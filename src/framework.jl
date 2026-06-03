@@ -21,7 +21,7 @@ index_family(::PielouEvenness) = :evenness
 index_family(::FisherAlpha) = :diversity
 index_family(::Union{Jaccard,SorensenDice,Overlap}) = :incidence
 index_family(::Union{BrayCurtis,Ruzicka,Canberra,MorisitaHorn}) = :abundance
-index_family(::Union{TotalVariation,Manhattan,Euclidean,Hellinger,Chord,Bhattacharyya,JensenShannon}) = :probability
+index_family(::Union{TotalVariation,Manhattan,Euclidean,Hellinger,Chord,Bhattacharyya,KullbackLeibler,ShannonDifference,JensenDifference,JensenShannon}) = :probability
 
 """
     input_mode(index)
@@ -30,7 +30,7 @@ Return the expected input style for an index: `:single_assemblage`,
 `:pairwise`, or `:either`.
 """
 input_mode(::DiversityIndex) = :single_assemblage
-input_mode(::Union{Jaccard,SorensenDice,Overlap,BrayCurtis,Ruzicka,TotalVariation,Manhattan,Euclidean,Canberra,Hellinger,Chord,Bhattacharyya,JensenShannon,MorisitaHorn}) = :pairwise
+input_mode(::Union{Jaccard,SorensenDice,Overlap,BrayCurtis,Ruzicka,TotalVariation,Manhattan,Euclidean,Canberra,Hellinger,Chord,Bhattacharyya,KullbackLeibler,ShannonDifference,JensenDifference,JensenShannon,MorisitaHorn}) = :pairwise
 
 """
     output_mode(index)
@@ -47,6 +47,7 @@ output_mode(::SampleCoverage) = :coverage
 output_mode(::PielouEvenness) = :evenness
 output_mode(::Union{Jaccard,SorensenDice,Overlap,Ruzicka,MorisitaHorn}) = :similarity
 output_mode(::Union{BrayCurtis,TotalVariation,Manhattan,Euclidean,Canberra,Hellinger,Chord,JensenShannon}) = :distance
+output_mode(::Union{KullbackLeibler,ShannonDifference,JensenDifference}) = :dissimilarity
 output_mode(::Bhattacharyya) = :coefficient
 
 """
@@ -68,7 +69,12 @@ index_range(::Union{PielouEvenness,SampleCoverage,GiniSimpson,GreenbergDiversity
     (lower=0.0, upper=1.0)
 index_range(::Manhattan) = (lower=0.0, upper=2.0)
 index_range(::Union{Euclidean,Chord}) = (lower=0.0, upper=sqrt(2))
-index_range(::JensenShannon) = (lower=0.0, upper=1.0)
+index_range(::Union{KullbackLeibler,ShannonDifference}) = (lower=0.0, upper=Inf)
+index_range(index::JensenDifference) = (lower=0.0, upper=log(2) / log(index.base))
+index_range(index::JensenShannon) = (
+    lower=0.0,
+    upper=index.distance ? sqrt(log(2) / log(index.base)) : log(2) / log(index.base),
+)
 
 """
     requires_probabilities(index)
@@ -76,7 +82,7 @@ index_range(::JensenShannon) = (lower=0.0, upper=1.0)
 Return whether an index is naturally defined on normalized probability vectors.
 """
 requires_probabilities(::DiversityIndex) = false
-requires_probabilities(::Union{Shannon,Renyi,Tsallis,Simpson,GiniSimpson,GreenbergDiversityIndex,LinguisticDiversityIndex,InverseSimpson,Hill,PielouEvenness,TotalVariation,Manhattan,Euclidean,Hellinger,Chord,Bhattacharyya,JensenShannon}) = true
+requires_probabilities(::Union{Shannon,Renyi,Tsallis,Simpson,GiniSimpson,GreenbergDiversityIndex,LinguisticDiversityIndex,InverseSimpson,Hill,PielouEvenness,TotalVariation,Manhattan,Euclidean,Hellinger,Chord,Bhattacharyya,KullbackLeibler,ShannonDifference,JensenDifference,JensenShannon}) = true
 
 """
     supports_matrix_kernel(index)
@@ -132,6 +138,9 @@ _index_formula(::BrayCurtis) = "sum_i |x_i-y_i| / sum_i (x_i+y_i)"
 _index_formula(::Ruzicka) = "sum_i min(x_i,y_i) / sum_i max(x_i,y_i)"
 _index_formula(::TotalVariation) = "0.5 sum_i |p_i-q_i|"
 _index_formula(::Hellinger) = "sqrt(sum_i (sqrt(p_i)-sqrt(q_i))^2 / 2)"
+_index_formula(::KullbackLeibler) = "sum_i p_i log_b(p_i/q_i)"
+_index_formula(::ShannonDifference) = "|H(p)-H(q)|"
+_index_formula(::JensenDifference) = "H((p+q)/2) - (H(p)+H(q))/2"
 _index_formula(::JensenShannon) = "sqrt((KL(p||m)+KL(q||m))/2) by default"
 
 _index_aliases(::DiversityIndex) = String[]
@@ -149,6 +158,8 @@ _index_notes(::DiversityIndex) = ""
 _index_notes(::Simpson) = "This package's Simpson() is concentration. Use GiniSimpson() for vegan's index=\"simpson\" convention."
 _index_notes(::GreenbergDiversityIndex) = "Equivalent to GiniSimpson(); interpreted as the probability that two randomly selected people have different mother tongues."
 _index_notes(::LinguisticDiversityIndex) = "Equivalent to GreenbergDiversityIndex() and GiniSimpson(); the temporal Index of Linguistic Diversity is available as index_of_linguistic_diversity(current, baseline)."
+_index_notes(::KullbackLeibler) = "Asymmetric: dissimilarity(KullbackLeibler(), left, right) returns D_KL(left || right) and may be Inf when right has zero probability where left is positive."
+_index_notes(::JensenDifference) = "For Shannon entropy, the Jensen difference equals Jensen-Shannon divergence."
 _index_notes(::JensenShannon) = "JensenShannon(distance=true) returns the square root of the divergence."
 
 """

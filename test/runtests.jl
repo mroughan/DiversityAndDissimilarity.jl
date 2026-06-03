@@ -285,6 +285,14 @@ end
     p = [1 / 3, 2 / 3, 0]
     q = [0, 1 / 4, 3 / 4]
     hellinger_expected = sqrt(sum(abs2, sqrt.(p) .- sqrt.(q)) / 2)
+    shannon_p = -sum(pi > 0 ? pi * log2(pi) : 0 for pi in p)
+    shannon_q = -sum(qi > 0 ? qi * log2(qi) : 0 for qi in q)
+    shannon_difference_expected = abs(shannon_p - shannon_q)
+    kl_left_right_expected = sum(pi > 0 ? pi * log2(pi / qi) : 0 for (pi, qi) in zip(p, q))
+    kl_right_left_expected = Inf
+    finite_kl_left = [1 / 2, 1 / 2]
+    finite_kl_right = [3 / 4, 1 / 4]
+    finite_kl_expected = sum(pi * log2(pi / qi) for (pi, qi) in zip(finite_kl_left, finite_kl_right))
     jensen_shannon_expected =
         (
             sum(pi > 0 ? pi * log2(pi / ((pi + qi) / 2)) : 0 for (pi, qi) in zip(p, q)) +
@@ -308,8 +316,29 @@ end
     @test chord_distance(left_vector, right_vector) ≈ sqrt(2) * hellinger_expected
     @test bhattacharyya_coefficient(left_vector, right_vector) ≈ sqrt(1 / 6)
     @test bhattacharyya_distance(left_vector, right_vector) ≈ -log(sqrt(1 / 6))
+    @test kullback_leibler_divergence(left_vector, right_vector) ≈ kl_left_right_expected
+    @test dissimilarity(KullbackLeibler(), left_vector, right_vector) ≈ kl_left_right_expected
+    @test kullback_leibler_divergence(right_vector, left_vector) == kl_right_left_expected
+    @test kullback_leibler_divergence(finite_kl_left, finite_kl_right) ≈ finite_kl_expected
+    @test kullback_leibler_divergence(finite_kl_left, finite_kl_right) !=
+        kullback_leibler_divergence(finite_kl_right, finite_kl_left)
+    @test kullback_leibler_divergence([1, 1], [1, 1]) ≈ 0
+    kl_matrix = kullback_leibler_divergence([1 1; 3 1])
+    @test kl_matrix[1, 2] ≈ finite_kl_expected
+    @test kl_matrix[2, 1] ≈ kullback_leibler_divergence(finite_kl_right, finite_kl_left)
+    @test kl_matrix[1, 2] != kl_matrix[2, 1]
+    @test shannon_difference(left_vector, right_vector) ≈ shannon_difference_expected
+    @test dissimilarity(ShannonDifference(), left_vector, right_vector) ≈ shannon_difference_expected
+    @test similarity(ShannonDifference(), left_vector, right_vector) ≈
+        1 - shannon_difference_expected / log2(3)
+    @test jensen_difference(left_vector, right_vector) ≈ jensen_shannon_expected
+    @test dissimilarity(JensenDifference(), left_vector, right_vector) ≈ jensen_shannon_expected
+    @test similarity(JensenDifference(), left_vector, right_vector) ≈
+        1 - jensen_shannon_expected
     @test jensen_shannon_divergence(left_vector, right_vector) ≈ jensen_shannon_expected
     @test jensen_shannon_distance(left_vector, right_vector) ≈ sqrt(jensen_shannon_expected)
+    @test jensen_shannon_similarity(left_vector, right_vector) ≈
+        1 - sqrt(jensen_shannon_expected)
     @test dissimilarity(JensenShannon(; distance=false), left_vector, right_vector) ≈ jensen_shannon_expected
     @test morisita_horn_similarity(left_vector, right_vector) ≈ 24 / 85
     @test morisita_horn_distance(left_vector, right_vector) ≈ 1 - 24 / 85

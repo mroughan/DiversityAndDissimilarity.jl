@@ -1,13 +1,14 @@
 # DiversityAndDissimilarity.jl
 
 [![CI](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/CI.yml)
-[![Quality](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Quality.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Quality.yml)
+[![Aqua](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Aqua.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Aqua.yml)
+[![JET](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/JET.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/JET.yml)
 [![Documentation](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/documentation.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/documentation.yml)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://mroughan.github.io/DiversityAndDissimilarity.jl/dev)
 
 `DiversityAndDissimilarity` provides ecology-style diversity indices for species
 abundance data, linguistic-demography category counts, observation vectors,
-and pairwise assemblage comparisons.
+and pairwise assemblage comparisons for dissimilarity or divergence.
 
 The package is small and dependency-free. It is designed around dispatchable
 index types such as `Richness()`, `Shannon()`, `Renyi()`, `Tsallis()`,
@@ -17,10 +18,13 @@ Where other fields use the same mathematical object under a different name,
 the package exposes those conventions explicitly; for example,
 `LinguisticDiversityIndex()` and `GreenbergDiversityIndex()` are aliases by
 interpretation for Gini-Simpson diversity.
- 
-If you are coming from R, the documentation includes a vegan migration guide.
+
+If you are coming from R, the documentation includes a
+[vegan migration guide](docs/src/vegan-migration.md) for the
+[vegan](https://vegandevs.github.io/vegan/) package.
 If you are choosing between packages, the documentation also includes
-availability checklists against common ecology and biodiversity tools.
+[availability checklists](docs/src/index-checklist.md) against common ecology
+and biodiversity tools.
 
 ## Installation
 
@@ -201,6 +205,9 @@ Supported pairwise indices include:
 - `Hellinger()`
 - `Chord()`
 - `Bhattacharyya()`
+- `KullbackLeibler()`
+- `ShannonDifference()`
+- `JensenDifference()`
 - `JensenShannon()`
 - `MorisitaHorn()`
 
@@ -236,6 +243,10 @@ right = [0, 4, 7]
 
 dissimilarity(BrayCurtis(), left, right)
 hellinger_distance(left, right)
+kullback_leibler_divergence(left, right)
+shannon_difference(left, right)
+jensen_difference(left, right)
+jensen_shannon_similarity(left, right)
 jensen_shannon_distance(left, right)
 total_variation_distance(left, right)
 ```
@@ -244,6 +255,13 @@ As a rule of thumb, use Jaccard or Sorensen-Dice for presence/absence turnover,
 Bray-Curtis for a practical ecological abundance default, Ruzicka when you want
 a quantitative Jaccard, Hellinger or Chord for composition comparisons before
 ordination, and Jensen-Shannon for a symmetric information-theoretic comparison.
+Use Shannon difference when the question is whether two assemblages have
+different entropy, and Jensen difference when you want the entropy gap between
+the average composition and the average entropy of the two assemblages.
+Kullback-Leibler divergence is available when an asymmetric
+``D_{KL}(left \\Vert right)`` comparison is intended; it can be infinite when
+the right assemblage has zero probability where the left assemblage is
+positive.
 
 Passing a community matrix or Tables.jl-compatible table as the only data
 argument returns a pairwise matrix across rows:
@@ -326,7 +344,8 @@ These functions also work row-wise on community matrices.
 
 ## Documentation
 
-Documenter.jl documentation lives in `docs/`.
+[Documenter.jl](https://documenter.juliadocs.org/stable/) documentation lives
+in `docs/`.
 
 ```julia
 julia --project=docs docs/make.jl
@@ -334,8 +353,10 @@ julia --project=docs docs/make.jl
 
 The generated site is written to `docs/build/`.
 
-Useful entry points include the getting-started guide, the vegan migration
-guide, the index availability checklists, and the benchmark notes.
+Useful entry points include the [getting-started guide](docs/src/getting-started.md),
+the [vegan migration guide](docs/src/vegan-migration.md), the
+[index availability checklists](docs/src/index-checklist.md), and the
+[benchmark notes](docs/src/benchmarks.md).
 
 ## Benchmarks
 
@@ -350,8 +371,9 @@ Rscript benchmark/r_vegan_benchmark.R
 benchmark/run_report.sh
 ```
 
-The Python benchmark requires `numpy` and uses `scipy` for Bray-Curtis when
-available. The R benchmark requires `vegan`.
+The Python benchmark requires [NumPy](https://numpy.org/) and uses
+[SciPy](https://scipy.org/) for Bray-Curtis when available. The R benchmark
+requires [vegan](https://vegandevs.github.io/vegan/).
 
 ## Quality Checks
 
@@ -361,16 +383,18 @@ The ordinary package tests are run with:
 julia --project=. -e 'using Pkg; Pkg.test()'
 ```
 
-Additional package-quality checks use Aqua.jl and JET.jl from a dedicated test
-environment:
+Additional package-quality checks use
+[Aqua.jl](https://github.com/JuliaTesting/Aqua.jl) and
+[JET.jl](https://github.com/aviatesk/JET.jl) from a dedicated test environment:
 
 ```julia
 julia --project=test/quality -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate()'
 julia --project=test/quality test/quality/runtests.jl
 ```
 
-GitHub Actions runs both the standard Julia compatibility matrix and the
-Aqua/JET quality workflow.
+GitHub Actions runs the standard Julia compatibility matrix separately from
+the Aqua and JET quality workflows, which run only on the latest stable Julia
+release.
 
 ## Disclosure
 

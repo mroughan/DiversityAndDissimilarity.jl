@@ -1,4 +1,4 @@
-name: Quality
+name: JET
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  aqua-jet:
-    name: Aqua and JET
+  jet:
+    name: JET - Julia latest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,11 +18,12 @@ jobs:
         with:
           version: '1'
       - uses: julia-actions/cache@v2
-      - name: Instantiate quality environment
+      - name: Run JET
         shell: julia --color=yes --project=test/quality {0}
         run: |
           using Pkg
           Pkg.develop(PackageSpec(path=pwd()))
           Pkg.instantiate()
-      - name: Run Aqua and JET
-        run: julia --color=yes --project=test/quality test/quality/runtests.jl
+          using DiversityAndDissimilarity
+          using JET
+          JET.test_package(DiversityAndDissimilarity; target_modules=(DiversityAndDissimilarity,))

@@ -78,8 +78,10 @@ others are asymmetric divergences.
 
 | Index | Form | Type | Notes |
 |---|---|---:|---|
-| Kullback-Leibler | ``\sum_i p_i\log(p_i/q_i)`` | divergence | Asymmetric; requires care with zeros. |
+| Kullback-Leibler | ``\sum_i p_i\log(p_i/q_i)`` | divergence | Asymmetric; returns infinity when ``p_i > 0`` and ``q_i = 0``. |
 | Jeffreys | ``D_{KL}(p\|q)+D_{KL}(q\|p)`` | divergence | Symmetric but not a metric. |
+| Shannon difference | ``|H(p)-H(q)|`` | dissimilarity | Compares entropy values rather than species overlap. |
+| Jensen difference | ``H((p+q)/2) - (H(p)+H(q))/2`` | divergence | For Shannon entropy this is Jensen-Shannon divergence. |
 | Jensen-Shannon | ``\frac{1}{2}D_{KL}(p\|m)+\frac{1}{2}D_{KL}(q\|m)``, ``m=(p+q)/2`` | divergence | Square root is a metric. |
 | Jensen-Shannon distance | ``\sqrt{JS(p,q)}`` | distance | Bounded and symmetric. |
 | Chi-square | ``\sum_i (p_i-q_i)^2/(p_i+q_i)`` or related conventions | distance/divergence | Multiple ecological and statistical conventions exist. |

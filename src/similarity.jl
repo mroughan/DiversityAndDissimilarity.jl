@@ -108,6 +108,61 @@ d_B(p,q) = -\\log BC(p,q)
 struct Bhattacharyya <: DiversityIndex end
 
 """
+Kullback-Leibler divergence between probability vectors.
+
+`dissimilarity(KullbackLeibler(), left, right)` returns ``D_{KL}(p \\Vert q)``:
+
+```math
+D_{KL}(p \\Vert q) = \\sum_i p_i \\log_b \\frac{p_i}{q_i}
+```
+
+This divergence is asymmetric and returns `Inf` when `p_i > 0` and `q_i == 0`
+for any coordinate.
+"""
+struct KullbackLeibler <: DiversityIndex
+    base::Float64
+end
+
+function KullbackLeibler(; base::Real=2)
+    base > 0 && base != 1 || throw(ArgumentError("base must be positive and not equal to 1"))
+    return KullbackLeibler(float(base))
+end
+
+"""
+Absolute Shannon entropy difference between probability vectors.
+
+```math
+|H_b(p) - H_b(q)|
+```
+"""
+struct ShannonDifference <: DiversityIndex
+    base::Float64
+end
+
+function ShannonDifference(; base::Real=2)
+    base > 0 && base != 1 || throw(ArgumentError("base must be positive and not equal to 1"))
+    return ShannonDifference(float(base))
+end
+
+"""
+Jensen difference of Shannon entropy between probability vectors.
+
+```math
+J_H(p,q) = H_b\\left(\\frac{p+q}{2}\\right) - \\frac{H_b(p)+H_b(q)}{2}
+```
+
+For Shannon entropy this is the Jensen-Shannon divergence.
+"""
+struct JensenDifference <: DiversityIndex
+    base::Float64
+end
+
+function JensenDifference(; base::Real=2)
+    base > 0 && base != 1 || throw(ArgumentError("base must be positive and not equal to 1"))
+    return JensenDifference(float(base))
+end
+
+"""
 Jensen-Shannon divergence or distance between probability vectors.
 
 `JensenShannon(; base=2, distance=true)` returns the square root of the
@@ -260,6 +315,71 @@ end
 function dissimilarity(index::Bhattacharyya, left, right; frequencies::Bool=true)
     coefficient = similarity(index, left, right; frequencies)
     return coefficient == 0 ? Inf : -log(coefficient)
+end
+
+function dissimilarity(index::KullbackLeibler, left, right; frequencies::Bool=true)
+    left_probability, right_probability = _aligned_probabilities(left, right; frequencies)
+    return _kl_divergence(left_probability, right_probability, index.base)
+end
+
+function dissimilarity(index::KullbackLeibler, data::AbstractMatrix{<:Real}; frequencies::Bool=true, species=nothing)
+    _check_matrix_frequencies(frequencies)
+    _validate_community_matrix(data)
+    nsites = size(data, 1)
+    probabilities = Matrix{Float64}(undef, size(data))
+    for row in 1:nsites
+        row_total = sum(view(data, row, :))
+        @inbounds for column in axes(data, 2)
+            probabilities[row, column] = data[row, column] / row_total
+        end
+    end
+
+    result = Matrix{Float64}(undef, nsites, nsites)
+    for i in 1:nsites
+        result[i, i] = 0.0
+        for j in 1:nsites
+            if i != j
+                result[i, j] = _kl_divergence(view(probabilities, i, :), view(probabilities, j, :), index.base)
+            end
+        end
+    end
+    return result
+end
+
+function dissimilarity(index::KullbackLeibler, data; frequencies::Bool=true, species=nothing)
+    matrix = community_matrix(data; species)
+    return dissimilarity(index, matrix; frequencies)
+end
+
+function dissimilarity(index::ShannonDifference, left, right; frequencies::Bool=true)
+    left_probability, right_probability = _aligned_probabilities(left, right; frequencies)
+    return abs(_shannon_entropy(left_probability, index.base) -
+        _shannon_entropy(right_probability, index.base))
+end
+
+function similarity(index::ShannonDifference, left, right; frequencies::Bool=true)
+    left_probability, right_probability = _aligned_probabilities(left, right; frequencies)
+    support = count(value -> value != 0, left_probability .+ right_probability)
+    support <= 1 && return 1.0
+    max_difference = log(support) / log(index.base)
+    return 1 - dissimilarity(index, left, right; frequencies) / max_difference
+end
+
+function _jensen_difference(index::JensenDifference, left, right; frequencies::Bool=true)
+    left_probability, right_probability = _aligned_probabilities(left, right; frequencies)
+    mixture = (left_probability .+ right_probability) ./ 2
+    return _shannon_entropy(mixture, index.base) -
+        (_shannon_entropy(left_probability, index.base) +
+            _shannon_entropy(right_probability, index.base)) / 2
+end
+
+function dissimilarity(index::JensenDifference, left, right; frequencies::Bool=true)
+    return _jensen_difference(index, left, right; frequencies)
+end
+
+function similarity(index::JensenDifference, left, right; frequencies::Bool=true)
+    max_difference = log(2) / log(index.base)
+    return 1 - dissimilarity(index, left, right; frequencies) / max_difference
 end
 
 function _jensen_shannon_divergence(index::JensenShannon, left, right; frequencies::Bool=true)
@@ -580,6 +700,17 @@ function _kl_divergence(left_probability, right_probability, base)
     return total
 end
 
+function _shannon_entropy(probability, base)
+    total = 0.0
+    log_base = log(base)
+    for value in probability
+        if value > 0
+            total -= value * log(value) / log_base
+        end
+    end
+    return total
+end
+
 """
     jaccard_index(left, right; frequencies=true)
 
@@ -808,6 +939,54 @@ bhattacharyya_distance(left, right; frequencies::Bool=true) =
     dissimilarity(Bhattacharyya(), left, right; frequencies)
 bhattacharyya_distance(data; frequencies::Bool=true, species=nothing) =
     dissimilarity(Bhattacharyya(), data; frequencies, species)
+
+"""
+    kullback_leibler_divergence(left, right; frequencies=true, base=2)
+
+Return Kullback-Leibler divergence ``D_{KL}(left \\Vert right)`` between
+normalized abundance/probability vectors. This divergence is asymmetric and
+returns `Inf` when `right` has zero probability where `left` has positive
+probability.
+"""
+kullback_leibler_divergence(left, right; frequencies::Bool=true, base::Real=2) =
+    dissimilarity(KullbackLeibler(; base), left, right; frequencies)
+kullback_leibler_divergence(data; frequencies::Bool=true, species=nothing, base::Real=2) =
+    dissimilarity(KullbackLeibler(; base), data; frequencies, species)
+
+"""
+    shannon_difference(left, right; frequencies=true, base=2)
+
+Return the absolute difference between Shannon entropies of two assemblages.
+"""
+shannon_difference(left, right; frequencies::Bool=true, base::Real=2) =
+    dissimilarity(ShannonDifference(; base), left, right; frequencies)
+shannon_difference(data; frequencies::Bool=true, species=nothing, base::Real=2) =
+    dissimilarity(ShannonDifference(; base), data; frequencies, species)
+
+"""
+    jensen_difference(left, right; frequencies=true, base=2)
+
+Return the Jensen difference of Shannon entropy. This equals Jensen-Shannon
+divergence for Shannon entropy.
+"""
+jensen_difference(left, right; frequencies::Bool=true, base::Real=2) =
+    dissimilarity(JensenDifference(; base), left, right; frequencies)
+jensen_difference(data; frequencies::Bool=true, species=nothing, base::Real=2) =
+    dissimilarity(JensenDifference(; base), data; frequencies, species)
+
+"""
+    jensen_shannon_similarity(left, right; frequencies=true, base=2, distance=true)
+
+Return one minus normalized Jensen-Shannon dissimilarity. By default the
+normalization uses the square-root Jensen-Shannon distance; pass
+`distance=false` to normalize the divergence instead.
+"""
+jensen_shannon_similarity(left, right; frequencies::Bool=true, base::Real=2,
+        distance::Bool=true) =
+    similarity(JensenShannon(; base, distance), left, right; frequencies)
+jensen_shannon_similarity(data; frequencies::Bool=true, species=nothing, base::Real=2,
+        distance::Bool=true) =
+    similarity(JensenShannon(; base, distance), data; frequencies, species)
 
 """
     jensen_shannon_divergence(left, right; frequencies=true, base=2)

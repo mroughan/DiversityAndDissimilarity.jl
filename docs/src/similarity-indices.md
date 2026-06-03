@@ -132,6 +132,15 @@ JS(p,q) =
 \\qquad m = \\frac{p+q}{2}.
 ```
 
+```math
+D_{KL}(p \\Vert q) = \\sum_i p_i \\log_b \\frac{p_i}{q_i}
+```
+
+```math
+J_H(p,q) =
+H_b\\left(\\frac{p+q}{2}\\right) - \\frac{H_b(p)+H_b(q)}{2}
+```
+
 | Index | Returned form | Range with default conventions | Most useful when |
 |---|---|---:|---|
 | [`TotalVariation`](@ref) | distance | ``[0,1]`` | You want the maximum compositional probability mass that differs between samples. |
@@ -140,7 +149,16 @@ JS(p,q) =
 | [`Hellinger`](@ref) | distance | ``[0,1]`` | You want a bounded metric that moderates dominant taxa through square-root transformation. |
 | [`Chord`](@ref) | distance | ``[0,\\sqrt{2}]`` | You want Euclidean distance after square-root probability transformation. |
 | [`Bhattacharyya`](@ref) | coefficient / distance | coefficient ``[0,1]``; distance ``[0,\\infty]`` | You want probability overlap, especially in classification or distributional overlap settings. |
+| [`KullbackLeibler`](@ref) | asymmetric divergence | ``[0,\\infty]`` | You want ``D_{KL}(p \\Vert q)`` and have a directional reference/comparison interpretation. |
+| [`ShannonDifference`](@ref) | dissimilarity | support-dependent | You want to compare how much entropy/diversity uncertainty each assemblage has, not which species are shared. |
+| [`JensenDifference`](@ref) | dissimilarity | ``[0,1]`` with `base=2` | You want the Shannon entropy Jensen gap; for Shannon entropy this is Jensen-Shannon divergence. |
 | [`JensenShannon`](@ref) | distance by default | ``[0,1]`` with `base=2` | You want a symmetric information-theoretic comparison; use `distance=false` for divergence. |
+
+[`KullbackLeibler`](@ref) is directional: `dissimilarity(KullbackLeibler(), left, right)`
+returns ``D_{KL}(left \\Vert right)``. It returns `Inf` if `right` has zero
+probability where `left` has positive probability. Pairwise matrices for this
+index are directional, so entry ``(i,j)`` is ``D_{KL}(i \\Vert j)`` and need
+not equal entry ``(j,i)``.
 
 ## Community Distance Matrices
 
@@ -205,6 +223,10 @@ hellinger_distance(left, right)
 chord_distance(left, right)
 bhattacharyya_coefficient(left, right)
 bhattacharyya_distance(left, right)
+kullback_leibler_divergence(left, right)
+shannon_difference(left, right)
+jensen_difference(left, right)
+jensen_shannon_similarity(left, right)
 jensen_shannon_divergence(left, right)
 jensen_shannon_distance(left, right)
 morisita_horn_similarity(left, right)
@@ -224,6 +246,9 @@ Canberra
 Hellinger
 Chord
 Bhattacharyya
+KullbackLeibler
+ShannonDifference
+JensenDifference
 JensenShannon
 MorisitaHorn
 similarity
@@ -256,6 +281,10 @@ hellinger_distance
 chord_distance
 bhattacharyya_coefficient
 bhattacharyya_distance
+kullback_leibler_divergence
+shannon_difference
+jensen_difference
+jensen_shannon_similarity
 jensen_shannon_divergence
 jensen_shannon_distance
 morisita_horn_similarity
