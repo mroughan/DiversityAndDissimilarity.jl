@@ -340,6 +340,17 @@ end
     @test jensen_shannon_similarity(left_vector, right_vector) ≈
         1 - sqrt(jensen_shannon_expected)
     @test dissimilarity(JensenShannon(; distance=false), left_vector, right_vector) ≈ jensen_shannon_expected
+    @test kullback_leibler_divergence(left_vector, right_vector; estimator=MillerMadow()) <=
+        kullback_leibler_divergence(left_vector, right_vector)
+    @test isfinite(kullback_leibler_divergence(left_vector, right_vector; estimator=AddGamma(1)))
+    @test isfinite(kullback_leibler_divergence(left_vector, right_vector; estimator=AddGamma(0.5)))
+    @test isfinite(kullback_leibler_divergence(left_vector, right_vector; estimator=HausserStrimmer()))
+    @test isfinite(kullback_leibler_divergence(left_vector, right_vector; estimator=ChaoShen()))
+    @test isfinite(jensen_shannon_divergence(left_vector, right_vector; estimator=MillerMadow()))
+    @test isfinite(jensen_shannon_divergence(left_vector, right_vector; estimator=AddGamma(1), support=4))
+    @test isfinite(jensen_shannon_divergence(left_vector, right_vector; estimator=AddGamma(0.5), support=4))
+    @test isfinite(jensen_shannon_divergence(left_vector, right_vector; estimator=HausserStrimmer(), support=4))
+    @test isfinite(jensen_shannon_divergence(left_vector, right_vector; estimator=ChaoShen()))
     @test morisita_horn_similarity(left_vector, right_vector) ≈ 24 / 85
     @test morisita_horn_distance(left_vector, right_vector) ≈ 1 - 24 / 85
 

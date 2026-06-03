@@ -158,9 +158,9 @@ _index_notes(::DiversityIndex) = ""
 _index_notes(::Simpson) = "This package's Simpson() is concentration. Use GiniSimpson() for vegan's index=\"simpson\" convention."
 _index_notes(::GreenbergDiversityIndex) = "Equivalent to GiniSimpson(); interpreted as the probability that two randomly selected people have different mother tongues."
 _index_notes(::LinguisticDiversityIndex) = "Equivalent to GreenbergDiversityIndex() and GiniSimpson(); the temporal Index of Linguistic Diversity is available as index_of_linguistic_diversity(current, baseline)."
-_index_notes(::KullbackLeibler) = "Asymmetric: dissimilarity(KullbackLeibler(), left, right) returns D_KL(left || right) and may be Inf when right has zero probability where left is positive."
-_index_notes(::JensenDifference) = "For Shannon entropy, the Jensen difference equals Jensen-Shannon divergence."
-_index_notes(::JensenShannon) = "JensenShannon(distance=true) returns the square root of the divergence."
+_index_notes(::KullbackLeibler) = "Asymmetric: dissimilarity(KullbackLeibler(), left, right) returns D_KL(left || right). Use estimator for Miller-Madow, pseudocount/shrinkage, or Good-Turing corrections."
+_index_notes(::JensenDifference) = "For Shannon entropy, the Jensen difference equals Jensen-Shannon divergence. Use estimator for low-sample corrections."
+_index_notes(::JensenShannon) = "JensenShannon(distance=true) returns the square root of the divergence. Use estimator for low-sample corrections."
 
 """
     reference_cases()

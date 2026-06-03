@@ -74,7 +74,10 @@ probability distances after normalization.
 ## Probability Divergences
 
 These compare normalized probability vectors. Some are true metrics, while
-others are asymmetric divergences.
+others are asymmetric divergences. KL and Jensen-Shannon-family functions in
+this package expose low-sample corrections through `MillerMadow()`,
+`AddGamma(1)` / `AddGamma(0.5)` pseudocount smoothing, `HausserStrimmer()`
+shrinkage, and `ChaoShen()` Good-Turing unseen-mass correction.
 
 | Index | Form | Type | Notes |
 |---|---|---:|---|

@@ -116,16 +116,22 @@ Kullback-Leibler divergence between probability vectors.
 D_{KL}(p \\Vert q) = \\sum_i p_i \\log_b \\frac{p_i}{q_i}
 ```
 
-This divergence is asymmetric and returns `Inf` when `p_i > 0` and `q_i == 0`
-for any coordinate.
+Use `estimator` for low-sample corrections. Supported options mirror Shannon
+entropy estimation: [`MillerMadow`](@ref), [`AddGamma`](@ref) for pseudocounts
+(`AddGamma(1)` is Laplace and `AddGamma(0.5)` is Jeffreys), [`HausserStrimmer`](@ref)
+for shrinkage, and [`ChaoShen`](@ref) for a Good-Turing unseen-mass correction.
+Without smoothing or unseen-mass correction this divergence returns `Inf` when
+`p_i > 0` and `q_i == 0` for any coordinate.
 """
-struct KullbackLeibler <: DiversityIndex
+struct KullbackLeibler{E<:ShannonEstimator,S} <: DiversityIndex
     base::Float64
+    estimator::E
+    support::S
 end
 
-function KullbackLeibler(; base::Real=2)
+function KullbackLeibler(; base::Real=2, estimator::ShannonEstimator=Plugin(), support=nothing)
     base > 0 && base != 1 || throw(ArgumentError("base must be positive and not equal to 1"))
-    return KullbackLeibler(float(base))
+    return KullbackLeibler(float(base), estimator, support)
 end
 
 """
@@ -135,13 +141,15 @@ Absolute Shannon entropy difference between probability vectors.
 |H_b(p) - H_b(q)|
 ```
 """
-struct ShannonDifference <: DiversityIndex
+struct ShannonDifference{E<:ShannonEstimator,S} <: DiversityIndex
     base::Float64
+    estimator::E
+    support::S
 end
 
-function ShannonDifference(; base::Real=2)
+function ShannonDifference(; base::Real=2, estimator::ShannonEstimator=Plugin(), support=nothing)
     base > 0 && base != 1 || throw(ArgumentError("base must be positive and not equal to 1"))
-    return ShannonDifference(float(base))
+    return ShannonDifference(float(base), estimator, support)
 end
 
 """
@@ -151,15 +159,18 @@ Jensen difference of Shannon entropy between probability vectors.
 J_H(p,q) = H_b\\left(\\frac{p+q}{2}\\right) - \\frac{H_b(p)+H_b(q)}{2}
 ```
 
-For Shannon entropy this is the Jensen-Shannon divergence.
+For Shannon entropy this is the Jensen-Shannon divergence. Use `estimator` for
+the same low-sample corrections available to [`KullbackLeibler`](@ref).
 """
-struct JensenDifference <: DiversityIndex
+struct JensenDifference{E<:ShannonEstimator,S} <: DiversityIndex
     base::Float64
+    estimator::E
+    support::S
 end
 
-function JensenDifference(; base::Real=2)
+function JensenDifference(; base::Real=2, estimator::ShannonEstimator=Plugin(), support=nothing)
     base > 0 && base != 1 || throw(ArgumentError("base must be positive and not equal to 1"))
-    return JensenDifference(float(base))
+    return JensenDifference(float(base), estimator, support)
 end
 
 """
@@ -167,16 +178,22 @@ Jensen-Shannon divergence or distance between probability vectors.
 
 `JensenShannon(; base=2, distance=true)` returns the square root of the
 divergence from [`dissimilarity`](@ref). Set `distance=false` for the
-divergence itself.
+divergence itself. Use `estimator` for low-sample corrections such as
+`MillerMadow()`, `AddGamma(1)` for Laplace smoothing, `AddGamma(0.5)` for
+Jeffreys smoothing, `HausserStrimmer()` shrinkage, and `ChaoShen()` /
+Good-Turing unseen-mass correction.
 """
-struct JensenShannon <: DiversityIndex
+struct JensenShannon{E<:ShannonEstimator,S} <: DiversityIndex
     base::Float64
     distance::Bool
+    estimator::E
+    support::S
 end
 
-function JensenShannon(; base::Real=2, distance::Bool=true)
+function JensenShannon(; base::Real=2, distance::Bool=true,
+        estimator::ShannonEstimator=Plugin(), support=nothing)
     base > 0 && base != 1 || throw(ArgumentError("base must be positive and not equal to 1"))
-    return JensenShannon(float(base), distance)
+    return JensenShannon(float(base), distance, estimator, support)
 end
 
 """
@@ -318,28 +335,32 @@ function dissimilarity(index::Bhattacharyya, left, right; frequencies::Bool=true
 end
 
 function dissimilarity(index::KullbackLeibler, left, right; frequencies::Bool=true)
-    left_probability, right_probability = _aligned_probabilities(left, right; frequencies)
-    return _kl_divergence(left_probability, right_probability, index.base)
+    left_counts, right_counts, left_total, right_total =
+        _aligned_divergence_counts(left, right; frequencies, support=index.support)
+    left_probability, right_probability = _divergence_probability_pair(
+        index.estimator, left_counts, right_counts, left_total, right_total)
+    divergence = _kl_divergence(
+        left_probability,
+        right_probability,
+        index.base,
+    )
+    if index.estimator isa MillerMadow
+        correction = (count(>(0), left_counts) - 1) / (2left_total * log(index.base))
+        divergence = max(0.0, divergence - correction)
+    end
+    return divergence
 end
 
 function dissimilarity(index::KullbackLeibler, data::AbstractMatrix{<:Real}; frequencies::Bool=true, species=nothing)
     _check_matrix_frequencies(frequencies)
     _validate_community_matrix(data)
     nsites = size(data, 1)
-    probabilities = Matrix{Float64}(undef, size(data))
-    for row in 1:nsites
-        row_total = sum(view(data, row, :))
-        @inbounds for column in axes(data, 2)
-            probabilities[row, column] = data[row, column] / row_total
-        end
-    end
-
     result = Matrix{Float64}(undef, nsites, nsites)
     for i in 1:nsites
         result[i, i] = 0.0
         for j in 1:nsites
             if i != j
-                result[i, j] = _kl_divergence(view(probabilities, i, :), view(probabilities, j, :), index.base)
+                result[i, j] = dissimilarity(index, view(data, i, :), view(data, j, :); frequencies)
             end
         end
     end
@@ -352,25 +373,28 @@ function dissimilarity(index::KullbackLeibler, data; frequencies::Bool=true, spe
 end
 
 function dissimilarity(index::ShannonDifference, left, right; frequencies::Bool=true)
-    left_probability, right_probability = _aligned_probabilities(left, right; frequencies)
-    return abs(_shannon_entropy(left_probability, index.base) -
-        _shannon_entropy(right_probability, index.base))
+    left_counts, right_counts, left_total, right_total =
+        _aligned_divergence_counts(left, right; frequencies, support=index.support)
+    return abs(
+        _divergence_entropy(index.estimator, left_counts, left_total, index.base) -
+        _divergence_entropy(index.estimator, right_counts, right_total, index.base),
+    )
 end
 
 function similarity(index::ShannonDifference, left, right; frequencies::Bool=true)
-    left_probability, right_probability = _aligned_probabilities(left, right; frequencies)
-    support = count(value -> value != 0, left_probability .+ right_probability)
+    left_counts, right_counts, _, _ =
+        _aligned_divergence_counts(left, right; frequencies, support=index.support)
+    support = _effective_divergence_support(index.estimator, left_counts, right_counts)
     support <= 1 && return 1.0
     max_difference = log(support) / log(index.base)
     return 1 - dissimilarity(index, left, right; frequencies) / max_difference
 end
 
 function _jensen_difference(index::JensenDifference, left, right; frequencies::Bool=true)
-    left_probability, right_probability = _aligned_probabilities(left, right; frequencies)
-    mixture = (left_probability .+ right_probability) ./ 2
-    return _shannon_entropy(mixture, index.base) -
-        (_shannon_entropy(left_probability, index.base) +
-            _shannon_entropy(right_probability, index.base)) / 2
+    left_counts, right_counts, left_total, right_total =
+        _aligned_divergence_counts(left, right; frequencies, support=index.support)
+    return _jensen_difference(index.estimator, left_counts, right_counts,
+        left_total, right_total, index.base)
 end
 
 function dissimilarity(index::JensenDifference, left, right; frequencies::Bool=true)
@@ -383,10 +407,10 @@ function similarity(index::JensenDifference, left, right; frequencies::Bool=true
 end
 
 function _jensen_shannon_divergence(index::JensenShannon, left, right; frequencies::Bool=true)
-    left_probability, right_probability = _aligned_probabilities(left, right; frequencies)
-    mixture = (left_probability .+ right_probability) ./ 2
-    return (_kl_divergence(left_probability, mixture, index.base) +
-        _kl_divergence(right_probability, mixture, index.base)) / 2
+    left_counts, right_counts, left_total, right_total =
+        _aligned_divergence_counts(left, right; frequencies, support=index.support)
+    return _jensen_difference(index.estimator, left_counts, right_counts,
+        left_total, right_total, index.base)
 end
 
 function dissimilarity(index::JensenShannon, left, right; frequencies::Bool=true)
@@ -688,6 +712,141 @@ function _aligned_probabilities(left, right; frequencies::Bool=true)
     return left_abundance ./ sum(left_abundance), right_abundance ./ sum(right_abundance)
 end
 
+function _aligned_divergence_counts(left, right; frequencies::Bool=true, support=nothing)
+    if support === nothing
+        left_counts, right_counts = _checked_aligned_abundances(left, right; frequencies)
+    elseif support isa Integer
+        left_counts, right_counts = _checked_aligned_abundances(left, right; frequencies)
+        support >= length(left_counts) || throw(ArgumentError("support size must be at least the aligned observed support size"))
+        append!(left_counts, zeros(Float64, support - length(left_counts)))
+        append!(right_counts, zeros(Float64, support - length(right_counts)))
+    else
+        known = collect(support)
+        left_observed = _divergence_observed_counts(left; frequencies)
+        right_observed = _divergence_observed_counts(right; frequencies)
+        observed_set = union(Set(keys(left_observed)), Set(keys(right_observed)))
+        known_set = Set(known)
+        observed_set ⊆ known_set || throw(ArgumentError("support must include every observed category"))
+        left_counts = [float(get(left_observed, category, 0)) for category in known]
+        right_counts = [float(get(right_observed, category, 0)) for category in known]
+        any(v -> v < 0 || !isfinite(v), Iterators.flatten((left_counts, right_counts))) &&
+            throw(ArgumentError("abundances must be non-negative and finite"))
+    end
+    left_total = sum(left_counts)
+    right_total = sum(right_counts)
+    left_total > 0 && right_total > 0 || throw(ArgumentError("both assemblages must have positive total abundance"))
+    return left_counts, right_counts, left_total, right_total
+end
+
+function _divergence_observed_counts(data; frequencies::Bool=true)
+    if data isa AbstractVector{<:Real} && frequencies
+        for value in data
+            value < 0 && throw(ArgumentError("abundances must be non-negative"))
+            isfinite(value) || throw(ArgumentError("abundances must be finite"))
+        end
+        return Dict(i => float(value) for (i, value) in pairs(data))
+    end
+    return counts(data)
+end
+
+function _divergence_probabilities(::Union{Plugin,MillerMadow}, counts, n)
+    return counts ./ n
+end
+
+function _divergence_probabilities(estimator::AddGamma, counts, n)
+    support_size = length(counts)
+    denominator = n + estimator.gamma * support_size
+    return [(count + estimator.gamma) / denominator for count in counts]
+end
+
+function _divergence_probabilities(::HausserStrimmer, counts, n)
+    support_size = length(counts)
+    target = inv(support_size)
+    probabilities = counts ./ n
+    denominator = sum(p -> (target - p)^2, probabilities)
+    shrinkage = if n <= 1 || denominator <= eps(Float64)
+        1.0
+    else
+        numerator = sum(p -> p * (1 - p), probabilities) / (n - 1)
+        clamp(numerator / denominator, 0.0, 1.0)
+    end
+    return [shrinkage * target + (1 - shrinkage) * p for p in probabilities]
+end
+
+function _divergence_probabilities(::ChaoShen, counts, n)
+    singletons = count(==(1), counts)
+    coverage = 1 - singletons / n
+    coverage >= 0 || throw(ArgumentError("Good-Turing coverage estimate must be non-negative"))
+    observed = [coverage * count / n for count in counts]
+    push!(observed, max(0.0, 1 - coverage))
+    return observed
+end
+
+function _divergence_entropy(estimator::ShannonEstimator, counts, n, base)
+    probabilities = _divergence_probabilities(estimator, counts, n)
+    return _shannon_entropy(probabilities, base)
+end
+
+function _divergence_probability_pair(estimator::ShannonEstimator, left_counts, right_counts,
+        left_total, right_total)
+    return (
+        _divergence_probabilities(estimator, left_counts, left_total),
+        _divergence_probabilities(estimator, right_counts, right_total),
+    )
+end
+
+function _divergence_probability_pair(::ChaoShen, left_counts, right_counts,
+        left_total, right_total)
+    return (
+        _good_turing_pair_probabilities(left_counts, right_counts, left_total),
+        _good_turing_pair_probabilities(right_counts, left_counts, right_total),
+    )
+end
+
+function _good_turing_pair_probabilities(counts, other_counts, n)
+    singletons = count(==(1), counts)
+    coverage = 1 - singletons / n
+    coverage >= 0 || throw(ArgumentError("Good-Turing coverage estimate must be non-negative"))
+    unseen_mass = max(0.0, 1 - coverage)
+    zero_in_this = [i for i in eachindex(counts) if counts[i] == 0 && other_counts[i] > 0]
+    unseen_share = unseen_mass / (length(zero_in_this) + 1)
+    probabilities = [count > 0 ? coverage * count / n : 0.0 for count in counts]
+    for index in zero_in_this
+        probabilities[index] = unseen_share
+    end
+    push!(probabilities, unseen_share)
+    return probabilities
+end
+
+function _jensen_difference(estimator::ShannonEstimator, left_counts, right_counts,
+        left_total, right_total, base)
+    left_probability, right_probability =
+        _divergence_probability_pair(estimator, left_counts, right_counts, left_total, right_total)
+    mixture = (left_probability .+ right_probability) ./ 2
+    value = _shannon_entropy(mixture, base) -
+        (_shannon_entropy(left_probability, base) + _shannon_entropy(right_probability, base)) / 2
+    if estimator isa MillerMadow
+        mixture_total = left_total + right_total
+        mixture_support = count(>(0), mixture)
+        left_support = count(>(0), left_counts)
+        right_support = count(>(0), right_counts)
+        correction = (mixture_support - 1) / (2mixture_total * log(base)) -
+            0.5 * (
+                (left_support - 1) / (2left_total * log(base)) +
+                (right_support - 1) / (2right_total * log(base))
+            )
+        value += correction
+    end
+    return max(0.0, value)
+end
+
+function _effective_divergence_support(estimator::ShannonEstimator, left_counts, right_counts)
+    if estimator isa ChaoShen
+        return count(value -> value != 0, left_counts .+ right_counts) + 1
+    end
+    return length(left_counts)
+end
+
 function _kl_divergence(left_probability, right_probability, base)
     total = 0.0
     log_base = log(base)
@@ -941,72 +1100,82 @@ bhattacharyya_distance(data; frequencies::Bool=true, species=nothing) =
     dissimilarity(Bhattacharyya(), data; frequencies, species)
 
 """
-    kullback_leibler_divergence(left, right; frequencies=true, base=2)
+    kullback_leibler_divergence(left, right; frequencies=true, base=2, estimator=Plugin(), support=nothing)
 
 Return Kullback-Leibler divergence ``D_{KL}(left \\Vert right)`` between
 normalized abundance/probability vectors. This divergence is asymmetric and
 returns `Inf` when `right` has zero probability where `left` has positive
 probability.
 """
-kullback_leibler_divergence(left, right; frequencies::Bool=true, base::Real=2) =
-    dissimilarity(KullbackLeibler(; base), left, right; frequencies)
-kullback_leibler_divergence(data; frequencies::Bool=true, species=nothing, base::Real=2) =
-    dissimilarity(KullbackLeibler(; base), data; frequencies, species)
+kullback_leibler_divergence(left, right; frequencies::Bool=true, base::Real=2,
+        estimator::ShannonEstimator=Plugin(), support=nothing) =
+    dissimilarity(KullbackLeibler(; base, estimator, support), left, right; frequencies)
+kullback_leibler_divergence(data; frequencies::Bool=true, species=nothing, base::Real=2,
+        estimator::ShannonEstimator=Plugin(), support=nothing) =
+    dissimilarity(KullbackLeibler(; base, estimator, support), data; frequencies, species)
 
 """
-    shannon_difference(left, right; frequencies=true, base=2)
+    shannon_difference(left, right; frequencies=true, base=2, estimator=Plugin(), support=nothing)
 
 Return the absolute difference between Shannon entropies of two assemblages.
 """
-shannon_difference(left, right; frequencies::Bool=true, base::Real=2) =
-    dissimilarity(ShannonDifference(; base), left, right; frequencies)
-shannon_difference(data; frequencies::Bool=true, species=nothing, base::Real=2) =
-    dissimilarity(ShannonDifference(; base), data; frequencies, species)
+shannon_difference(left, right; frequencies::Bool=true, base::Real=2,
+        estimator::ShannonEstimator=Plugin(), support=nothing) =
+    dissimilarity(ShannonDifference(; base, estimator, support), left, right; frequencies)
+shannon_difference(data; frequencies::Bool=true, species=nothing, base::Real=2,
+        estimator::ShannonEstimator=Plugin(), support=nothing) =
+    dissimilarity(ShannonDifference(; base, estimator, support), data; frequencies, species)
 
 """
-    jensen_difference(left, right; frequencies=true, base=2)
+    jensen_difference(left, right; frequencies=true, base=2, estimator=Plugin(), support=nothing)
 
 Return the Jensen difference of Shannon entropy. This equals Jensen-Shannon
 divergence for Shannon entropy.
 """
-jensen_difference(left, right; frequencies::Bool=true, base::Real=2) =
-    dissimilarity(JensenDifference(; base), left, right; frequencies)
-jensen_difference(data; frequencies::Bool=true, species=nothing, base::Real=2) =
-    dissimilarity(JensenDifference(; base), data; frequencies, species)
+jensen_difference(left, right; frequencies::Bool=true, base::Real=2,
+        estimator::ShannonEstimator=Plugin(), support=nothing) =
+    dissimilarity(JensenDifference(; base, estimator, support), left, right; frequencies)
+jensen_difference(data; frequencies::Bool=true, species=nothing, base::Real=2,
+        estimator::ShannonEstimator=Plugin(), support=nothing) =
+    dissimilarity(JensenDifference(; base, estimator, support), data; frequencies, species)
 
 """
-    jensen_shannon_similarity(left, right; frequencies=true, base=2, distance=true)
+    jensen_shannon_similarity(left, right; frequencies=true, base=2, distance=true, estimator=Plugin(), support=nothing)
 
 Return one minus normalized Jensen-Shannon dissimilarity. By default the
 normalization uses the square-root Jensen-Shannon distance; pass
 `distance=false` to normalize the divergence instead.
 """
 jensen_shannon_similarity(left, right; frequencies::Bool=true, base::Real=2,
-        distance::Bool=true) =
-    similarity(JensenShannon(; base, distance), left, right; frequencies)
+        distance::Bool=true, estimator::ShannonEstimator=Plugin(), support=nothing) =
+    similarity(JensenShannon(; base, distance, estimator, support), left, right; frequencies)
 jensen_shannon_similarity(data; frequencies::Bool=true, species=nothing, base::Real=2,
-        distance::Bool=true) =
-    similarity(JensenShannon(; base, distance), data; frequencies, species)
+        distance::Bool=true, estimator::ShannonEstimator=Plugin(), support=nothing) =
+    similarity(JensenShannon(; base, distance, estimator, support), data; frequencies, species)
 
 """
-    jensen_shannon_divergence(left, right; frequencies=true, base=2)
+    jensen_shannon_divergence(left, right; frequencies=true, base=2, estimator=Plugin(), support=nothing)
 
 Return Jensen-Shannon divergence between probability vectors.
 """
-jensen_shannon_divergence(left, right; frequencies::Bool=true, base::Real=2) =
-    dissimilarity(JensenShannon(; base, distance=false), left, right; frequencies)
-jensen_shannon_divergence(data; frequencies::Bool=true, species=nothing, base::Real=2) =
-    dissimilarity(JensenShannon(; base, distance=false), data; frequencies, species)
+jensen_shannon_divergence(left, right; frequencies::Bool=true, base::Real=2,
+        estimator::ShannonEstimator=Plugin(), support=nothing) =
+    dissimilarity(JensenShannon(; base, distance=false, estimator, support), left, right; frequencies)
+jensen_shannon_divergence(data; frequencies::Bool=true, species=nothing, base::Real=2,
+        estimator::ShannonEstimator=Plugin(), support=nothing) =
+    dissimilarity(JensenShannon(; base, distance=false, estimator, support), data; frequencies, species)
 
 """
-    jensen_shannon_distance(left, right; frequencies=true, base=2)
+    jensen_shannon_distance(left, right; frequencies=true, base=2, estimator=Plugin(), support=nothing)
 
 Return the square root of Jensen-Shannon divergence.
 """
-jensen_shannon_distance(left, right; frequencies::Bool=true, base::Real=2) =
-    dissimilarity(JensenShannon(; base, distance=true), left, right; frequencies)
-jensen_shannon_distance(data; frequencies::Bool=true, species=nothing, base::Real=2) =
-    dissimilarity(JensenShannon(; base, distance=true), data; frequencies, species)
+jensen_shannon_distance(left, right; frequencies::Bool=true, base::Real=2,
+        estimator::ShannonEstimator=Plugin(), support=nothing) =
+    dissimilarity(JensenShannon(; base, distance=true, estimator, support), left, right; frequencies)
+jensen_shannon_distance(data; frequencies::Bool=true, species=nothing, base::Real=2,
+        estimator::ShannonEstimator=Plugin(), support=nothing) =
+    dissimilarity(JensenShannon(; base, distance=true, estimator, support), data; frequencies, species)
 
 """
     morisita_horn_similarity(left, right; frequencies=true)

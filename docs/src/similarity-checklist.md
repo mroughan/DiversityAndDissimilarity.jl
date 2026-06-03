@@ -57,10 +57,10 @@ or probability mass on a tree. It excludes edit distances and string metrics.
 | Binomial deviance dissimilarity | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | vegan `vegdist(method="binomial")`. |
 | Gower / altGower on abundance columns | [ ] | [ ] | [x] | [ ] | [~] | [x] | [ ] | [ ] | [ ] | [ ] | Include only when columns are species/probability variables, not arbitrary mixed metadata. |
 | Chi-square distance | [ ] | [ ] | [x] | [ ] | [~] | [ ] | [ ] | [ ] | [ ] | [ ] | vegan `vegdist(method="chisq")`; conventions vary. |
-| Kullback-Leibler divergence | [x] | [ ] | [ ] | [ ] | [~] | [ ] | [ ] | [~] | [ ] | [x] | `KullbackLeibler()` / `kullback_leibler_divergence`; asymmetric ``D_{KL}(left \Vert right)`` and may be infinite for zero support in `right`. |
+| Kullback-Leibler divergence | [x] | [ ] | [ ] | [ ] | [~] | [ ] | [ ] | [~] | [ ] | [x] | `KullbackLeibler()` / `kullback_leibler_divergence`; asymmetric ``D_{KL}(left \Vert right)`` with Miller-Madow, pseudocount/shrinkage, and Good-Turing correction options. |
 | Jeffreys divergence | [ ] | [ ] | [ ] | [ ] | [~] | [ ] | [ ] | [ ] | [ ] | [~] | Symmetrized KL; not a metric. |
 | Shannon entropy difference | [x] | [ ] | [ ] | [ ] | [~] | [ ] | [ ] | [ ] | [ ] | [~] | `ShannonDifference()` / `shannon_difference`; compares entropy values rather than shared taxa. |
-| Jensen / Jensen-Shannon divergence / distance | [x] | [ ] | [ ] | [ ] | [~] | [ ] | [ ] | [x] | [ ] | [~] | `JensenDifference()` and `JensenShannon()`; SciPy includes Jensen-Shannon distance; square root of JS divergence is a metric. |
+| Jensen / Jensen-Shannon divergence / distance | [x] | [ ] | [ ] | [ ] | [~] | [ ] | [ ] | [x] | [ ] | [~] | `JensenDifference()` and `JensenShannon()`; includes low-sample correction options. SciPy includes Jensen-Shannon distance; square root of JS divergence is a metric. |
 | Aitchison distance | [ ] | [ ] | [ ] | [ ] | [~] | [ ] | [~] | [ ] | [ ] | [~] | Compositional-data distance after CLR transform; requires zero handling. |
 | Robust Aitchison distance | [ ] | [ ] | [ ] | [ ] | [~] | [ ] | [~] | [ ] | [ ] | [~] | Common in microbiome workflows for sparse compositions. |
 | Earth mover's / Wasserstein on taxa probabilities | [ ] | [ ] | [ ] | [ ] | [~] | [ ] | [ ] | [x] | [ ] | [ ] | Requires a ground distance among taxa/features. |

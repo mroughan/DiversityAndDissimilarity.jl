@@ -160,6 +160,36 @@ probability where `left` has positive probability. Pairwise matrices for this
 index are directional, so entry ``(i,j)`` is ``D_{KL}(i \\Vert j)`` and need
 not equal entry ``(j,i)``.
 
+## Low-Sample Divergence Corrections
+
+KL, Jensen difference, and Jensen-Shannon divergence/distance accept the same
+estimator objects used for Shannon entropy:
+
+```julia
+kullback_leibler_divergence(left, right; estimator=MillerMadow())
+kullback_leibler_divergence(left, right; estimator=AddGamma(1))    # Laplace
+kullback_leibler_divergence(left, right; estimator=AddGamma(0.5))  # Jeffreys
+kullback_leibler_divergence(left, right; estimator=HausserStrimmer())
+kullback_leibler_divergence(left, right; estimator=ChaoShen())
+
+jensen_difference(left, right; estimator=MillerMadow())
+jensen_shannon_divergence(left, right; estimator=AddGamma(0.5), support=10)
+jensen_shannon_distance(left, right; estimator=ChaoShen())
+```
+
+The correction modes have different interpretations:
+
+- [`MillerMadow`](@ref) applies a first-order entropy-term bias correction.
+- [`AddGamma`](@ref) applies Bayesian pseudocount smoothing. `AddGamma(1)` is
+  Laplace smoothing and `AddGamma(0.5)` is Jeffreys smoothing.
+- [`HausserStrimmer`](@ref) shrinks probabilities toward a uniform distribution
+  over the aligned or supplied support.
+- [`ChaoShen`](@ref) uses Good-Turing sample coverage to assign unseen mass to
+  categories missing from one side and to a residual unseen category.
+
+For `AddGamma` and `HausserStrimmer`, pass `support` when the finite category
+universe is known and larger than the observed aligned support.
+
 ## Community Distance Matrices
 
 Passing a community matrix as the only data argument computes all pairwise

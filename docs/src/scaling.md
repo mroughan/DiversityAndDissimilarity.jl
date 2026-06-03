@@ -80,6 +80,10 @@ shannon_entropy(table; species=[:oak, :ash, :elm])
 
 Pairwise comparisons between two assemblages are linear in aligned support:
 ``O(P)`` for vectors and approximately ``O(S_1 + S_2)`` for dictionaries.
+Low-sample corrections for KL and Jensen-Shannon-style divergences remain
+linear in the aligned or supplied support. `AddGamma` and `HausserStrimmer`
+scale with the supplied finite support ``K`` when `support` is larger than the
+observed aligned support; `ChaoShen` adds one residual unseen-mass coordinate.
 
 Passing a community matrix as a single argument computes all pairwise
 comparisons across rows:

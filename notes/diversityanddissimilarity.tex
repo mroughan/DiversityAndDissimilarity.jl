@@ -230,6 +230,19 @@ doubleton counts, sample coverage, Shannon estimator results, effective
 diversities, and warnings.  This makes estimator assumptions visible when
 sample size and unseen taxa may influence interpretation
 \citep{chao2003nonparametric}.
+Low-sample corrections for entropy and information divergences are grounded in
+the same sampling problem.  The plugin entropy estimator has a systematic
+finite-sample bias \citep{paninski2003entropy}; Miller--Madow-style corrections
+address the leading entropy-term bias, whereas pseudocount and shrinkage
+estimators trade bias for finite estimates when categories are sparse.  For
+unseen categories, Good--Turing coverage estimates \citep{good1953population}
+and later unseen-estimation work \citep{valiant2017estimating} motivate
+explicit unseen-mass corrections.  Minimax results for large alphabets
+\citep{jiao2015minimax,wu2016minimax} show why naive plugin estimators can be
+fragile when support size is comparable with sample size.  Bayesian entropy
+estimators such as the NSB prior \citep{nemenman2002entropy} provide another
+route to low-sample information-functional estimation, and motivate exposing
+Bayesian smoothing options for KL and Jensen--Shannon-style divergences.
 
 The \texttt{diversity\_audit} function combines alpha summaries, estimator
 diagnostics, labeled pairwise matrices, and warnings about potentially

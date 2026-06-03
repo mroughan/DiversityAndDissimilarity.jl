@@ -263,6 +263,24 @@ Kullback-Leibler divergence is available when an asymmetric
 the right assemblage has zero probability where the left assemblage is
 positive.
 
+Low-sample corrections for KL and Jensen-Shannon-style divergences use the same
+estimator objects as Shannon entropy:
+
+```julia
+kullback_leibler_divergence(left, right; estimator=MillerMadow())
+kullback_leibler_divergence(left, right; estimator=AddGamma(1))    # Laplace
+kullback_leibler_divergence(left, right; estimator=AddGamma(0.5))  # Jeffreys
+kullback_leibler_divergence(left, right; estimator=HausserStrimmer())
+kullback_leibler_divergence(left, right; estimator=ChaoShen())
+
+jensen_shannon_divergence(left, right; estimator=MillerMadow())
+jensen_shannon_distance(left, right; estimator=AddGamma(0.5), support=10)
+```
+
+`AddGamma` and `HausserStrimmer` use the aligned observed support unless a
+larger known `support` is supplied. `ChaoShen()` applies a Good-Turing-style
+unseen-mass correction.
+
 Passing a community matrix or Tables.jl-compatible table as the only data
 argument returns a pairwise matrix across rows:
 
