@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/CI.yml)
 [![Codecov](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Codecov.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Codecov.yml)
-[![codecov](https://codecov.io/gh/mroughan/DiversityAndDissimilarity.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/mroughan/DiversityAndDissimilarity.jl)
+[![codecov](https://codecov.io/gh/mroughan/DiversityAndDissimilarity.jl/branch/main/graph/badge.svg?token=ZtXnAmM4b6)](https://codecov.io/gh/mroughan/DiversityAndDissimilarity.jl)
 [![Aqua](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Aqua.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Aqua.yml)
 [![JET](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/JET.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/JET.yml)
 [![Documentation](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/documentation.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/documentation.yml)
