@@ -29,7 +29,6 @@ Pages = [
     "getting-started.md",
     "examples.md",
     "vegan-migration.md",
-    "framework.md",
     "indices.md",
     "diversity-indices.md",
     "choosing-an-estimator.md",
@@ -37,8 +36,13 @@ Pages = [
     "similarity-index-catalog.md",
     "scaling.md",
     "benchmarks.md",
+    "framework.md",
+    "case-study.md",
     "reference-examples.md",
     "release-readiness.md",
+    "checklists.md",
+    "index-checklist.md",
+    "similarity-checklist.md",
     "api.md",
 ]
 Depth = 2

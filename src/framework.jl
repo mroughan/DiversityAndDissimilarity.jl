@@ -3,6 +3,19 @@
 
 Return a symbolic family label for an index, such as `:entropy`,
 `:richness`, `:evenness`, `:incidence`, `:abundance`, or `:probability`.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> index_family(Shannon())
+:entropy
+
+julia> index_family(BrayCurtis())
+:abundance
+
+julia> index_family(Jaccard())
+:incidence
+```
 """
 index_family(::DiversityIndex) = :unknown
 index_family(::Richness) = :richness
@@ -28,6 +41,16 @@ index_family(::Union{TotalVariation,Manhattan,Euclidean,Hellinger,Chord,Bhattach
 
 Return the expected input style for an index: `:single_assemblage`,
 `:pairwise`, or `:either`.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> input_mode(Shannon())
+:single_assemblage
+
+julia> input_mode(BrayCurtis())
+:pairwise
+```
 """
 input_mode(::DiversityIndex) = :single_assemblage
 input_mode(::PairwiseIndex) = :pairwise
@@ -37,6 +60,22 @@ input_mode(::PairwiseIndex) = :pairwise
 
 Return the conventional output form, such as `:entropy`, `:diversity`,
 `:similarity`, `:dissimilarity`, `:distance`, `:coefficient`, or `:estimate`.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> output_mode(Shannon())
+:entropy
+
+julia> output_mode(Jaccard())
+:similarity
+
+julia> output_mode(BrayCurtis())
+:dissimilarity
+
+julia> output_mode(Hellinger())
+:distance
+```
 """
 output_mode(::DiversityIndex) = :estimate
 output_mode(::Union{Shannon,Renyi,Tsallis}) = :entropy
@@ -56,6 +95,19 @@ output_mode(::Bhattacharyya) = :coefficient
 Return whether the index is expected to return finite values for valid finite
 inputs. This is separate from [`is_bounded`](@ref): an index can be finite on
 every finite data set while having no fixed finite upper bound.
+
+[`KullbackLeibler`](@ref) returns `Inf` when `right` has zero probability where
+`left` has positive probability, so `is_finite` returns `false` for it.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_finite(JensenShannon())
+true
+
+julia> is_finite(KullbackLeibler())
+false
+```
 """
 is_finite(::DiversityIndex) = true
 is_finite(::KullbackLeibler) = false
@@ -63,8 +115,24 @@ is_finite(::KullbackLeibler) = false
 """
     is_metric(index)
 
-Return whether the package's distance/dissimilarity form is a metric under the
-usual assumptions for the index.
+Return whether the package's distance/dissimilarity form is a
+[metric](https://en.wikipedia.org/wiki/Metric_space) under the usual
+assumptions for the index: nonnegative, zero only for identical inputs,
+symmetric, and satisfying the
+[triangle inequality](https://en.wikipedia.org/wiki/Triangle_inequality).
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_metric(Jaccard())
+true
+
+julia> is_metric(BrayCurtis())
+false
+
+julia> is_metric(JensenShannon())
+true
+```
 """
 is_metric(::DiversityIndex) = false
 is_metric(::Union{Jaccard,TotalVariation,Manhattan,Euclidean,Canberra,Hellinger,Chord,JensenShannon}) = true
@@ -73,8 +141,23 @@ is_metric(::Union{Jaccard,TotalVariation,Manhattan,Euclidean,Canberra,Hellinger,
     is_triangular(index)
 
 Return whether the package's distance/dissimilarity form is known to obey the
-triangle inequality. Returns `:unknown` when this package does not encode a
-claim.
+[triangle inequality](https://en.wikipedia.org/wiki/Triangle_inequality).
+Returns `:unknown` when this package does not encode a claim.
+
+All indices for which [`is_metric`](@ref) is `true` are also triangular.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_triangular(Jaccard())
+true
+
+julia> is_triangular(BrayCurtis())
+false
+
+julia> is_triangular(Overlap())
+:unknown
+```
 """
 is_triangular(index::DiversityIndex) = is_metric(index) ? true : :unknown
 is_triangular(::Union{BrayCurtis,KullbackLeibler,JensenDifference}) = false
@@ -84,6 +167,19 @@ is_triangular(::ShannonDifference) = true
     is_nonnegative(index)
 
 Return whether the index output is known to be nonnegative.
+
+All indices implemented in this package return nonnegative values for valid
+inputs.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_nonnegative(Shannon())
+true
+
+julia> is_nonnegative(KullbackLeibler())
+true
+```
 """
 is_nonnegative(::DiversityIndex) = true
 
@@ -91,6 +187,24 @@ is_nonnegative(::DiversityIndex) = true
     is_bounded(index)
 
 Return whether the conventional output range has a finite upper bound.
+
+Uses [`index_range`](@ref) to determine boundedness. Indices such as
+[`BrayCurtis`](@ref), [`Jaccard`](@ref), and [`JensenShannon`](@ref) are
+bounded in `[0, 1]`. Entropy, richness, and divergence indices are typically
+unbounded above.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_bounded(Jaccard())
+true
+
+julia> is_bounded(KullbackLeibler())
+false
+
+julia> is_bounded(JensenShannon())
+true
+```
 """
 function is_bounded(index::DiversityIndex)
     bounds = index_range(index)
@@ -100,9 +214,28 @@ end
 """
     is_pseudometric(index)
 
-Return whether the distance/dissimilarity form is known to be a pseudometric:
-nonnegative, symmetric, zero for identical inputs, and triangular, while
-allowing distinct inputs to have zero distance.
+Return whether the distance/dissimilarity form is known to be a
+[pseudometric](https://en.wikipedia.org/wiki/Pseudometric_space):
+nonnegative, symmetric, zero for identical inputs, and satisfying the triangle
+inequality, while allowing distinct inputs to have zero distance.
+
+Returns `:unknown` where that classification is not encoded.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_pseudometric(Jaccard())
+true
+
+julia> is_pseudometric(ShannonDifference())
+true
+
+julia> is_pseudometric(BrayCurtis())
+false
+
+julia> is_pseudometric(Overlap())
+:unknown
+```
 """
 is_pseudometric(index::DiversityIndex) = is_metric(index) ? true : :unknown
 is_pseudometric(::ShannonDifference) = true
@@ -111,9 +244,25 @@ is_pseudometric(::Union{BrayCurtis,KullbackLeibler,JensenDifference}) = false
 """
     is_quasimetric(index)
 
-Return whether the distance/dissimilarity form is known to be a quasimetric:
-nonnegative, zero only for identical inputs, and triangular, without requiring
-symmetry. Metrics are also quasimetrics under this convention.
+Return whether the distance/dissimilarity form is known to be a
+[quasimetric](https://en.wikipedia.org/wiki/Quasimetric_space):
+nonnegative, zero only for identical inputs, and satisfying the triangle
+inequality, without requiring symmetry. Every metric is also a quasimetric.
+
+Returns `:unknown` where that classification is not encoded.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_quasimetric(Jaccard())
+true
+
+julia> is_quasimetric(BrayCurtis())
+false
+
+julia> is_quasimetric(Overlap())
+:unknown
+```
 """
 is_quasimetric(index::DiversityIndex) = is_metric(index) ? true : :unknown
 is_quasimetric(::Union{BrayCurtis,KullbackLeibler,ShannonDifference,JensenDifference}) = false
@@ -122,9 +271,24 @@ is_quasimetric(::Union{BrayCurtis,KullbackLeibler,ShannonDifference,JensenDiffer
     is_metametric(index)
 
 Return whether the distance/dissimilarity form is known to be a metametric
+(see [generalizations of metric spaces](https://en.wikipedia.org/wiki/Metric_space#Generalizations))
 under this package's convention: nonnegative, symmetric, and zero for identical
-inputs, without requiring identity of indiscernibles or the triangle
-inequality. Returns `:unknown` where that classification is not encoded.
+inputs, without requiring the identity of indiscernibles or the
+[triangle inequality](https://en.wikipedia.org/wiki/Triangle_inequality).
+Returns `:unknown` where that classification is not encoded.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_metametric(BrayCurtis())
+true
+
+julia> is_metametric(KullbackLeibler())
+false
+
+julia> is_metametric(Jaccard())
+true
+```
 """
 is_metametric(index::DiversityIndex) = is_metric(index) ? true : :unknown
 is_metametric(::Union{BrayCurtis,Overlap,Ruzicka,Canberra,ShannonDifference,JensenDifference}) = true
@@ -133,9 +297,26 @@ is_metametric(::KullbackLeibler) = false
 """
     is_semimetric(index)
 
-Return whether the distance/dissimilarity form is known to be a semimetric
+Return whether the distance/dissimilarity form is known to be a
+[semimetric](https://en.wikipedia.org/wiki/Semimetric_space)
 under this package's convention: nonnegative, symmetric, zero only for
-identical inputs, but not necessarily triangular.
+identical inputs, but not necessarily satisfying the
+[triangle inequality](https://en.wikipedia.org/wiki/Triangle_inequality).
+
+Returns `:unknown` where that classification is not encoded.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_semimetric(BrayCurtis())
+true
+
+julia> is_semimetric(Overlap())
+false
+
+julia> is_semimetric(Jaccard())
+true
+```
 """
 is_semimetric(index::DiversityIndex) = is_metric(index) ? true : :unknown
 is_semimetric(::Union{BrayCurtis,Ruzicka,Canberra}) = true
@@ -144,9 +325,26 @@ is_semimetric(::Union{Overlap,KullbackLeibler,ShannonDifference,JensenDifference
 """
     is_premetric(index)
 
-Return whether the distance/dissimilarity form is known to be a premetric:
+Return whether the distance/dissimilarity form is known to be a
+[premetric](https://en.wikipedia.org/wiki/Premetric_space):
 nonnegative and zero for identical inputs, without requiring symmetry or the
-triangle inequality.
+[triangle inequality](https://en.wikipedia.org/wiki/Triangle_inequality).
+This is the weakest of the standard metric-like properties.
+
+Returns `:unknown` where that classification is not encoded.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_premetric(BrayCurtis())
+true
+
+julia> is_premetric(KullbackLeibler())
+true
+
+julia> is_premetric(Shannon())
+:unknown
+```
 """
 is_premetric(index::DiversityIndex) = is_metric(index) ? true : :unknown
 is_premetric(::Union{BrayCurtis,Overlap,Ruzicka,Canberra,KullbackLeibler,ShannonDifference,JensenDifference}) = true
@@ -155,8 +353,20 @@ is_premetric(::Union{BrayCurtis,Overlap,Ruzicka,Canberra,KullbackLeibler,Shannon
     is_supermetric(index)
 
 Return whether the index is known to obey a supermetric or reverse-triangle
-style condition. This property is uncommon for the indices implemented here, so
-unknown cases return `:unknown`.
+style condition, as in an
+[ultrametric](https://en.wikipedia.org/wiki/Ultrametric_space)
+(``d(x,z) \\leq \\max(d(x,y), d(y,z))``). This property is uncommon for the
+indices implemented here, so unknown cases return `:unknown`.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_supermetric(Jaccard())
+false
+
+julia> is_supermetric(BrayCurtis())
+:unknown
+```
 """
 is_supermetric(::DiversityIndex) = :unknown
 is_supermetric(::Union{Jaccard,TotalVariation,Manhattan,Euclidean,Canberra,Hellinger,Chord,KullbackLeibler,ShannonDifference,JensenDifference,JensenShannon}) = false
@@ -166,6 +376,19 @@ is_supermetric(::Union{Jaccard,TotalVariation,Manhattan,Euclidean,Canberra,Helli
 
 Return whether the primary output mode is a similarity or similarity
 coefficient.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_similarity(Jaccard())
+true
+
+julia> is_similarity(Bhattacharyya())
+true
+
+julia> is_similarity(BrayCurtis())
+false
+```
 """
 is_similarity(index::DiversityIndex) = output_mode(index) in (:similarity, :coefficient)
 
@@ -173,6 +396,19 @@ is_similarity(index::DiversityIndex) = output_mode(index) in (:similarity, :coef
     is_dissimilarity(index)
 
 Return whether the primary output mode is a dissimilarity or distance.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_dissimilarity(BrayCurtis())
+true
+
+julia> is_dissimilarity(Hellinger())
+true
+
+julia> is_dissimilarity(Jaccard())
+false
+```
 """
 is_dissimilarity(index::DiversityIndex) = output_mode(index) in (:dissimilarity, :distance)
 
@@ -193,6 +429,16 @@ Most indices are symmetric. [`KullbackLeibler`](@ref) is the notable exception:
 `dissimilarity(KullbackLeibler(), a, b)` computes ``D_{KL}(a \\Vert b)`` which
 generally differs from ``D_{KL}(b \\Vert a)``. Community distance matrices for
 asymmetric indices are not symmetric matrices.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_symmetric(BrayCurtis())
+true
+
+julia> is_symmetric(KullbackLeibler())
+false
+```
 """
 is_symmetric(::DiversityIndex) = true
 is_symmetric(::KullbackLeibler) = false
@@ -201,6 +447,19 @@ is_symmetric(::KullbackLeibler) = false
     index_range(index)
 
 Return a conventional numeric range for the index output when it is known.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> index_range(Jaccard())
+(lower = 0.0, upper = 1.0)
+
+julia> index_range(Shannon())
+(lower = 0.0, upper = Inf)
+
+julia> index_range(JensenDifference())
+(lower = 0.0, upper = 1.0)
+```
 """
 index_range(::DiversityIndex) = (lower=0.0, upper=Inf)
 index_range(::Union{PielouEvenness,SampleCoverage,GiniSimpson,GreenbergDiversityIndex,LinguisticDiversityIndex,Jaccard,SorensenDice,Overlap,BrayCurtis,Ruzicka,TotalVariation,Canberra,Hellinger,Bhattacharyya,MorisitaHorn}) =
@@ -219,6 +478,50 @@ index_range(index::JensenShannon) = (
 
 Return a named tuple describing the conventional numeric bounds and the usual
 interpretation of those bounds. Unknown meanings are returned as `:unknown`.
+
+The fields `lower_meaning` and `upper_meaning` explain what the extremes
+conventionally signify. For a similarity, the lower bound means complete
+dissimilarity or no overlap; for a dissimilarity or distance, it means identical
+or indistinguishable inputs.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> b = index_bounds(Jaccard());
+
+julia> b.lower, b.upper
+(0.0, 1.0)
+
+julia> b.lower_meaning
+"minimal similarity; conventionally complete dissimilarity or no overlap"
+
+julia> b.upper_meaning
+"maximal similarity; conventionally identical or complete overlap"
+```
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> b = index_bounds(BrayCurtis());
+
+julia> b.lower_meaning
+"minimal dissimilarity; identical or indistinguishable inputs"
+
+julia> b.upper_meaning
+"maximal dissimilarity under the index convention"
+```
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> b = index_bounds(KullbackLeibler());
+
+julia> b.upper
+Inf
+
+julia> b.upper_meaning
+"unbounded dissimilarity; larger values mean greater separation"
+```
 """
 function index_bounds(index::DiversityIndex)
     range = index_range(index)
@@ -280,6 +583,16 @@ end
     requires_probabilities(index)
 
 Return whether an index is naturally defined on normalized probability vectors.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> requires_probabilities(Hellinger())
+true
+
+julia> requires_probabilities(BrayCurtis())
+false
+```
 """
 requires_probabilities(::DiversityIndex) = false
 requires_probabilities(::Union{Shannon,Renyi,Tsallis,Simpson,GiniSimpson,GreenbergDiversityIndex,LinguisticDiversityIndex,InverseSimpson,Hill,PielouEvenness,TotalVariation,Manhattan,Euclidean,Hellinger,Chord,Bhattacharyya,KullbackLeibler,ShannonDifference,JensenDifference,JensenShannon}) = true
@@ -288,7 +601,18 @@ requires_probabilities(::Union{Shannon,Renyi,Tsallis,Simpson,GiniSimpson,Greenbe
     supports_matrix_kernel(index)
 
 Return whether this package has a specialized matrix implementation for the
-index.
+index. Indices with a matrix kernel compute pairwise distance matrices more
+efficiently than the fallback that calls the pairwise method once per pair.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> supports_matrix_kernel(BrayCurtis())
+true
+
+julia> supports_matrix_kernel(Canberra())
+false
+```
 """
 supports_matrix_kernel(::DiversityIndex) = false
 supports_matrix_kernel(::Union{Richness,Shannon,Jaccard,BrayCurtis,Hellinger}) = true
@@ -296,8 +620,30 @@ supports_matrix_kernel(::Union{Richness,Shannon,Jaccard,BrayCurtis,Hellinger}) =
 """
     index_metadata(index)
 
-Return convention-aware metadata for an index: family, input and output modes,
-range, metric status, formula, aliases, and implementation notes.
+Return convention-aware metadata for an index as a named tuple, including:
+family, input and output modes, numeric range and interpreted bounds, all
+property trait values, formula, aliases, and implementation notes.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> m = index_metadata(BrayCurtis());
+
+julia> m.family
+:abundance
+
+julia> m.output_mode
+:dissimilarity
+
+julia> m.is_metric
+false
+
+julia> m.is_semimetric
+true
+
+julia> m.is_symmetric
+true
+```
 """
 function index_metadata(index::DiversityIndex)
     return (
@@ -400,6 +746,18 @@ end
     validate_reference_cases(; cases=reference_cases())
 
 Evaluate reference cases and return one result named tuple per case.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> results = validate_reference_cases();
+
+julia> all(r -> r.passed, results)
+true
+
+julia> results[1].name
+"vegan_shannon_natural_log"
+```
 """
 function validate_reference_cases(; cases=reference_cases())
     return map(cases) do case
@@ -418,6 +776,21 @@ end
 
 Return a compact report comparing Shannon entropy estimators and basic
 coverage diagnostics for one assemblage.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> r = estimator_report([1, 1, 2, 0, 5]);
+
+julia> r.observed_richness
+4
+
+julia> r.singletons
+2
+
+julia> r.estimates[1].name
+:plugin
+```
 """
 function estimator_report(data; support=nothing, base::Real=2, frequencies::Bool=true, species=nothing)
     if _is_table(data)
@@ -469,6 +842,25 @@ end
 
 Return validation diagnostics, alpha summaries, estimator diagnostics, and an
 optional labeled pairwise matrix for a diversity workflow.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> community = [1 1 2 0 5; 3 0 1 1 0];
+
+julia> audit = diversity_audit(community; labels=["a", "b"]);
+
+julia> audit.n_samples
+2
+
+julia> audit.n_taxa
+5
+
+julia> audit.pairwise.labels
+2-element Vector{String}:
+ "a"
+ "b"
+```
 """
 function diversity_audit(data; species=nothing, labels=nothing, label=nothing,
         pairwise_index::DiversityIndex=BrayCurtis())
@@ -499,6 +891,25 @@ end
 Return bootstrap uncertainty summaries for Shannon entropy and effective
 diversity alongside sample labels and coverage diagnostics. For matrices and
 Tables.jl-compatible inputs, one report is returned per sample.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> community = [1 1 2 0 5; 3 0 1 1 0];
+
+julia> ua = uncertainty_audit(community; labels=["a", "b"], nboot=50, rng=nothing);
+
+julia> length(ua.reports)
+2
+
+julia> ua.labels
+2-element Vector{String}:
+ "a"
+ "b"
+
+julia> ua.reports[1].label
+"a"
+```
 """
 function uncertainty_audit(data; species=nothing, labels=nothing, label=nothing,
         index::Shannon=Shannon(), nboot::Integer=1000, level::Real=0.95,

@@ -8,77 +8,197 @@ make validation reproducible.
 
 Use [`index_metadata`](@ref) to inspect how an index is represented:
 
-```julia
-index_metadata(BrayCurtis())
-index_metadata(GiniSimpson())
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> m = index_metadata(BrayCurtis());
+
+julia> m.family
+:abundance
+
+julia> m.output_mode
+:dissimilarity
+
+julia> m.is_metric
+false
+
+julia> m.is_semimetric
+true
+
+julia> m.bounds.lower_meaning
+"minimal dissimilarity; identical or indistinguishable inputs"
 ```
 
-The lower-level trait helpers are useful when writing generic workflows:
-
-```julia
-index_family(BrayCurtis())
-input_mode(BrayCurtis())
-output_mode(BrayCurtis())
-is_metric(Jaccard())
-is_triangular(Jaccard())
-is_nonnegative(KullbackLeibler())
-is_bounded(JensenShannon())
-is_semimetric(BrayCurtis())
-is_similarity(Jaccard())
-is_dissimilarity(BrayCurtis())
-is_symmetric(KullbackLeibler())
-index_range(PielouEvenness())
-index_bounds(BrayCurtis())
-requires_probabilities(Hellinger())
-supports_matrix_kernel(Jaccard())
-```
-
-These traits are intentionally simple symbols and named tuples, so users can
-branch on them without depending on internal implementation details.
+The lower-level trait helpers are useful when writing generic workflows.
 Properties that are not encoded for an index return `:unknown` where a Boolean
 answer would overstate what the package knows.
 
-`is_metric` follows the usual metric convention: nonnegative, zero only for
-identical inputs, symmetric, and triangular. The related helpers expose weaker
-properties:
+```jldoctest
+julia> using DiversityAndDissimilarity
 
-- `is_triangular` checks the triangle inequality only.
-- `is_pseudometric` allows distinct inputs to have zero distance.
-- `is_quasimetric` allows asymmetry while retaining the triangle inequality.
-- `is_metametric` means nonnegative, symmetric, and zero for identical inputs,
-  without requiring identity of indiscernibles or the triangle inequality.
-- `is_semimetric` means nonnegative, symmetric, and zero only for identical
-  inputs, without requiring the triangle inequality.
-- `is_premetric` means nonnegative and zero for identical inputs.
-- `is_supermetric` is reserved for reverse-triangle or supermetric-style
-  properties; most implemented indices return `false` or `:unknown`.
+julia> index_family(BrayCurtis())
+:abundance
 
-Use [`index_bounds`](@ref) when the interpretation of a range matters. For a
-similarity, the lower bound commonly means no overlap or complete dissimilarity;
-for a dissimilarity or distance, the lower bound commonly means identical or
-indistinguishable inputs.
+julia> input_mode(BrayCurtis())
+:pairwise
 
-The full descriptor set is:
+julia> output_mode(BrayCurtis())
+:dissimilarity
 
-```julia
-is_finite(index)
-is_symmetric(index)
-is_nonnegative(index)
-is_bounded(index)
-is_metric(index)
-is_triangular(index)
-is_pseudometric(index)
-is_quasimetric(index)
-is_metametric(index)
-is_semimetric(index)
-is_premetric(index)
-is_supermetric(index)
-is_similarity(index)
-is_dissimilarity(index)
+julia> is_metric(Jaccard())
+true
+
+julia> is_triangular(BrayCurtis())
+false
+
+julia> is_triangular(Overlap())
+:unknown
+
+julia> is_nonnegative(KullbackLeibler())
+true
+
+julia> is_bounded(JensenShannon())
+true
+
+julia> is_semimetric(BrayCurtis())
+true
+
+julia> is_similarity(Jaccard())
+true
+
+julia> is_dissimilarity(BrayCurtis())
+true
+
+julia> is_symmetric(KullbackLeibler())
+false
+
+julia> index_range(PielouEvenness())
+(lower = 0.0, upper = 1.0)
+
+julia> requires_probabilities(Hellinger())
+true
+
+julia> supports_matrix_kernel(Jaccard())
+true
 ```
 
-`index_metadata(index)` includes these values, the basic
-[`index_range`](@ref), and the interpreted [`index_bounds`](@ref) tuple.
+## Index Bounds
+
+[`index_bounds`](@ref) adds semantic meaning to the numeric range. For
+similarities, the lower bound conventionally means no overlap; for
+dissimilarities and distances, it means identical inputs.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> b = index_bounds(Jaccard());
+
+julia> b.lower, b.upper
+(0.0, 1.0)
+
+julia> b.lower_meaning
+"minimal similarity; conventionally complete dissimilarity or no overlap"
+
+julia> b.upper_meaning
+"maximal similarity; conventionally identical or complete overlap"
+```
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> b = index_bounds(KullbackLeibler());
+
+julia> b.upper
+Inf
+
+julia> b.upper_meaning
+"unbounded dissimilarity; larger values mean greater separation"
+```
+
+## Metric Hierarchy
+
+[`is_metric`](@ref) follows the usual
+[metric space](https://en.wikipedia.org/wiki/Metric_space) convention:
+nonnegative, zero only for identical inputs, symmetric, and satisfying the
+[triangle inequality](https://en.wikipedia.org/wiki/Triangle_inequality).
+The related helpers expose progressively weaker properties:
+
+| Trait | Wikipedia | Requires | Notes |
+|---|---|---|---|
+| [`is_metric`](@ref) | [Metric space](https://en.wikipedia.org/wiki/Metric_space) | nonneg + d=0 iff same + symmetric + triangular | Full metric |
+| [`is_pseudometric`](@ref) | [Pseudometric space](https://en.wikipedia.org/wiki/Pseudometric_space) | nonneg + symmetric + d=0 for same + triangular | Distinct inputs may have zero distance |
+| [`is_quasimetric`](@ref) | [Quasimetric](https://en.wikipedia.org/wiki/Quasimetric_space) | nonneg + d=0 iff same + triangular | No symmetry required |
+| [`is_metametric`](@ref) | [Generalizations](https://en.wikipedia.org/wiki/Metric_space#Generalizations) | nonneg + symmetric + d=0 for same | No triangle inequality; no identity of indiscernibles |
+| [`is_semimetric`](@ref) | [Semimetric space](https://en.wikipedia.org/wiki/Semimetric_space) | nonneg + symmetric + d=0 iff same | No triangle inequality |
+| [`is_premetric`](@ref) | [Premetric space](https://en.wikipedia.org/wiki/Premetric_space) | nonneg + d=0 for same | Most permissive |
+| [`is_supermetric`](@ref) | [Ultrametric space](https://en.wikipedia.org/wiki/Ultrametric_space) | reverse-triangle condition | Uncommon; most indices return `false` or `:unknown` |
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_metric(Jaccard())
+true
+
+julia> is_pseudometric(ShannonDifference())
+true
+
+julia> is_metametric(BrayCurtis())
+true
+
+julia> is_semimetric(BrayCurtis())
+true
+
+julia> is_premetric(KullbackLeibler())
+true
+
+julia> is_supermetric(Jaccard())
+false
+```
+
+The full descriptor set with typical results:
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> is_finite(KullbackLeibler())
+false
+
+julia> is_symmetric(KullbackLeibler())
+false
+
+julia> is_nonnegative(KullbackLeibler())
+true
+
+julia> is_bounded(KullbackLeibler())
+false
+
+julia> is_metric(KullbackLeibler())
+false
+
+julia> is_triangular(KullbackLeibler())
+false
+
+julia> is_pseudometric(KullbackLeibler())
+false
+
+julia> is_quasimetric(KullbackLeibler())
+false
+
+julia> is_metametric(KullbackLeibler())
+false
+
+julia> is_premetric(KullbackLeibler())
+true
+
+julia> is_supermetric(KullbackLeibler())
+false
+
+julia> is_similarity(KullbackLeibler())
+false
+
+julia> is_dissimilarity(KullbackLeibler())
+true
+```
 
 ## Reference Validation
 
@@ -86,20 +206,42 @@ is_dissimilarity(index)
 to formulas and external package behavior. [`validate_reference_cases`](@ref)
 evaluates them:
 
-```julia
-validate_reference_cases()
-```
+```jldoctest
+julia> using DiversityAndDissimilarity
 
-This is a lightweight validation corpus rather than a replacement for the full
-test suite. It is meant to make convention choices visible and reproducible.
+julia> results = validate_reference_cases();
+
+julia> all(r -> r.passed, results)
+true
+
+julia> results[1].name
+"vegan_shannon_natural_log"
+
+julia> results[1].observed ≈ 1.0397207708399179
+true
+```
 
 ## Estimator Reports
 
 [`estimator_report`](@ref) compares Shannon estimators and reports basic
 coverage diagnostics:
 
-```julia
-estimator_report([1, 1, 2, 0, 5]; support=6)
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> r = estimator_report([1, 1, 2, 0, 5]);
+
+julia> r.observed_richness
+4
+
+julia> r.singletons
+2
+
+julia> r.sample_coverage
+0.7777777777777778
+
+julia> r.estimates[1].name
+:plugin
 ```
 
 The report includes observed richness, singleton and doubleton counts, sample
@@ -110,17 +252,26 @@ coverage, estimator outputs, and warnings about common support/coverage issues.
 [`diversity_audit`](@ref) combines input validation, row-wise alpha summaries,
 estimator diagnostics, and a labeled pairwise distance matrix:
 
-```julia
-audit = diversity_audit(
-    community;
-    labels=["plot-a", "plot-b"],
-    pairwise_index=BrayCurtis(),
-)
+```jldoctest
+julia> using DiversityAndDissimilarity
 
-audit.alpha
-audit.estimator_report
-audit.pairwise
-audit.warnings
+julia> community = [1 1 2 0 5; 3 0 1 1 0];
+
+julia> audit = diversity_audit(community; labels=["plot-a", "plot-b"]);
+
+julia> audit.n_samples
+2
+
+julia> audit.n_taxa
+5
+
+julia> audit.pairwise.labels
+2-element Vector{String}:
+ "plot-a"
+ "plot-b"
+
+julia> audit.alpha[1].richness
+4
 ```
 
 For Tables.jl-compatible inputs, use `species` and `label` to separate species
@@ -136,12 +287,21 @@ diversity_audit(table; species=[:oak, :ash, :elm], label=:site)
 workflow checks. It reports Shannon entropy and effective-diversity intervals
 for each sample together with labels, sample coverage, richness, and warnings:
 
-```julia
-uncertainty_audit(
-    community;
-    labels=["plot-a", "plot-b"],
-    nboot=500,
-)
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> community = [1 1 2 0 5; 3 0 1 1 0];
+
+julia> ua = uncertainty_audit(community; labels=["plot-a", "plot-b"], nboot=50);
+
+julia> length(ua.reports)
+2
+
+julia> ua.reports[1].label
+"plot-a"
+
+julia> ua.reports[1].richness
+4
 ```
 
 Use a modest `nboot` while developing a workflow and a larger value for final
