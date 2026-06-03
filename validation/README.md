@@ -25,6 +25,8 @@ and related transformations across Julia, R, and Python.
 - `cross_package_manifest.csv`: package-call manifest mapping each validation
   task to the intended convention in DiversityAndDissimilarity.jl, R vegan, SciPy, and
   scikit-bio-style APIs.
+- `reference_dataset_candidates.md`: online reference datasets that can be
+  added as larger fixtures with upstream package-generated expected values.
 
 These are validation inputs, not ecological observations. They are simulated to
 exercise convention-sensitive cases and should be treated as a reproducibility

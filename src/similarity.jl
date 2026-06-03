@@ -1,3 +1,6 @@
+"""Abstract supertype for pairwise similarity, dissimilarity, and distance indices."""
+abstract type PairwiseIndex <: DiversityIndex end
+
 """
 Jaccard incidence similarity.
 
@@ -5,7 +8,7 @@ Jaccard incidence similarity.
 J(A,B) = \\frac{|A \\cap B|}{|A \\cup B|}
 ```
 """
-struct Jaccard <: DiversityIndex end
+struct Jaccard <: PairwiseIndex end
 
 """
 Sorensen-Dice incidence similarity.
@@ -14,7 +17,7 @@ Sorensen-Dice incidence similarity.
 S(A,B) = \\frac{2|A \\cap B|}{|A| + |B|}
 ```
 """
-struct SorensenDice <: DiversityIndex end
+struct SorensenDice <: PairwiseIndex end
 
 """
 Overlap (Szymkiewicz-Simpson) incidence similarity.
@@ -23,7 +26,7 @@ Overlap (Szymkiewicz-Simpson) incidence similarity.
 O(A,B) = \\frac{|A \\cap B|}{\\min(|A|, |B|)}
 ```
 """
-struct Overlap <: DiversityIndex end
+struct Overlap <: PairwiseIndex end
 
 """
 Bray-Curtis abundance dissimilarity.
@@ -32,7 +35,7 @@ Bray-Curtis abundance dissimilarity.
 BC(x,y) = \\frac{\\sum_i |x_i - y_i|}{\\sum_i (x_i + y_i)}
 ```
 """
-struct BrayCurtis <: DiversityIndex end
+struct BrayCurtis <: PairwiseIndex end
 
 """
 Ruzicka, or quantitative Jaccard, abundance similarity.
@@ -41,7 +44,7 @@ Ruzicka, or quantitative Jaccard, abundance similarity.
 R(x,y) = \\frac{\\sum_i \\min(x_i,y_i)}{\\sum_i \\max(x_i,y_i)}
 ```
 """
-struct Ruzicka <: DiversityIndex end
+struct Ruzicka <: PairwiseIndex end
 
 """
 Total variation distance between probability vectors.
@@ -50,7 +53,7 @@ Total variation distance between probability vectors.
 TV(p,q) = \\frac{1}{2}\\sum_i |p_i - q_i|
 ```
 """
-struct TotalVariation <: DiversityIndex end
+struct TotalVariation <: PairwiseIndex end
 
 """
 Manhattan, or L1, distance between probability vectors.
@@ -59,7 +62,7 @@ Manhattan, or L1, distance between probability vectors.
 d_1(p,q) = \\sum_i |p_i - q_i|
 ```
 """
-struct Manhattan <: DiversityIndex end
+struct Manhattan <: PairwiseIndex end
 
 """
 Euclidean, or L2, distance between probability vectors.
@@ -68,7 +71,7 @@ Euclidean, or L2, distance between probability vectors.
 d_2(p,q) = \\sqrt{\\sum_i (p_i - q_i)^2}
 ```
 """
-struct Euclidean <: DiversityIndex end
+struct Euclidean <: PairwiseIndex end
 
 """
 Averaged Canberra distance between abundance vectors.
@@ -77,7 +80,7 @@ Averaged Canberra distance between abundance vectors.
 C(x,y) = \\frac{1}{m}\\sum_{i:x_i+y_i>0}\\frac{|x_i-y_i|}{x_i+y_i}
 ```
 """
-struct Canberra <: DiversityIndex end
+struct Canberra <: PairwiseIndex end
 
 """
 Hellinger distance between probability vectors.
@@ -86,7 +89,7 @@ Hellinger distance between probability vectors.
 H(p,q) = \\frac{1}{\\sqrt{2}}\\sqrt{\\sum_i (\\sqrt{p_i} - \\sqrt{q_i})^2}
 ```
 """
-struct Hellinger <: DiversityIndex end
+struct Hellinger <: PairwiseIndex end
 
 """
 Chord distance between square-root transformed probability vectors.
@@ -95,7 +98,7 @@ Chord distance between square-root transformed probability vectors.
 d_c(p,q) = \\sqrt{\\sum_i (\\sqrt{p_i} - \\sqrt{q_i})^2}
 ```
 """
-struct Chord <: DiversityIndex end
+struct Chord <: PairwiseIndex end
 
 """
 Bhattacharyya coefficient and distance between probability vectors.
@@ -105,7 +108,7 @@ BC(p,q) = \\sum_i \\sqrt{p_i q_i}, \\qquad
 d_B(p,q) = -\\log BC(p,q)
 ```
 """
-struct Bhattacharyya <: DiversityIndex end
+struct Bhattacharyya <: PairwiseIndex end
 
 """
 Kullback-Leibler divergence between probability vectors.
@@ -116,14 +119,24 @@ Kullback-Leibler divergence between probability vectors.
 D_{KL}(p \\Vert q) = \\sum_i p_i \\log_b \\frac{p_i}{q_i}
 ```
 
+**This divergence is asymmetric**: `dissimilarity(KullbackLeibler(), a, b)` and
+`dissimilarity(KullbackLeibler(), b, a)` are generally different, and a full
+community distance matrix will not be symmetric. See [`is_symmetric`](@ref).
+
 Use `estimator` for low-sample corrections. Supported options mirror Shannon
 entropy estimation: [`MillerMadow`](@ref), [`AddGamma`](@ref) for pseudocounts
 (`AddGamma(1)` is Laplace and `AddGamma(0.5)` is Jeffreys), [`HausserStrimmer`](@ref)
 for shrinkage, and [`ChaoShen`](@ref) for a Good-Turing unseen-mass correction.
 Without smoothing or unseen-mass correction this divergence returns `Inf` when
 `p_i > 0` and `q_i == 0` for any coordinate.
+
+The [`MillerMadow`](@ref) correction subtracts the standard entropy bias
+correction ``(S-1)/(2n \\log b)`` from the plugin divergence estimate, where
+``S`` is the number of observed positive-probability categories in `left` and
+``n`` is its total count. This is a first-order correction for the bias in
+``H(p)``; the cross-entropy term ``H(p,q)`` is left uncorrected.
 """
-struct KullbackLeibler{E<:ShannonEstimator,S} <: DiversityIndex
+struct KullbackLeibler{E<:ShannonEstimator,S} <: PairwiseIndex
     base::Float64
     estimator::E
     support::S
@@ -140,8 +153,15 @@ Absolute Shannon entropy difference between probability vectors.
 ```math
 |H_b(p) - H_b(q)|
 ```
+
+!!! warning "Does not measure distributional divergence"
+    This index compares the scalar entropy magnitudes of two assemblages; it
+    does not measure how different the distributions themselves are. Two
+    assemblages with completely disjoint species but identical species-abundance
+    profiles will score zero. Use [`JensenShannon`](@ref) or
+    [`KullbackLeibler`](@ref) when you want a proper distributional divergence.
 """
-struct ShannonDifference{E<:ShannonEstimator,S} <: DiversityIndex
+struct ShannonDifference{E<:ShannonEstimator,S} <: PairwiseIndex
     base::Float64
     estimator::E
     support::S
@@ -159,10 +179,12 @@ Jensen difference of Shannon entropy between probability vectors.
 J_H(p,q) = H_b\\left(\\frac{p+q}{2}\\right) - \\frac{H_b(p)+H_b(q)}{2}
 ```
 
-For Shannon entropy this is the Jensen-Shannon divergence. Use `estimator` for
-the same low-sample corrections available to [`KullbackLeibler`](@ref).
+For Shannon entropy this equals the Jensen-Shannon divergence. It returns the
+raw divergence value. Use [`JensenShannon`](@ref) when you want the metric
+square-root form (i.e. `dissimilarity(JensenShannon(), ...)` with `distance=true`).
+Use `estimator` for the same low-sample corrections available to [`KullbackLeibler`](@ref).
 """
-struct JensenDifference{E<:ShannonEstimator,S} <: DiversityIndex
+struct JensenDifference{E<:ShannonEstimator,S} <: PairwiseIndex
     base::Float64
     estimator::E
     support::S
@@ -177,13 +199,16 @@ end
 Jensen-Shannon divergence or distance between probability vectors.
 
 `JensenShannon(; base=2, distance=true)` returns the square root of the
-divergence from [`dissimilarity`](@ref). Set `distance=false` for the
-divergence itself. Use `estimator` for low-sample corrections such as
-`MillerMadow()`, `AddGamma(1)` for Laplace smoothing, `AddGamma(0.5)` for
-Jeffreys smoothing, `HausserStrimmer()` shrinkage, and `ChaoShen()` /
-Good-Turing unseen-mass correction.
+Jensen-Shannon divergence, which is a proper metric. Set `distance=false` for
+the divergence itself (identical to [`JensenDifference`](@ref)). Use `estimator`
+for low-sample corrections such as `MillerMadow()`, `AddGamma(1)` for Laplace
+smoothing, `AddGamma(0.5)` for Jeffreys smoothing, `HausserStrimmer()` shrinkage,
+and `ChaoShen()` / Good-Turing unseen-mass correction.
+
+See also [`JensenDifference`](@ref), which returns the raw divergence value
+without taking a square root.
 """
-struct JensenShannon{E<:ShannonEstimator,S} <: DiversityIndex
+struct JensenShannon{E<:ShannonEstimator,S} <: PairwiseIndex
     base::Float64
     distance::Bool
     estimator::E
@@ -206,7 +231,7 @@ MH(x,y) =
 \\lambda_x = \\frac{\\sum_i x_i^2}{N_x^2}
 ```
 """
-struct MorisitaHorn <: DiversityIndex end
+struct MorisitaHorn <: PairwiseIndex end
 
 """
     similarity(index, left, right; frequencies=true)

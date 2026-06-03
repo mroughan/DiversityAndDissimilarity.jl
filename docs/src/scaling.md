@@ -52,6 +52,28 @@ Use `support` deliberately for large ``K``. If ``K`` is much larger than the
 observed support, finite-support estimators can move substantially and may do
 more work than observed-support estimators.
 
+## Matrix Fast Path
+
+When computing `alpha_diversity` on a community matrix with the default
+[`Plugin`](@ref) estimator and no `support` override, this package uses a
+specialized cache-friendly kernel that accumulates all statistics in two
+column-major passes. This is significantly faster than the fallback row-by-row
+path, which is used for all other estimators.
+
+```julia
+alpha_diversity(community)                          # uses fast kernel (Plugin, no support)
+alpha_diversity(community; estimator=MillerMadow()) # uses row-by-row fallback
+alpha_diversity(community; support=10)              # uses row-by-row fallback
+```
+
+The fast kernel covers [`Richness`](@ref), [`Shannon`](@ref),
+[`Simpson`](@ref)/[`GiniSimpson`](@ref)/[`InverseSimpson`](@ref),
+[`Chao1`](@ref), [`ACE`](@ref), [`SampleCoverage`](@ref),
+[`PielouEvenness`](@ref), and [`FisherAlpha`](@ref) simultaneously.
+For non-Plugin or support-constrained workflows, benchmark with a
+representative subset to check whether the row-by-row path is fast enough,
+or pre-compute proportions and pass them directly.
+
 ## Community Matrices And Tables
 
 Community matrices are interpreted as samples in rows and species/taxa in
@@ -108,6 +130,9 @@ For large ``M``:
 - prefer bounded measures such as [`BrayCurtis`](@ref),
   [`TotalVariation`](@ref), or [`Hellinger`](@ref) when comparing many datasets
   because their ranges are easy to monitor for quality checks.
+- use [`is_bounded`](@ref), [`is_finite`](@ref), [`is_metric`](@ref), and
+  [`index_bounds`](@ref) to choose indices and attach bound-aware quality
+  checks to large automated workflows.
 
 ## Resampling
 

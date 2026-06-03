@@ -150,15 +150,16 @@ H_b\\left(\\frac{p+q}{2}\\right) - \\frac{H_b(p)+H_b(q)}{2}
 | [`Chord`](@ref) | distance | ``[0,\\sqrt{2}]`` | You want Euclidean distance after square-root probability transformation. |
 | [`Bhattacharyya`](@ref) | coefficient / distance | coefficient ``[0,1]``; distance ``[0,\\infty]`` | You want probability overlap, especially in classification or distributional overlap settings. |
 | [`KullbackLeibler`](@ref) | asymmetric divergence | ``[0,\\infty]`` | You want ``D_{KL}(p \\Vert q)`` and have a directional reference/comparison interpretation. |
-| [`ShannonDifference`](@ref) | dissimilarity | support-dependent | You want to compare how much entropy/diversity uncertainty each assemblage has, not which species are shared. |
-| [`JensenDifference`](@ref) | dissimilarity | ``[0,1]`` with `base=2` | You want the Shannon entropy Jensen gap; for Shannon entropy this is Jensen-Shannon divergence. |
-| [`JensenShannon`](@ref) | distance by default | ``[0,1]`` with `base=2` | You want a symmetric information-theoretic comparison; use `distance=false` for divergence. |
+| [`ShannonDifference`](@ref) | dissimilarity | support-dependent | You want to compare entropy magnitudes; note this is **not** a distributional divergence — two assemblages with disjoint species but the same entropy score zero. |
+| [`JensenDifference`](@ref) | divergence | ``[0,1]`` with `base=2` | You want the Jensen-Shannon divergence (raw, not square-rooted). Identical to `JensenShannon(distance=false)`. |
+| [`JensenShannon`](@ref) | distance by default | ``[0,1]`` with `base=2` | You want a symmetric information-theoretic metric; the default square-root form is a proper distance. Use `distance=false` to get the raw divergence (same as `JensenDifference`). |
 
 [`KullbackLeibler`](@ref) is directional: `dissimilarity(KullbackLeibler(), left, right)`
 returns ``D_{KL}(left \\Vert right)``. It returns `Inf` if `right` has zero
 probability where `left` has positive probability. Pairwise matrices for this
-index are directional, so entry ``(i,j)`` is ``D_{KL}(i \\Vert j)`` and need
-not equal entry ``(j,i)``.
+index are not symmetric: entry ``(i,j)`` is ``D_{KL}(i \\Vert j)`` and generally
+differs from entry ``(j,i)``. You can check this programmatically with
+`is_symmetric(KullbackLeibler())`, which returns `false`.
 
 ## Low-Sample Divergence Corrections
 
@@ -179,7 +180,11 @@ jensen_shannon_distance(left, right; estimator=ChaoShen())
 
 The correction modes have different interpretations:
 
-- [`MillerMadow`](@ref) applies a first-order entropy-term bias correction.
+- [`MillerMadow`](@ref) applies a first-order entropy bias correction: it
+  subtracts ``(S-1)/(2n \log b)`` from the plugin divergence, where ``S`` and
+  ``n`` are the observed support size and total count of the *left* distribution.
+  This corrects for bias in ``H(p)`` but leaves the cross-entropy term
+  uncorrected; it is a heuristic first-order adjustment.
 - [`AddGamma`](@ref) applies Bayesian pseudocount smoothing. `AddGamma(1)` is
   Laplace smoothing and `AddGamma(0.5)` is Jeffreys smoothing.
 - [`HausserStrimmer`](@ref) shrinks probabilities toward a uniform distribution

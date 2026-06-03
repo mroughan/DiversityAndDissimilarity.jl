@@ -180,6 +180,25 @@ index-selection notes, and the
 [availability checklists](index-checklist.md) when comparing this package with
 other biodiversity packages.
 
+## Index Metadata
+
+Index objects also carry convention metadata. This is useful when writing
+generic workflows that need to distinguish similarities from dissimilarities,
+avoid non-metric inputs to ordination methods, or explain the meaning of a
+bounded scale.
+
+```julia
+index_metadata(BrayCurtis())
+is_symmetric(KullbackLeibler())
+is_metric(JensenShannon())
+index_bounds(Jaccard())
+```
+
+Use [`index_bounds`](@ref) rather than only [`index_range`](@ref) when the
+interpretation of the lower and upper bounds matters. For example, the lower
+bound of a dissimilarity usually means identical inputs, while the lower bound
+of a similarity usually means no overlap.
+
 ## Shannon Entropy Estimators
 
 [`Shannon`](@ref) accepts an estimator object. The default is [`Plugin`](@ref),

@@ -42,6 +42,24 @@ linguistic-demography names for the same quantity as [`GiniSimpson`](@ref):
 the probability that two randomly selected individuals belong to different
 categories, interpreted as different mother tongues.
 
+## Describing Index Conventions
+
+Use [`index_metadata`](@ref) and the descriptor helpers when workflow code needs
+to know what an index means before evaluating it:
+
+```julia
+index_metadata(BrayCurtis())
+is_similarity(Jaccard())
+is_dissimilarity(BrayCurtis())
+is_metric(JensenShannon())
+index_bounds(JensenShannon())
+```
+
+The descriptor helpers cover boundedness, finiteness, symmetry,
+nonnegativity, metric and metric-like properties, and whether an index is
+conventionally a similarity or a dissimilarity. Unknown classifications return
+`:unknown`.
+
 ## Pages
 
 - [Diversity Indices](diversity-indices.md) covers [`entropy`](@ref),
@@ -51,3 +69,5 @@ categories, interpreted as different mother tongues.
 - [Similarity And Dissimilarity Indices](similarity-indices.md) covers [`similarity`](@ref),
   [`dissimilarity`](@ref), incidence comparisons, abundance comparisons, and
   convenience functions such as [`jaccard_index`](@ref).
+- [Framework](framework.md) documents [`index_metadata`](@ref),
+  [`index_bounds`](@ref), and the full descriptor-helper vocabulary.

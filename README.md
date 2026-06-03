@@ -1,6 +1,8 @@
 # DiversityAndDissimilarity.jl
 
 [![CI](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/CI.yml)
+[![Codecov](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Codecov.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Codecov.yml)
+[![codecov](https://codecov.io/gh/mroughan/DiversityAndDissimilarity.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/mroughan/DiversityAndDissimilarity.jl)
 [![Aqua](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Aqua.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Aqua.yml)
 [![JET](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/JET.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/JET.yml)
 [![Documentation](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/documentation.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/documentation.yml)
@@ -154,6 +156,21 @@ The generic API is built around small index types:
   where that transformation is standard.
 - `similarity(index, left, right)` and `dissimilarity(index, left, right)`
   compare two assemblages.
+- `index_metadata(index)`, `index_bounds(index)`, and trait helpers expose
+  package conventions for generic workflows.
+
+```julia
+is_metric(Jaccard())
+is_semimetric(BrayCurtis())
+is_symmetric(KullbackLeibler())
+index_bounds(JensenShannon())
+```
+
+The descriptor helpers include `is_finite`, `is_symmetric`, `is_nonnegative`,
+`is_bounded`, `is_metric`, `is_triangular`, `is_pseudometric`,
+`is_quasimetric`, `is_metametric`, `is_semimetric`, `is_premetric`,
+`is_supermetric`, `is_similarity`, and `is_dissimilarity`. Unknown or
+unencoded properties return `:unknown`.
 
 Supported alpha diversity indices include:
 

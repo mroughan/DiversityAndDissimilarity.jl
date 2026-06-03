@@ -247,8 +247,38 @@ end
     @test metadata.supports_matrix_kernel
     @test !is_metric(BrayCurtis())
     @test is_metric(Jaccard())
+    @test is_symmetric(Shannon())
+    @test is_symmetric(BrayCurtis())
+    @test !is_symmetric(KullbackLeibler())
+    @test index_metadata(KullbackLeibler()).is_symmetric == false
     @test output_mode(Shannon()) == :entropy
+    @test output_mode(BrayCurtis()) == :dissimilarity
+    @test output_mode(Canberra()) == :dissimilarity
+    @test output_mode(Hellinger()) == :distance
     @test index_range(PielouEvenness()) == (lower=0.0, upper=1.0)
+    @test index_bounds(Jaccard()).lower_meaning ==
+        "minimal similarity; conventionally complete dissimilarity or no overlap"
+    @test index_bounds(BrayCurtis()).upper == 1.0
+    @test !is_finite(KullbackLeibler())
+    @test is_finite(JensenShannon())
+    @test is_nonnegative(KullbackLeibler())
+    @test is_bounded(JensenDifference())
+    @test !is_bounded(KullbackLeibler())
+    @test is_triangular(Jaccard())
+    @test !is_triangular(KullbackLeibler())
+    @test is_pseudometric(ShannonDifference())
+    @test is_quasimetric(Jaccard())
+    @test is_metametric(Overlap())
+    @test is_semimetric(BrayCurtis())
+    @test is_premetric(KullbackLeibler())
+    @test !is_supermetric(JensenShannon())
+    @test is_similarity(Jaccard())
+    @test !is_similarity(BrayCurtis())
+    @test is_dissimilarity(BrayCurtis())
+    @test is_dissimiliarty(BrayCurtis())
+    @test index_metadata(BrayCurtis()).is_semimetric
+    @test index_metadata(Jaccard()).bounds.upper_meaning ==
+        "maximal similarity; conventionally identical or complete overlap"
     @test all(result -> result.passed, validate_reference_cases())
 
     report = estimator_report([1, 1, 2, 0, 5]; support=6)
@@ -340,6 +370,10 @@ end
     @test jensen_shannon_similarity(left_vector, right_vector) ≈
         1 - sqrt(jensen_shannon_expected)
     @test dissimilarity(JensenShannon(; distance=false), left_vector, right_vector) ≈ jensen_shannon_expected
+    @test dissimilarity(JensenDifference(), left_vector, right_vector) ≈
+        dissimilarity(JensenShannon(; distance=false), left_vector, right_vector)
+    @test dissimilarity(KullbackLeibler(), [1, 0], [0, 1]) == Inf
+    @test dissimilarity(KullbackLeibler(), [0, 1], [1, 0]) == Inf
     @test kullback_leibler_divergence(left_vector, right_vector; estimator=MillerMadow()) <=
         kullback_leibler_divergence(left_vector, right_vector)
     @test isfinite(kullback_leibler_divergence(left_vector, right_vector; estimator=AddGamma(1)))

@@ -56,6 +56,13 @@ T_q = \\frac{\\sum_i p_i^q - 1}{(1-q)\\log b}
 The order ``q = 1`` case for Renyi and Tsallis entropy is evaluated as Shannon
 entropy.
 
+!!! note "Tsallis base scaling"
+    The ``\\log b`` denominator in the Tsallis formula above scales the result so
+    that ``T_1`` equals Shannon entropy in the same base. This differs from the
+    standard textbook definition ``(1 - \\sum_i p_i^q)/(q-1)``, which has no
+    logarithm base factor. Values will differ from packages using the standard
+    definition by a factor of ``\\log b``.
+
 ## Shannon Entropy Estimators
 
 [`Shannon`](@ref) estimates entropy using an estimator object:

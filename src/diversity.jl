@@ -74,8 +74,11 @@ struct ChaoShen <: ShannonEstimator end
 """Abstract supertype for diversity, similarity, and dissimilarity indices."""
 abstract type DiversityIndex end
 
+"""Abstract supertype for single-assemblage diversity, entropy, and richness indices."""
+abstract type AlphaDiversityIndex <: DiversityIndex end
+
 """Species richness: the number of species/categories with positive abundance."""
-struct Richness <: DiversityIndex end
+struct Richness <: AlphaDiversityIndex end
 
 """
     Shannon(; base=2, estimator=Plugin())
@@ -92,7 +95,7 @@ base is provided. Use `estimator` to choose among [`Plugin`](@ref),
 H_b = -\\sum_i p_i \\log_b p_i
 ```
 """
-struct Shannon{E<:ShannonEstimator} <: DiversityIndex
+struct Shannon{E<:ShannonEstimator} <: AlphaDiversityIndex
     base::Float64
     estimator::E
 end
@@ -111,7 +114,7 @@ base is provided. At `q = 1`, Renyi entropy is evaluated as Shannon entropy.
 H_q = \\frac{1}{1-q}\\log_b\\left(\\sum_i p_i^q\\right)
 ```
 """
-struct Renyi <: DiversityIndex
+struct Renyi <: AlphaDiversityIndex
     q::Float64
     base::Float64
 end
@@ -128,8 +131,15 @@ Shannon entropy with the same base.
 ```math
 T_q = \\frac{\\sum_i p_i^q - 1}{(1-q)\\log b}
 ```
+
+!!! note "Non-standard base scaling"
+    The ``\\log b`` denominator scales the result so that ``T_1`` equals Shannon
+    entropy in the same base. This differs from the standard Tsallis definition
+    ``(1 - \\sum_i p_i^q)/(q-1)``, which does not include a logarithm base factor.
+    Values will differ from packages that use the standard definition by a factor
+    of ``\\log b``.
 """
-struct Tsallis <: DiversityIndex
+struct Tsallis <: AlphaDiversityIndex
     q::Float64
     base::Float64
 end
@@ -142,7 +152,7 @@ Simpson concentration.
 D = \\sum_i p_i^2
 ```
 """
-struct Simpson <: DiversityIndex end
+struct Simpson <: AlphaDiversityIndex end
 
 """
 Gini-Simpson diversity.
@@ -151,7 +161,7 @@ Gini-Simpson diversity.
 1 - D = 1 - \\sum_i p_i^2
 ```
 """
-struct GiniSimpson <: DiversityIndex end
+struct GiniSimpson <: AlphaDiversityIndex end
 
 """
 Greenberg's linguistic diversity index.
@@ -168,7 +178,7 @@ The index uses only relative mother-tongue frequencies. It does not account
 for second-language use, language vitality, or linguistic distance between
 languages.
 """
-struct GreenbergDiversityIndex <: DiversityIndex end
+struct GreenbergDiversityIndex <: AlphaDiversityIndex end
 
 """
 Linguistic diversity index (LDI).
@@ -178,7 +188,7 @@ for linguistic-demography workflows. It returns the probability that two
 randomly selected individuals have different mother tongues, equivalent to
 [`GiniSimpson`](@ref).
 """
-struct LinguisticDiversityIndex <: DiversityIndex end
+struct LinguisticDiversityIndex <: AlphaDiversityIndex end
 
 """
 Inverse Simpson diversity.
@@ -187,7 +197,7 @@ Inverse Simpson diversity.
 \\frac{1}{D} = \\frac{1}{\\sum_i p_i^2}
 ```
 """
-struct InverseSimpson <: DiversityIndex end
+struct InverseSimpson <: AlphaDiversityIndex end
 
 """
     Hill(q)
@@ -199,7 +209,7 @@ Shannon effective diversity, and inverse Simpson diversity.
 {}^qD = \\left(\\sum_i p_i^q\\right)^{1/(1-q)}
 ```
 """
-struct Hill <: DiversityIndex
+struct Hill <: AlphaDiversityIndex
     q::Float64
 end
 Hill(q::Real) = Hill(float(q))
@@ -214,7 +224,7 @@ For observed richness ``S_{obs}``, singleton count ``f_1``, and doubleton count
 \\hat S_{Chao1} = S_{obs} + \\frac{f_1(f_1 - 1)}{2(f_2 + 1)}.
 ```
 """
-struct Chao1 <: DiversityIndex end
+struct Chao1 <: AlphaDiversityIndex end
 
 """
     ACE(; threshold=10)
@@ -224,7 +234,7 @@ Abundance-based Coverage Estimator (ACE) for richness.
 Species with counts up to `threshold` are treated as rare. The default
 `threshold=10` follows the usual ACE convention.
 """
-struct ACE <: DiversityIndex
+struct ACE <: AlphaDiversityIndex
     threshold::Int
 end
 ACE(; threshold::Integer=10) =
@@ -239,7 +249,7 @@ For sample size ``n`` and singleton count ``f_1``, sample coverage is
 \\hat C = 1 - \\frac{f_1}{n}.
 ```
 """
-struct SampleCoverage <: DiversityIndex end
+struct SampleCoverage <: AlphaDiversityIndex end
 
 """
 Pielou evenness, Shannon entropy divided by the maximum entropy for the
@@ -249,7 +259,7 @@ observed richness.
 J = \\frac{H}{\\log_b S}
 ```
 """
-struct PielouEvenness <: DiversityIndex end
+struct PielouEvenness <: AlphaDiversityIndex end
 
 """
 Fisher's alpha diversity parameter.
@@ -262,7 +272,7 @@ S = \\alpha \\log\\left(1 + \\frac{n}{\\alpha}\\right),
 
 where ``S`` is observed richness and ``n`` is total abundance.
 """
-struct FisherAlpha <: DiversityIndex end
+struct FisherAlpha <: AlphaDiversityIndex end
 
 """
     entropy(index, data; frequencies=true, support=nothing)

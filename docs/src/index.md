@@ -13,8 +13,9 @@ operations:
   pairwise comparisons.
 - [`counts`](@ref) and [`proportions`](@ref) for preparing abundance data.
 - [`alpha_diversity`](@ref) for a compact exploratory alpha-diversity summary.
-- [`index_metadata`](@ref), [`reference_cases`](@ref), and
-  [`diversity_audit`](@ref) for convention-aware and validation-oriented
+- [`index_metadata`](@ref), [`index_bounds`](@ref), descriptor helpers such as
+  [`is_metric`](@ref) and [`is_similarity`](@ref), [`reference_cases`](@ref),
+  and [`diversity_audit`](@ref) for convention-aware and validation-oriented
   workflows.
 
 If you are coming from R, start with the

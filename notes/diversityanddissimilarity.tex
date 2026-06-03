@@ -177,9 +177,13 @@ through the same dispatch and metadata interface.
 \texttt{DiversityAndDissimilarity.jl} represents indices as small dispatchable objects
 and exposes their interpretation through trait-like metadata functions.
 For each supported index, the package records the index family, expected input
-mode, output mode, numerical range, metric status, aliases, convention notes,
-and whether a specialized matrix kernel is available.  Figure
-\ref{fig:framework} summarizes the design.
+mode, output mode, numerical range, interpreted bounds, metric status, aliases,
+convention notes, and whether a specialized matrix kernel is available.
+Descriptor functions expose finiteness, boundedness, non-negativity, symmetry,
+triangle-inequality status, metric and weaker metric-like classifications, and
+whether an index is conventionally a similarity or a dissimilarity.  Unknown
+or unencoded classifications are reported explicitly rather than silently
+promoted to a Boolean claim.  Figure \ref{fig:framework} summarizes the design.
 
 \input{Figs/framework.tex}
 
@@ -191,7 +195,9 @@ available to users and to programs.
 A report generator can label an output as a concentration, a similarity, or a
 dissimilarity.  A workflow audit can warn when an index is not a metric.  A
 documentation page can group indices by input mode rather than by informal
-name.
+name.  Bound metadata also records the interpretation of endpoints: for a
+similarity, the lower endpoint usually denotes no overlap, while for a
+dissimilarity it usually denotes identical or indistinguishable inputs.
 
 The design is intentionally lightweight.  Metadata functions return ordinary
 Julia values such as symbols, named tuples, and strings.  This avoids a heavy

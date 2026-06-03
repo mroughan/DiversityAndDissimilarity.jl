@@ -30,7 +30,7 @@ Return the expected input style for an index: `:single_assemblage`,
 `:pairwise`, or `:either`.
 """
 input_mode(::DiversityIndex) = :single_assemblage
-input_mode(::Union{Jaccard,SorensenDice,Overlap,BrayCurtis,Ruzicka,TotalVariation,Manhattan,Euclidean,Canberra,Hellinger,Chord,Bhattacharyya,KullbackLeibler,ShannonDifference,JensenDifference,JensenShannon,MorisitaHorn}) = :pairwise
+input_mode(::PairwiseIndex) = :pairwise
 
 """
     output_mode(index)
@@ -46,9 +46,19 @@ output_mode(::Union{GiniSimpson,GreenbergDiversityIndex,LinguisticDiversityIndex
 output_mode(::SampleCoverage) = :coverage
 output_mode(::PielouEvenness) = :evenness
 output_mode(::Union{Jaccard,SorensenDice,Overlap,Ruzicka,MorisitaHorn}) = :similarity
-output_mode(::Union{BrayCurtis,TotalVariation,Manhattan,Euclidean,Canberra,Hellinger,Chord,JensenShannon}) = :distance
-output_mode(::Union{KullbackLeibler,ShannonDifference,JensenDifference}) = :dissimilarity
+output_mode(::Union{TotalVariation,Manhattan,Euclidean,Hellinger,Chord,JensenShannon}) = :distance
+output_mode(::Union{BrayCurtis,Canberra,KullbackLeibler,ShannonDifference,JensenDifference}) = :dissimilarity
 output_mode(::Bhattacharyya) = :coefficient
+
+"""
+    is_finite(index)
+
+Return whether the index is expected to return finite values for valid finite
+inputs. This is separate from [`is_bounded`](@ref): an index can be finite on
+every finite data set while having no fixed finite upper bound.
+"""
+is_finite(::DiversityIndex) = true
+is_finite(::KullbackLeibler) = false
 
 """
     is_metric(index)
@@ -57,7 +67,135 @@ Return whether the package's distance/dissimilarity form is a metric under the
 usual assumptions for the index.
 """
 is_metric(::DiversityIndex) = false
-is_metric(::Union{Jaccard,TotalVariation,Manhattan,Euclidean,Hellinger,Chord,JensenShannon}) = true
+is_metric(::Union{Jaccard,TotalVariation,Manhattan,Euclidean,Canberra,Hellinger,Chord,JensenShannon}) = true
+
+"""
+    is_triangular(index)
+
+Return whether the package's distance/dissimilarity form is known to obey the
+triangle inequality. Returns `:unknown` when this package does not encode a
+claim.
+"""
+is_triangular(index::DiversityIndex) = is_metric(index) ? true : :unknown
+is_triangular(::Union{BrayCurtis,KullbackLeibler,JensenDifference}) = false
+is_triangular(::ShannonDifference) = true
+
+"""
+    is_nonnegative(index)
+
+Return whether the index output is known to be nonnegative.
+"""
+is_nonnegative(::DiversityIndex) = true
+
+"""
+    is_bounded(index)
+
+Return whether the conventional output range has a finite upper bound.
+"""
+function is_bounded(index::DiversityIndex)
+    bounds = index_range(index)
+    return isfinite(bounds.lower) && isfinite(bounds.upper)
+end
+
+"""
+    is_pseudometric(index)
+
+Return whether the distance/dissimilarity form is known to be a pseudometric:
+nonnegative, symmetric, zero for identical inputs, and triangular, while
+allowing distinct inputs to have zero distance.
+"""
+is_pseudometric(index::DiversityIndex) = is_metric(index) ? true : :unknown
+is_pseudometric(::ShannonDifference) = true
+is_pseudometric(::Union{BrayCurtis,KullbackLeibler,JensenDifference}) = false
+
+"""
+    is_quasimetric(index)
+
+Return whether the distance/dissimilarity form is known to be a quasimetric:
+nonnegative, zero only for identical inputs, and triangular, without requiring
+symmetry. Metrics are also quasimetrics under this convention.
+"""
+is_quasimetric(index::DiversityIndex) = is_metric(index) ? true : :unknown
+is_quasimetric(::Union{BrayCurtis,KullbackLeibler,ShannonDifference,JensenDifference}) = false
+
+"""
+    is_metametric(index)
+
+Return whether the distance/dissimilarity form is known to be a metametric
+under this package's convention: nonnegative, symmetric, and zero for identical
+inputs, without requiring identity of indiscernibles or the triangle
+inequality. Returns `:unknown` where that classification is not encoded.
+"""
+is_metametric(index::DiversityIndex) = is_metric(index) ? true : :unknown
+is_metametric(::Union{BrayCurtis,Overlap,Ruzicka,Canberra,ShannonDifference,JensenDifference}) = true
+is_metametric(::KullbackLeibler) = false
+
+"""
+    is_semimetric(index)
+
+Return whether the distance/dissimilarity form is known to be a semimetric
+under this package's convention: nonnegative, symmetric, zero only for
+identical inputs, but not necessarily triangular.
+"""
+is_semimetric(index::DiversityIndex) = is_metric(index) ? true : :unknown
+is_semimetric(::Union{BrayCurtis,Ruzicka,Canberra}) = true
+is_semimetric(::Union{Overlap,KullbackLeibler,ShannonDifference,JensenDifference}) = false
+
+"""
+    is_premetric(index)
+
+Return whether the distance/dissimilarity form is known to be a premetric:
+nonnegative and zero for identical inputs, without requiring symmetry or the
+triangle inequality.
+"""
+is_premetric(index::DiversityIndex) = is_metric(index) ? true : :unknown
+is_premetric(::Union{BrayCurtis,Overlap,Ruzicka,Canberra,KullbackLeibler,ShannonDifference,JensenDifference}) = true
+
+"""
+    is_supermetric(index)
+
+Return whether the index is known to obey a supermetric or reverse-triangle
+style condition. This property is uncommon for the indices implemented here, so
+unknown cases return `:unknown`.
+"""
+is_supermetric(::DiversityIndex) = :unknown
+is_supermetric(::Union{Jaccard,TotalVariation,Manhattan,Euclidean,Canberra,Hellinger,Chord,KullbackLeibler,ShannonDifference,JensenDifference,JensenShannon}) = false
+
+"""
+    is_similarity(index)
+
+Return whether the primary output mode is a similarity or similarity
+coefficient.
+"""
+is_similarity(index::DiversityIndex) = output_mode(index) in (:similarity, :coefficient)
+
+"""
+    is_dissimilarity(index)
+
+Return whether the primary output mode is a dissimilarity or distance.
+"""
+is_dissimilarity(index::DiversityIndex) = output_mode(index) in (:dissimilarity, :distance)
+
+"""
+    is_dissimiliarty(index)
+
+Deprecated misspelling of [`is_dissimilarity`](@ref), retained as a forgiving
+alias.
+"""
+is_dissimiliarty(index::DiversityIndex) = is_dissimilarity(index)
+
+"""
+    is_symmetric(index)
+
+Return whether the pairwise form satisfies `f(a, b) == f(b, a)` for all inputs.
+
+Most indices are symmetric. [`KullbackLeibler`](@ref) is the notable exception:
+`dissimilarity(KullbackLeibler(), a, b)` computes ``D_{KL}(a \\Vert b)`` which
+generally differs from ``D_{KL}(b \\Vert a)``. Community distance matrices for
+asymmetric indices are not symmetric matrices.
+"""
+is_symmetric(::DiversityIndex) = true
+is_symmetric(::KullbackLeibler) = false
 
 """
     index_range(index)
@@ -75,6 +213,68 @@ index_range(index::JensenShannon) = (
     lower=0.0,
     upper=index.distance ? sqrt(log(2) / log(index.base)) : log(2) / log(index.base),
 )
+
+"""
+    index_bounds(index)
+
+Return a named tuple describing the conventional numeric bounds and the usual
+interpretation of those bounds. Unknown meanings are returned as `:unknown`.
+"""
+function index_bounds(index::DiversityIndex)
+    range = index_range(index)
+    return (
+        lower=range.lower,
+        upper=range.upper,
+        lower_meaning=_lower_bound_meaning(index),
+        upper_meaning=_upper_bound_meaning(index),
+    )
+end
+
+function _lower_bound_meaning(index::DiversityIndex)
+    mode = output_mode(index)
+    if mode in (:similarity, :coefficient)
+        return "minimal similarity; conventionally complete dissimilarity or no overlap"
+    elseif mode in (:dissimilarity, :distance)
+        return "minimal dissimilarity; identical or indistinguishable inputs"
+    elseif mode == :entropy
+        return "no uncertainty; all mass in one category"
+    elseif mode == :diversity
+        return "minimal diversity under the index convention"
+    elseif mode == :dominance
+        return "minimal dominance"
+    elseif mode == :coverage
+        return "no sampled probability mass covered"
+    elseif mode == :evenness
+        return "minimal evenness"
+    else
+        return :unknown
+    end
+end
+
+function _upper_bound_meaning(index::DiversityIndex)
+    mode = output_mode(index)
+    if mode in (:similarity, :coefficient)
+        return "maximal similarity; conventionally identical or complete overlap"
+    elseif mode in (:dissimilarity, :distance)
+        return isfinite(index_range(index).upper) ?
+               "maximal dissimilarity under the index convention" :
+               "unbounded dissimilarity; larger values mean greater separation"
+    elseif mode == :entropy
+        return "maximum uncertainty for the supplied or observed support"
+    elseif mode == :diversity
+        return isfinite(index_range(index).upper) ?
+               "maximal diversity under the index convention" :
+               "unbounded effective or richness-scale diversity"
+    elseif mode == :dominance
+        return "maximal dominance"
+    elseif mode == :coverage
+        return "complete sampled probability mass covered"
+    elseif mode == :evenness
+        return "maximal evenness"
+    else
+        return :unknown
+    end
+end
 
 """
     requires_probabilities(index)
@@ -106,7 +306,21 @@ function index_metadata(index::DiversityIndex)
         input_mode=input_mode(index),
         output_mode=output_mode(index),
         range=index_range(index),
+        bounds=index_bounds(index),
+        is_finite=is_finite(index),
         is_metric=is_metric(index),
+        is_triangular=is_triangular(index),
+        is_nonnegative=is_nonnegative(index),
+        is_bounded=is_bounded(index),
+        is_pseudometric=is_pseudometric(index),
+        is_quasimetric=is_quasimetric(index),
+        is_metametric=is_metametric(index),
+        is_semimetric=is_semimetric(index),
+        is_premetric=is_premetric(index),
+        is_supermetric=is_supermetric(index),
+        is_similarity=is_similarity(index),
+        is_dissimilarity=is_dissimilarity(index),
+        is_symmetric=is_symmetric(index),
         requires_probabilities=requires_probabilities(index),
         supports_matrix_kernel=supports_matrix_kernel(index),
         formula=_index_formula(index),
@@ -158,9 +372,10 @@ _index_notes(::DiversityIndex) = ""
 _index_notes(::Simpson) = "This package's Simpson() is concentration. Use GiniSimpson() for vegan's index=\"simpson\" convention."
 _index_notes(::GreenbergDiversityIndex) = "Equivalent to GiniSimpson(); interpreted as the probability that two randomly selected people have different mother tongues."
 _index_notes(::LinguisticDiversityIndex) = "Equivalent to GreenbergDiversityIndex() and GiniSimpson(); the temporal Index of Linguistic Diversity is available as index_of_linguistic_diversity(current, baseline)."
-_index_notes(::KullbackLeibler) = "Asymmetric: dissimilarity(KullbackLeibler(), left, right) returns D_KL(left || right). Use estimator for Miller-Madow, pseudocount/shrinkage, or Good-Turing corrections."
-_index_notes(::JensenDifference) = "For Shannon entropy, the Jensen difference equals Jensen-Shannon divergence. Use estimator for low-sample corrections."
-_index_notes(::JensenShannon) = "JensenShannon(distance=true) returns the square root of the divergence. Use estimator for low-sample corrections."
+_index_notes(::KullbackLeibler) = "Asymmetric (is_symmetric=false): dissimilarity(KullbackLeibler(), left, right) returns D_KL(left || right). Community matrices are not symmetric. Use estimator for Miller-Madow, pseudocount/shrinkage, or Good-Turing corrections."
+_index_notes(::ShannonDifference) = "Measures the difference in entropy magnitudes |H(p)-H(q)|, not distributional divergence. Two assemblages with disjoint species but identical abundance profiles score zero. Use JensenShannon or KullbackLeibler for distributional divergence."
+_index_notes(::JensenDifference) = "For Shannon entropy, the Jensen difference equals Jensen-Shannon divergence. Returns the raw divergence. Use JensenShannon (distance=true) for the metric square-root form. Use estimator for low-sample corrections."
+_index_notes(::JensenShannon) = "JensenShannon(distance=true) returns the square root of the divergence (a metric). JensenShannon(distance=false) is identical to JensenDifference. Use estimator for low-sample corrections."
 
 """
     reference_cases()
