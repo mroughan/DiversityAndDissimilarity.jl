@@ -116,8 +116,131 @@ julia> sorensen_dice_index(left, right)
 0.6666666666666666
 ```
 
+## Magurran (2004) Five-Species Community
+
+A five-species community used as a worked example in Magurran (2004)
+*Measuring Biological Diversity* (Blackwell). The relative abundances are
+``p = [135, 76, 45, 22, 13] / 291``.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> x = [135, 76, 45, 22, 13];
+
+julia> richness(x)
+5
+
+julia> simpson_index(x) ≈ (135^2 + 76^2 + 45^2 + 22^2 + 13^2) / 291^2
+true
+
+julia> entropy(Shannon(; base=ℯ), x)
+1.3296981241766592
+
+julia> pielou_evenness(x) ≈ entropy(Shannon(; base=ℯ), x) / log(5)
+true
+```
+
+Verify in R with `vegan::diversity(c(135,76,45,22,13), "shannon")`.
+
+## iNEXT Spider Dataset
+
+Spider pitfall-trap data from two hemlock-forest canopy treatments at Harvard
+Forest, originally reported by Sackett et al. (2011) and distributed with the
+iNEXT package by Chao et al. (2014). The vectors below are the exact abundance
+counts extracted from the iNEXT package source.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> girdled = [46, 22, 17, 15, 15, 9, 8, 6, 6, 4, 2, 2, 2, 2,
+                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+
+julia> richness(girdled)
+26
+
+julia> chao1(girdled)
+39.2
+
+julia> sample_coverage(girdled) ≈ 13/14
+true
+
+julia> entropy(Shannon(; base=ℯ), girdled)
+2.4898652106915704
+
+julia> logged = [88, 22, 16, 15, 13, 10, 8, 8, 7, 7, 7, 5, 4, 4, 4,
+                 3, 3, 3, 3, 2, 2, 2, 2,
+                 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+
+julia> richness(logged)
+37
+
+julia> chao1(logged)
+55.2
+
+julia> sample_coverage(logged) ≈ 17/18
+true
+
+julia> entropy(Shannon(; base=ℯ), logged)
+2.6686855819621367
+```
+
+Verify Chao1 and ACE in R with `estimateR(spider$Girdled)` from the vegan
+package. Full documentation is in `notes/references/spider_dataset.md`.
+
+## SciPy Convention Comparisons
+
+This package and `scipy.spatial.distance` agree on Bray-Curtis but differ on
+Canberra (averaging) and Jensen-Shannon (logarithm base).
+
+### Bray-Curtis: identical
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> bray_curtis_dissimilarity([1, 0, 0], [0, 1, 0])
+1.0
+
+julia> bray_curtis_dissimilarity([1, 1, 0], [0, 1, 0])
+0.3333333333333333
+```
+
+### Canberra: this package averages by number of nonzero terms; SciPy does not
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> canberra_distance([1, 2, 3], [2, 1, 0])
+0.5555555555555555
+```
+
+The SciPy unaveraged sum is `5/3 ≈ 1.6667`; this package divides by `m = 3`
+nonzero terms to give `5/9 ≈ 0.5556`. See Legendre & Legendre (2012)
+*Numerical Ecology* §7.4.
+
+### Jensen-Shannon: base-2 (this package) vs natural log (SciPy)
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> jensen_shannon_distance([1.0, 0.0, 0.0], [0.0, 1.0, 0.0])
+1.0
+
+julia> jensen_shannon_distance([1.0, 0.0, 0.0], [0.0, 1.0, 0.0]; base=ℯ)
+0.8325546111576977
+```
+
+The first call uses `base=2` (default): maximum JSD = 1 bit, so the distance
+is 1. The second matches SciPy's natural-log convention. To always match SciPy,
+pass `base=ℯ`. The ratio between the two conventions is ``\sqrt{\log_2 e}``.
+
+Full documentation is in `notes/references/scipy_conventions.md`.
+
 ## Sources
 
 - [scikit-bio diversity tutorial](https://scikit.bio/docs/latest/diversity.html)
 - [vegan diversity documentation](https://vegandevs.github.io/vegan/reference/diversity.html)
 - [vegan vegdist documentation](https://vegandevs.github.io/vegan/reference/vegdist.html)
+- Magurran, A.E. (2004) *Measuring Biological Diversity*. Blackwell Publishing.
+- Sackett et al. (2011) Can. J. Forest Res. 41(2):394–409. doi:10.1139/X10-207
+- Chao et al. (2014) Ecol. Monogr. 84(1):45–67. doi:10.1890/13-0133.1
+- SciPy 1.0 (2020) Nature Methods 17:261–272. doi:10.1038/s41592-019-0686-2

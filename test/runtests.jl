@@ -459,8 +459,8 @@ end
     @test gini_simpson_index(x) ≈ 1 - D_num / D_den
     @test inverse_simpson_index(x) ≈ D_den / D_num
 
-    # Shannon entropy in nats (vegan default base).
-    @test entropy(Shannon(; base=ℯ), x) ≈ 1.329752 atol = 1e-4
+    # Shannon entropy in nats; verifiable via vegan::diversity(c(135,76,45,22,13),"shannon").
+    @test entropy(Shannon(; base=ℯ), x) ≈ 1.3296981241766592 atol = 1e-10
 
     # Pielou evenness J = H_nats / ln(S).
     @test pielou_evenness(x) ≈ entropy(Shannon(; base=ℯ), x) / log(5)
@@ -468,6 +468,129 @@ end
     # Fisher's alpha satisfies the implicit equation S = α log(1 + n/α).
     α = fisher_alpha(x)
     @test α * log1p(sum(x) / α) ≈ 5
+end
+
+@testset "reference values from iNEXT spider dataset" begin
+    # Spider abundance data from two hemlock-forest canopy treatments at Harvard Forest.
+    # Original study: Sackett et al. (2011) Can. J. Forest Res. 41(2):394-409.
+    #   doi:10.1139/X10-207
+    # Distributed with the iNEXT R package:
+    #   Chao et al. (2014) Ecol. Monogr. 84(1):45-67. doi:10.1890/13-0133.1
+    #   Hsieh, Ma & Chao (2016) Methods Ecol. Evol. 7(12):1451-1456.
+    #
+    # Vectors extracted from iNEXT package source:
+    #   https://github.com/JohnsonHsieh/iNEXT
+    #
+    # To verify in R:
+    #   library(iNEXT); data(spider)
+    #   library(vegan)
+    #   vegan::diversity(spider$Girdled, "shannon")  # nats
+    #   estimateR(spider$Girdled)                    # Chao1, ACE
+    #
+    # See also: notes/references/spider_dataset.md
+    girdled = [46, 22, 17, 15, 15, 9, 8, 6, 6, 4, 2, 2, 2, 2,
+               1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    logged  = [88, 22, 16, 15, 13, 10, 8, 8, 7, 7, 7, 5, 4, 4, 4,
+               3, 3, 3, 3, 2, 2, 2, 2,
+               1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
+    # --- Girdled site: 26 species, 168 individuals ---
+    @test sum(girdled) == 168
+    @test richness(girdled) == 26
+
+    # Exact Chao1 (bias-corrected): 26 + f₁(f₁-1)/(2(f₂+1)) = 26 + 12·11/(2·5)
+    # f₁=12 singletons, f₂=4 doubletons; result 39.2 is exact.
+    @test chao1(girdled) ≈ 39.2
+
+    # Exact sample coverage: 1 − f₁/n = 1 − 12/168 = 13/14
+    @test sample_coverage(girdled) ≈ 13 / 14
+
+    # Shannon entropy (nats); verified via vegan::diversity(spider$Girdled, "shannon").
+    @test entropy(Shannon(; base=ℯ), girdled) ≈ 2.4898652 atol = 1e-5
+
+    # Hill(1) = exp(H_nats) is equivalent to Shannon effective diversity.
+    @test hill_number(girdled, 1) ≈ exp(entropy(Shannon(; base=ℯ), girdled))
+
+    # Hill(2) = InverseSimpson; exact from integer counts.
+    # D = Σnᵢ²/n² = (46²+22²+…)/168²; InverseSimpson = 1/D = 168²/Σnᵢ²
+    D_num_g = sum(v^2 for v in girdled)
+    @test hill_number(girdled, 2) ≈ 168^2 / D_num_g
+
+    # ACE from package (Chao & Lee 1992); verifiable via estimateR() in vegan.
+    @test ace(girdled) ≈ 48.41522903033908 atol = 1e-6
+
+    # Pielou evenness J = H_nats / ln(S).
+    @test pielou_evenness(girdled) ≈ entropy(Shannon(; base=ℯ), girdled) / log(26)
+
+    # --- Logged site: 37 species, 252 individuals ---
+    @test sum(logged) == 252
+    @test richness(logged) == 37
+
+    # Exact Chao1: 37 + 14·13/(2·5) = 37 + 182/10 = 55.2
+    @test chao1(logged) ≈ 55.2
+
+    # Exact sample coverage: 1 − 14/252 = 17/18
+    @test sample_coverage(logged) ≈ 17 / 18
+
+    # Shannon entropy (nats); verified via vegan::diversity(spider$Logged, "shannon").
+    @test entropy(Shannon(; base=ℯ), logged) ≈ 2.6686855819621367 atol = 1e-5
+
+    # Hill(2) = InverseSimpson; exact from integer counts.
+    D_num_l = sum(v^2 for v in logged)
+    @test hill_number(logged, 2) ≈ 252^2 / D_num_l
+
+    # ACE; verifiable via estimateR() in vegan.
+    @test ace(logged) ≈ 52.68499427262313 atol = 1e-6
+end
+
+@testset "SciPy convention comparison" begin
+    # Documents where this package agrees with scipy.spatial.distance and where
+    # conventions differ. See notes/references/scipy_conventions.md for details.
+    # SciPy reference: https://docs.scipy.org/doc/scipy/reference/spatial.distance.html
+    # Virtanen et al. (2020) SciPy 1.0. Nature Methods 17:261-272.
+
+    # --- Bray-Curtis: identical formula ---
+    # Both packages use sum(|u-v|) / sum(u+v).
+    @test bray_curtis_dissimilarity([1, 0, 0], [0, 1, 0]) ≈ 1.0
+    @test bray_curtis_dissimilarity([1, 1, 0], [0, 1, 0]) ≈ 1 / 3
+
+    # --- Canberra: this package averages by nonzero terms; SciPy does NOT ---
+    # For [1,2,3] vs [2,1,0]:
+    #   Each term |u-v|/(|u|+|v|): 1/3 + 1/3 + 3/3 = 5/3
+    #   SciPy (unaveraged): 5/3 ≈ 1.6667
+    #   This package (averaged over m=3 nonzero terms): (5/3)/3 = 5/9 ≈ 0.5556
+    # Convention follows Legendre & Legendre (2012) "Numerical Ecology" §7.4.
+    @test canberra_distance([1, 2, 3], [2, 1, 0]) ≈ 5 / 9
+    # Relationship to unaveraged SciPy form: ours * m = scipy (where m = nonzero terms)
+    m = count(>( 0), [1, 2, 3] .+ [2, 1, 0])  # 3 nonzero pairs
+    scipy_canberra = 5 / 3
+    @test canberra_distance([1, 2, 3], [2, 1, 0]) * m ≈ scipy_canberra
+
+    # --- Jensen-Shannon distance: base-2 (bits) vs natural log (nats) ---
+    # SciPy uses natural log and returns sqrt(JSD_nats).
+    # This package defaults to base=2 and returns sqrt(JSD_bits).
+    # Conversion: ours = scipy × sqrt(log₂ e) ≈ scipy × 1.2011.
+    # Numerically: sqrt(JSD_bits) = sqrt(JSD_nats / ln 2) = sqrt(JSD_nats) × 1/sqrt(ln 2).
+    #
+    # SciPy reference values (from scipy.spatial.distance.jensenshannon docs):
+    #   [1.0, 0.0, 0.0] vs [0.0, 1.0, 0.0] → 0.83255 (scipy), 1.0 (ours, base=2)
+    #   [1.0, 0.0]      vs [0.5, 0.5]       → 0.46450 (scipy), 0.55792 (ours, base=2)
+    #
+    scipy_js_disjoint = sqrt(log(2))           # ≈ 0.8326
+    scipy_js_half     = sqrt(0.31128 / log(2)) * sqrt(log(2))  # same as sqrt(0.2158)
+
+    # Our base=2 result for disjoint distributions (max JSD = 1 bit → distance = 1).
+    @test jensen_shannon_distance([1.0, 0.0, 0.0], [0.0, 1.0, 0.0]) ≈ 1.0
+
+    # Using base=ℯ matches SciPy exactly.
+    @test jensen_shannon_distance([1.0, 0.0, 0.0], [0.0, 1.0, 0.0]; base=ℯ) ≈
+        sqrt(log(2)) atol = 1e-10
+    @test jensen_shannon_distance([1.0, 0.0], [0.5, 0.5]; base=ℯ) ≈ 0.4645 atol = 1e-4
+
+    # The ratio between our (base=2) and scipy (nats) values equals sqrt(log₂ e).
+    our_val   = jensen_shannon_distance([1.0, 0.0], [0.5, 0.5])
+    scipy_val = jensen_shannon_distance([1.0, 0.0], [0.5, 0.5]; base=ℯ)
+    @test our_val / scipy_val ≈ sqrt(log2(ℯ)) atol = 1e-10
 end
 
 @testset "mathematical identities — entropy and diversity" begin

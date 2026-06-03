@@ -1,0 +1,100 @@
+\begin{thebibliography}{15}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\href}[2]{#2}
+\providecommand{\path}[1]{#1}
+\providecommand{\DOIprefix}{doi:}
+\providecommand{\ArXivprefix}{arXiv:}
+\providecommand{\URLprefix}{URL: }
+\providecommand{\Pubmedprefix}{pmid:}
+\providecommand{\doi}[1]{\href{http://dx.doi.org/#1}{\path{#1}}}
+\providecommand{\Pubmed}[1]{\href{pmid:#1}{\path{#1}}}
+\providecommand{\bibinfo}[2]{#2}
+\ifx\xfnm\relax \def\xfnm[#1]{\unskip,\space#1}\fi
+%Type = Article
+\bibitem[{Chao(1984)}]{chao1984nonparametric}
+\bibinfo{author}{Chao, A.}, \bibinfo{year}{1984}.
+\newblock \bibinfo{title}{Nonparametric estimation of the number of classes in a population}.
+\newblock \bibinfo{journal}{Scandinavian Journal of Statistics} \bibinfo{volume}{11}, \bibinfo{pages}{265--270}.
+%Type = Article
+\bibitem[{Chao and Shen(2003)}]{chao2003nonparametric}
+\bibinfo{author}{Chao, A.}, \bibinfo{author}{Shen, T.J.}, \bibinfo{year}{2003}.
+\newblock \bibinfo{title}{Nonparametric estimation of shannon's index of diversity when there are unseen species in sample}.
+\newblock \bibinfo{journal}{Environmental and Ecological Statistics} \bibinfo{volume}{10}, \bibinfo{pages}{429--443}.
+\newblock \DOIprefix\doi{10.1023/A:1026096204727}.
+%Type = Article
+\bibitem[{Good(1953)}]{good1953population}
+\bibinfo{author}{Good, I.J.}, \bibinfo{year}{1953}.
+\newblock \bibinfo{title}{The population frequencies of species and the estimation of population parameters}.
+\newblock \bibinfo{journal}{Biometrika} \bibinfo{volume}{40}, \bibinfo{pages}{237--264}.
+\newblock \DOIprefix\doi{10.1093/biomet/40.3-4.237}.
+%Type = Article
+\bibitem[{Hill(1973)}]{hill1973diversity}
+\bibinfo{author}{Hill, M.O.}, \bibinfo{year}{1973}.
+\newblock \bibinfo{title}{Diversity and evenness: A unifying notation and its consequences}.
+\newblock \bibinfo{journal}{Ecology} \bibinfo{volume}{54}, \bibinfo{pages}{427--432}.
+\newblock \DOIprefix\doi{10.2307/1934352}.
+%Type = Article
+\bibitem[{Jiao et~al.(2015)Jiao, Venkat, Han and Weissman}]{jiao2015minimax}
+\bibinfo{author}{Jiao, J.}, \bibinfo{author}{Venkat, K.}, \bibinfo{author}{Han, Y.}, \bibinfo{author}{Weissman, T.}, \bibinfo{year}{2015}.
+\newblock \bibinfo{title}{Minimax estimation of functionals of discrete distributions}.
+\newblock \bibinfo{journal}{IEEE Transactions on Information Theory} \bibinfo{volume}{61}, \bibinfo{pages}{2835--2885}.
+\newblock \DOIprefix\doi{10.1109/TIT.2015.2412945}.
+%Type = Article
+\bibitem[{Jost(2006)}]{jost2006entropy}
+\bibinfo{author}{Jost, L.}, \bibinfo{year}{2006}.
+\newblock \bibinfo{title}{Entropy and diversity}.
+\newblock \bibinfo{journal}{Oikos} \bibinfo{volume}{113}, \bibinfo{pages}{363--375}.
+\newblock \DOIprefix\doi{10.1111/j.2006.0030-1299.14714.x}.
+%Type = Book
+\bibitem[{Legendre and Legendre(2012)}]{legendre2012numerical}
+\bibinfo{author}{Legendre, P.}, \bibinfo{author}{Legendre, L.}, \bibinfo{year}{2012}.
+\newblock \bibinfo{title}{Numerical Ecology}.
+\newblock \bibinfo{edition}{3} ed., \bibinfo{publisher}{Elsevier}, \bibinfo{address}{Amsterdam}.
+%Type = Inproceedings
+\bibitem[{Nemenman et~al.(2002)Nemenman, Shafee and Bialek}]{nemenman2002entropy}
+\bibinfo{author}{Nemenman, I.}, \bibinfo{author}{Shafee, F.}, \bibinfo{author}{Bialek, W.}, \bibinfo{year}{2002}.
+\newblock \bibinfo{title}{Entropy and inference, revisited}, in: \bibinfo{booktitle}{Advances in Neural Information Processing Systems}, pp. \bibinfo{pages}{471--478}.
+%Type = Misc
+\bibitem[{Oksanen et~al.(2022)Oksanen, Simpson, Blanchet, Kindt, Legendre, Minchin, O'Hara, Solymos, Stevens, Szoecs, Wagner, Barbour, Bedward, Bolker, Borcard, Carvalho, Chirico, De~Caceres, Durand, Evangelista, FitzJohn, Friendly, Furneaux, Hannigan, Hill, Lahti, McGlinn, Ouellette, Ribeiro~Cunha, Smith, Stier, Ter~Braak and Weedon}]{oksanen2022vegan}
+\bibinfo{author}{Oksanen, J.}, \bibinfo{author}{Simpson, G.L.}, \bibinfo{author}{Blanchet, F.G.}, \bibinfo{author}{Kindt, R.}, \bibinfo{author}{Legendre, P.}, \bibinfo{author}{Minchin, P.R.}, \bibinfo{author}{O'Hara, R.B.}, \bibinfo{author}{Solymos, P.}, \bibinfo{author}{Stevens, M.H.H.}, \bibinfo{author}{Szoecs, E.}, \bibinfo{author}{Wagner, H.}, \bibinfo{author}{Barbour, M.}, \bibinfo{author}{Bedward, M.}, \bibinfo{author}{Bolker, B.}, \bibinfo{author}{Borcard, D.}, \bibinfo{author}{Carvalho, G.}, \bibinfo{author}{Chirico, M.}, \bibinfo{author}{De~Caceres, M.}, \bibinfo{author}{Durand, S.}, \bibinfo{author}{Evangelista, H.B.A.}, \bibinfo{author}{FitzJohn, R.}, \bibinfo{author}{Friendly, M.}, \bibinfo{author}{Furneaux, B.}, \bibinfo{author}{Hannigan, G.}, \bibinfo{author}{Hill, M.O.}, \bibinfo{author}{Lahti, L.}, \bibinfo{author}{McGlinn, D.}, \bibinfo{author}{Ouellette, M.H.}, \bibinfo{author}{Ribeiro~Cunha, E.}, \bibinfo{author}{Smith, T.}, \bibinfo{author}{Stier, A.}, \bibinfo{author}{Ter~Braak, C.J.F.}, \bibinfo{author}{Weedon, J.}, \bibinfo{year}{2022}.
+\newblock \bibinfo{title}{vegan: Community ecology package}.
+\newblock \bibinfo{note}{R package}.
+%Type = Article
+\bibitem[{Paninski(2003)}]{paninski2003entropy}
+\bibinfo{author}{Paninski, L.}, \bibinfo{year}{2003}.
+\newblock \bibinfo{title}{Estimation of entropy and mutual information}.
+\newblock \bibinfo{journal}{Neural Computation} \bibinfo{volume}{15}, \bibinfo{pages}{1191--1253}.
+\newblock \DOIprefix\doi{10.1162/089976603321780272}.
+%Type = Article
+\bibitem[{Peng(2011)}]{peng2011reproducible}
+\bibinfo{author}{Peng, R.D.}, \bibinfo{year}{2011}.
+\newblock \bibinfo{title}{Reproducible research in computational science}.
+\newblock \bibinfo{journal}{Science} \bibinfo{volume}{334}, \bibinfo{pages}{1226--1227}.
+\newblock \DOIprefix\doi{10.1126/science.1213847}.
+%Type = Article
+\bibitem[{Valiant and Valiant(2017)}]{valiant2017estimating}
+\bibinfo{author}{Valiant, G.}, \bibinfo{author}{Valiant, P.}, \bibinfo{year}{2017}.
+\newblock \bibinfo{title}{Estimating the unseen: Improved estimators for entropy and other properties}.
+\newblock \bibinfo{journal}{Journal of the ACM} \bibinfo{volume}{64}, \bibinfo{pages}{37:1--37:41}.
+\newblock \DOIprefix\doi{10.1145/3125643}.
+%Type = Article
+\bibitem[{Whittaker(1960)}]{whittaker1960vegetation}
+\bibinfo{author}{Whittaker, R.H.}, \bibinfo{year}{1960}.
+\newblock \bibinfo{title}{Vegetation of the siskiyou mountains, oregon and california}.
+\newblock \bibinfo{journal}{Ecological Monographs} \bibinfo{volume}{30}, \bibinfo{pages}{279--338}.
+\newblock \DOIprefix\doi{10.2307/1943563}.
+%Type = Article
+\bibitem[{Wilkinson et~al.(2016)Wilkinson, Dumontier, Aalbersberg, Appleton, Axton, Baak, Blomberg, Boiten, da~Silva~Santos, Bourne, Bouwman, Brookes, Clark, Crosas, Dillo, Dumon, Edmunds, Evelo, Finkers, Gonzalez-Beltran, Gray, Groth, Goble, Grethe, Heringa, 't~Hoen, Hooft, Kuhn, Kok, Kok, Lusher, Martone, Mons, Packer, Persson, Rocca-Serra, Roos, van Schaik, Sansone, Schultes, Sengstag, Slater, Strawn, Swertz, Thompson, van~der Lei, van Mulligen, Velterop, Waagmeester, Wittenburg, Wolstencroft, Zhao and Mons}]{wilkinson2016fair}
+\bibinfo{author}{Wilkinson, M.D.}, \bibinfo{author}{Dumontier, M.}, \bibinfo{author}{Aalbersberg, I.J.}, \bibinfo{author}{Appleton, G.}, \bibinfo{author}{Axton, M.}, \bibinfo{author}{Baak, A.}, \bibinfo{author}{Blomberg, N.}, \bibinfo{author}{Boiten, J.W.}, \bibinfo{author}{da~Silva~Santos, L.B.}, \bibinfo{author}{Bourne, P.E.}, \bibinfo{author}{Bouwman, J.}, \bibinfo{author}{Brookes, A.J.}, \bibinfo{author}{Clark, T.}, \bibinfo{author}{Crosas, M.}, \bibinfo{author}{Dillo, I.}, \bibinfo{author}{Dumon, O.}, \bibinfo{author}{Edmunds, S.}, \bibinfo{author}{Evelo, C.T.}, \bibinfo{author}{Finkers, R.}, \bibinfo{author}{Gonzalez-Beltran, A.}, \bibinfo{author}{Gray, A.J.G.}, \bibinfo{author}{Groth, P.}, \bibinfo{author}{Goble, C.}, \bibinfo{author}{Grethe, J.S.}, \bibinfo{author}{Heringa, J.}, \bibinfo{author}{'t~Hoen, P.A.C.}, \bibinfo{author}{Hooft, R.}, \bibinfo{author}{Kuhn, T.}, \bibinfo{author}{Kok, R.}, \bibinfo{author}{Kok, J.}, \bibinfo{author}{Lusher, S.J.}, \bibinfo{author}{Martone, M.E.}, \bibinfo{author}{Mons, A.}, \bibinfo{author}{Packer, A.L.}, \bibinfo{author}{Persson, B.}, \bibinfo{author}{Rocca-Serra, P.}, \bibinfo{author}{Roos, M.}, \bibinfo{author}{van Schaik, R.}, \bibinfo{author}{Sansone, S.A.}, \bibinfo{author}{Schultes, E.}, \bibinfo{author}{Sengstag, T.}, \bibinfo{author}{Slater, T.}, \bibinfo{author}{Strawn, G.}, \bibinfo{author}{Swertz, M.A.}, \bibinfo{author}{Thompson, M.}, \bibinfo{author}{van~der Lei, J.}, \bibinfo{author}{van Mulligen, E.}, \bibinfo{author}{Velterop, J.}, \bibinfo{author}{Waagmeester, A.}, \bibinfo{author}{Wittenburg, P.}, \bibinfo{author}{Wolstencroft, K.}, \bibinfo{author}{Zhao, J.}, \bibinfo{author}{Mons, B.}, \bibinfo{year}{2016}.
+\newblock \bibinfo{title}{The fair guiding principles for scientific data management and stewardship}.
+\newblock \bibinfo{journal}{Scientific Data} \bibinfo{volume}{3}, \bibinfo{pages}{160018}.
+\newblock \DOIprefix\doi{10.1038/sdata.2016.18}.
+%Type = Article
+\bibitem[{Wu and Yang(2016)}]{wu2016minimax}
+\bibinfo{author}{Wu, Y.}, \bibinfo{author}{Yang, P.}, \bibinfo{year}{2016}.
+\newblock \bibinfo{title}{Minimax rates of entropy estimation on large alphabets via best polynomial approximation}.
+\newblock \bibinfo{journal}{IEEE Transactions on Information Theory} \bibinfo{volume}{62}, \bibinfo{pages}{3702--3720}.
+\newblock \DOIprefix\doi{10.1109/TIT.2016.2548468}.
+
+\end{thebibliography}
