@@ -17,7 +17,7 @@ Where other fields use the same mathematical object under a different name,
 the package exposes those conventions explicitly; for example,
 `LinguisticDiversityIndex()` and `GreenbergDiversityIndex()` are aliases by
 interpretation for Gini-Simpson diversity.
-
+ 
 If you are coming from R, the documentation includes a vegan migration guide.
 If you are choosing between packages, the documentation also includes
 availability checklists against common ecology and biodiversity tools.
