@@ -48,7 +48,14 @@ makedocs(;
     checkdocs=:none,
 )
 
-if get(ENV, "CI", "false") == "true"
+github_ref = get(ENV, "GITHUB_REF", "")
+should_deploy_docs =
+    get(ENV, "CI", "false") == "true" &&
+    get(ENV, "GITHUB_EVENT_NAME", "") == "push" &&
+    (github_ref in ("refs/heads/main", "refs/heads/master") ||
+     startswith(github_ref, "refs/tags/"))
+
+if should_deploy_docs
     deploydocs(;
         repo="github.com/mroughan/DiversityAndDissimilarity.jl",
     )
