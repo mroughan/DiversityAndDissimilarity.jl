@@ -33,6 +33,7 @@ makedocs(;
         ],
         "Framework" => [
             "Framework" => "framework.md",
+            "Type Structure" => "type-structure.md",
             "Workflow Case Study" => "case-study.md",
             "Reference Examples" => "reference-examples.md",
             "Release Readiness" => "release-readiness.md",

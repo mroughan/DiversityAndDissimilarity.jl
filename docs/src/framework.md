@@ -4,6 +4,9 @@
 addition to numeric index values. These helpers make conventions explicit and
 make validation reproducible.
 
+For the package's abstract and concrete index hierarchy, see
+[Type Structure](type-structure.md).
+
 ## Index Metadata And Traits
 
 Use [`index_metadata`](@ref) to inspect how an index is represented:

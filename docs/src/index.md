@@ -37,6 +37,7 @@ Pages = [
     "scaling.md",
     "benchmarks.md",
     "framework.md",
+    "type-structure.md",
     "case-study.md",
     "reference-examples.md",
     "release-readiness.md",

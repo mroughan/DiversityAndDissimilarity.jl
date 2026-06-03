@@ -3,6 +3,14 @@
 This page is a compact index of the public API. Full docstrings are grouped by
 topic on the diversity and similarity pages.
 
+## Core Types
+
+```@docs
+DiversityIndex
+AlphaDiversityIndex
+PairwiseIndex
+```
+
 ## Data Preparation
 
 ```@docs

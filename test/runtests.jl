@@ -280,12 +280,42 @@ end
     @test index_metadata(BrayCurtis()).is_semimetric
     @test index_metadata(Jaccard()).bounds.upper_meaning ==
         "maximal similarity; conventionally identical or complete overlap"
+    @test index_bounds(Shannon()).lower_meaning ==
+        "no uncertainty; all mass in one category"
+    @test index_bounds(Shannon()).upper_meaning ==
+        "maximum uncertainty for the supplied or observed support"
+    @test index_bounds(Richness()).lower_meaning ==
+        "minimal diversity under the index convention"
+    @test index_bounds(Richness()).upper_meaning ==
+        "unbounded effective or richness-scale diversity"
+    @test index_bounds(GiniSimpson()).upper_meaning ==
+        "maximal diversity under the index convention"
+    @test index_bounds(Simpson()).lower_meaning == "minimal dominance"
+    @test index_bounds(Simpson()).upper_meaning == "maximal dominance"
+    @test index_bounds(SampleCoverage()).lower_meaning ==
+        "no sampled probability mass covered"
+    @test index_bounds(SampleCoverage()).upper_meaning ==
+        "complete sampled probability mass covered"
+    @test index_bounds(PielouEvenness()).lower_meaning == "minimal evenness"
+    @test index_bounds(PielouEvenness()).upper_meaning == "maximal evenness"
+    @test index_bounds(Chao1()).lower_meaning == :unknown
+    @test index_bounds(Chao1()).upper_meaning == :unknown
+    @test is_triangular(BrayCurtis()) == false
+    @test is_supermetric(Richness()) == :unknown
     @test all(result -> result.passed, validate_reference_cases())
 
     report = estimator_report([1, 1, 2, 0, 5]; support=6)
     @test report.observed_richness == 4
     @test report.singletons == 2
     @test any(estimate -> estimate.name == :add_one, report.estimates)
+
+    table_report = estimator_report(
+        DataFrame(site=["a", "b"], oak=[1, 3], ash=[1, 0], elm=[2, 1]);
+        species=[:oak, :ash, :elm],
+    )
+    @test length(table_report) == 2
+    @test table_report[1].observed_richness == 3
+    @test table_report[2].observed_richness == 2
 
     linguistic = diversity(LinguisticDiversityIndex(), [1, 1, 2])
     @test linguistic ≈ diversity(GiniSimpson(), [1, 1, 2])
