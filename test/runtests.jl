@@ -1,5 +1,6 @@
 using DataFrames
 using DiversityAndDissimilarity
+using LinearAlgebra
 using Test
 
 function test_valid_probabilities(data; frequencies=true)
@@ -437,4 +438,343 @@ end
     @test pielou_evenness(x) ≈ entropy(Shannon(; base=ℯ), x) / log(3)
     @test fisher_alpha(x) * log1p(sum(x) / fisher_alpha(x)) ≈ 3
     @test bray_curtis_distance([1, 2, 3], [2, 2, 0]) ≈ 4 / 10
+end
+
+@testset "reference values from Magurran (2004)" begin
+    # Five-species community used as a recurring worked example in:
+    # Magurran, A.E. (2004) "Measuring Biological Diversity", Blackwell, Table 4.1.
+    # Independent verification via R vegan:
+    #   x <- c(135, 76, 45, 22, 13)
+    #   vegan::diversity(x, "shannon")    # 1.329752 (nats)
+    #   vegan::diversity(x, "simpson")    # 0.684947 (= GiniSimpson)
+    #   vegan::diversity(x, "invsimpson") # 3.174054
+    x = [135, 76, 45, 22, 13]
+
+    @test richness(x) == 5
+
+    # Simpson concentration D = Σp_i² = (135²+76²+45²+22²+13²)/291²; exact fraction.
+    D_num = 135^2 + 76^2 + 45^2 + 22^2 + 13^2  # 26679
+    D_den = sum(x)^2                             # 84681
+    @test simpson_index(x) ≈ D_num / D_den
+    @test gini_simpson_index(x) ≈ 1 - D_num / D_den
+    @test inverse_simpson_index(x) ≈ D_den / D_num
+
+    # Shannon entropy in nats (vegan default base).
+    @test entropy(Shannon(; base=ℯ), x) ≈ 1.329752 atol = 1e-4
+
+    # Pielou evenness J = H_nats / ln(S).
+    @test pielou_evenness(x) ≈ entropy(Shannon(; base=ℯ), x) / log(5)
+
+    # Fisher's alpha satisfies the implicit equation S = α log(1 + n/α).
+    α = fisher_alpha(x)
+    @test α * log1p(sum(x) / α) ≈ 5
+end
+
+@testset "mathematical identities — entropy and diversity" begin
+    # --- Shannon entropy (Cover & Thomas 2006, "Elements of Information Theory") ---
+
+    # Uniform distribution achieves maximum entropy log₂(n).
+    # H(p₁,...,pₙ) ≤ log₂(n) with equality iff pᵢ = 1/n (Cover & Thomas §2.6).
+    for n in [2, 3, 5, 10, 50]
+        @test shannon_entropy(ones(n)) ≈ log2(n)
+    end
+
+    # Single non-zero mass: H = 0 (no uncertainty).
+    @test shannon_entropy([1, 0, 0, 0]) ≈ 0.0
+    @test shannon_entropy([7]) ≈ 0.0
+
+    # Adding zero-probability species is a no-op (continuity axiom, Shannon 1948).
+    x = [1, 3, 2]
+    @test shannon_entropy(x) ≈ shannon_entropy([x; 0])
+    @test shannon_entropy(x) ≈ shannon_entropy([0; x; 0])
+    @test richness(x) == richness([x; 0]) == richness([0; x; 0])
+
+    # Base change: H_b = H_e / ln(b).
+    @test shannon_entropy(x; base=2) ≈ shannon_entropy(x; base=ℯ) / log(2)
+    @test shannon_entropy(x; base=10) ≈ shannon_entropy(x; base=ℯ) / log(10)
+
+    # MillerMadow corrects upward: H_MM ≥ H_Plugin (correction is always +).
+    # Miller (1955) "Note on the bias of information estimates".
+    for x in [[1, 1], [1, 2, 3], [4, 3, 2, 1]]
+        @test shannon_entropy(x; estimator=MillerMadow()) ≥ shannon_entropy(x)
+    end
+
+    # --- Simpson family identities ---
+
+    # Complementarity: D + (1-D) = 1 and D × (1/D) = 1 for any distribution.
+    for x in [[1, 2, 3], [10, 10], [5, 3, 1, 1], [1, 1, 1, 1, 1]]
+        @test simpson_index(x) + gini_simpson_index(x) ≈ 1.0
+        @test simpson_index(x) * inverse_simpson_index(x) ≈ 1.0
+    end
+
+    # Uniform distribution: GiniSimpson = 1 - 1/n (maximum for given richness).
+    for n in [2, 4, 10]
+        @test gini_simpson_index(ones(n)) ≈ 1 - 1 / n
+    end
+
+    # --- Renyi entropy at special orders (Rényi 1961, Hill 1973) ---
+    x = [1, 2, 3, 4]
+
+    # q = 0: H₀ = log₂(S) since Σpᵢ⁰ = S (number of non-zero categories).
+    @test renyi_entropy(x, 0) ≈ log2(richness(x))
+
+    # q = 1 (limit): reduces to Shannon entropy.
+    @test renyi_entropy(x, 1) ≈ shannon_entropy(x)
+
+    # q = 2: H₂ = −log₂(Σpᵢ²) = −log₂(D_Simpson).
+    @test renyi_entropy(x, 2) ≈ -log2(simpson_index(x))
+
+    # Uniform distribution: Rényi(q) = log₂(n) for all q.
+    for q in [0.0, 0.5, 1.0, 2.0, 5.0]
+        @test renyi_entropy(ones(6), q) ≈ log2(6)
+    end
+
+    # Rényi is non-increasing in q for non-uniform distributions (Hill 1973).
+    @test renyi_entropy(x, 0) ≥ renyi_entropy(x, 1) - 1e-10
+    @test renyi_entropy(x, 1) ≥ renyi_entropy(x, 2) - 1e-10
+    @test renyi_entropy(x, 2) ≥ renyi_entropy(x, 5) - 1e-10
+
+    # --- Tsallis entropy at special orders ---
+    # Tsallis (1988) "Possible generalization of Boltzmann-Gibbs statistics".
+
+    # q = 1: reduces to Shannon (limit definition, scaled to same base).
+    @test tsallis_entropy(x, 1) ≈ shannon_entropy(x)
+
+    # q = 2 with base b: T₂ = GiniSimpson / log(b).
+    # From T_q = (Σpᵢ^q − 1)/((1−q)log b): at q=2, T₂ = (D−1)/(−log b) = (1−D)/log b.
+    for b in [2.0, ℯ, 10.0]
+        @test tsallis_entropy(x, 2; base=b) ≈ gini_simpson_index(x) / log(b)
+    end
+
+    # --- Hill numbers (Hill 1973, "Diversity and evenness") ---
+
+    # Hill(0) = Richness (counts all species equally).
+    @test hill_number(x, 0) == richness(x)
+
+    # Hill(1) = exp(Shannon in nats) = Shannon effective diversity.
+    @test hill_number(x, 1) ≈ exp(shannon_entropy(x; base=ℯ))
+
+    # Hill(2) = Inverse Simpson.
+    @test hill_number(x, 2) ≈ inverse_simpson_index(x)
+
+    # Hill–Rényi correspondence: Hill(q) = base^Renyi_base(q) for any base.
+    for q in [0.5, 1.5, 2.0, 3.0]
+        @test hill_number(x, q) ≈ 2.0^renyi_entropy(x, q)
+        @test hill_number(x, q) ≈ ℯ^renyi_entropy(x, q; base=ℯ)
+    end
+
+    # Uniform distribution: Hill(q) = n for all q.
+    for n in [3, 5, 10]
+        for q in [0.0, 0.5, 1.0, 2.0, 5.0]
+            @test hill_number(ones(n), q) ≈ float(n)
+        end
+    end
+
+    # Hill numbers are non-increasing in q for non-uniform distributions.
+    @test hill_number(x, 0) ≥ hill_number(x, 1) - 1e-10
+    @test hill_number(x, 1) ≥ hill_number(x, 2) - 1e-10
+
+    # --- Richness estimator bounds ---
+
+    # Chao1 = Richness when no singletons (f₁ = 0); see Chao (1984) eq. 2.
+    @test chao1([2, 4, 3, 6]) == float(richness([2, 4, 3, 6]))
+
+    # Chao1 ≥ Richness and ACE ≥ Richness (both are upward-biased estimators).
+    for x in [[1, 1, 2, 3], [4, 3, 2, 1], [2, 2, 2], [1, 5, 3]]
+        @test chao1(x) ≥ richness(x) - 1e-10
+        @test ace(x) ≥ richness(x) - 1e-10
+    end
+
+    # SampleCoverage = 1 when no singletons (all species observed at least twice).
+    @test sample_coverage([2, 3, 4]) ≈ 1.0
+    @test sample_coverage([2, 2, 2, 2]) ≈ 1.0
+
+    # PielouEvenness = 1 for uniform distributions.
+    for n in [2, 5, 10]
+        @test pielou_evenness(ones(n)) ≈ 1.0
+    end
+end
+
+@testset "mathematical identities — pairwise indices" begin
+    # --- Incidence index relationships ---
+
+    # Ruzicka = Jaccard on binary (0/1) data.
+    # When data are binary, min(x,y)=x∧y and max(x,y)=x∨y, so Ruzicka reduces
+    # to |A∩B|/|A∪B| = Jaccard (Ruzicka 1958 is the abundance generalisation).
+    for (a, b) in [([1, 1, 0, 1], [1, 0, 1, 1]), ([1, 0, 1], [0, 1, 1])]
+        @test similarity(Ruzicka(), a, b) ≈ similarity(Jaccard(), a, b)
+    end
+
+    # Jaccard–Sørensen conversion: S = 2J/(1+J) and J = S/(2−S).
+    # Follows from their definitions with |A|+|B| = 2|A∩B| + |A△B|.
+    for (a, b) in [([1, 1, 0, 1], [1, 0, 1, 1]), ([1, 0, 0, 1], [0, 1, 0, 1])]
+        J = similarity(Jaccard(), a, b)
+        S = similarity(SorensenDice(), a, b)
+        @test S ≈ 2J / (1 + J)
+        @test J ≈ S / (2 - S)
+    end
+
+    # --- Probability distance relationships ---
+
+    # Manhattan = 2 × TotalVariation.
+    # TV = ½Σ|pᵢ−qᵢ|, Manhattan = Σ|pᵢ−qᵢ|, so Manhattan = 2 TV.
+    for (a, b) in [([1, 2, 3], [3, 2, 1]), ([4, 1, 0, 5], [1, 3, 2, 4])]
+        @test manhattan_distance(a, b) ≈ 2 * total_variation_distance(a, b)
+    end
+
+    # Chord = √2 × Hellinger.
+    # Hellinger = √(Σ(√pᵢ−√qᵢ)²/2), Chord = √(Σ(√pᵢ−√qᵢ)²), so Chord = √2 H.
+    # See Legendre & Gallagher (2001) "Ecologically meaningful transformations".
+    for (a, b) in [([1, 2, 3], [3, 1, 2]), ([4, 1, 0, 5], [1, 3, 2, 4])]
+        @test chord_distance(a, b) ≈ sqrt(2) * hellinger_distance(a, b)
+    end
+
+    # Hellinger² = 1 − Bhattacharyya coefficient.
+    # H²(p,q) = Σ(√pᵢ−√qᵢ)²/2 = (Σpᵢ+Σqᵢ−2Σ√(pᵢqᵢ))/2 = 1−BC(p,q).
+    # See Deza & Deza (2016) "Encyclopedia of Distances", ch. 14.
+    for (a, b) in [([1, 3, 2], [2, 1, 3]), ([5, 1, 4], [2, 4, 4])]
+        @test hellinger_distance(a, b)^2 ≈ 1 - bhattacharyya_coefficient(a, b)
+    end
+
+    # JensenShannon (metric, distance=true) = √(JensenDifference divergence).
+    # JensenShannon is the square-root metric form; JensenDifference is the raw divergence.
+    for (a, b) in [([1, 2, 3], [3, 1, 2]), ([1, 0, 4], [0, 3, 1])]
+        @test jensen_shannon_distance(a, b)^2 ≈ jensen_difference(a, b)
+    end
+
+    # Jensen–Shannon divergence = ½KL(p‖m) + ½KL(q‖m), m = (p+q)/2.
+    # Lin (1991) "Divergence measures based on the Shannon entropy", IEEE Trans. Inf. Theory.
+    a, b = [1, 2, 3], [3, 1, 2]
+    pa = proportions(a); pb = proportions(b)
+    m = (pa .+ pb) ./ 2
+    js_via_kl = (kullback_leibler_divergence(pa, m) + kullback_leibler_divergence(pb, m)) / 2
+    @test jensen_difference(a, b) ≈ js_via_kl
+
+    # KL(p‖Uniform) = log₂(n) − H(p).
+    # KL(p‖U) = Σpᵢ log(pᵢ/(1/n)) = −H(p) + log₂(n) (Cover & Thomas §2.3).
+    for x in [[1, 2, 3], [4, 1, 5, 2], [3, 3, 3]]
+        n = richness(x)
+        uniform = ones(n)
+        @test kullback_leibler_divergence(x, uniform) ≈ log2(n) - shannon_entropy(x)
+    end
+
+    # --- Self-identity: d(x,x)=0 for distances, s(x,x)=1 for similarities ---
+    # Follows from definitions; failure indicates a normalization or sign bug.
+    for x in [[1, 2, 3], [5, 0, 1, 3], [2, 2, 2]]
+        for index in [Jaccard(), SorensenDice(), Overlap(), BrayCurtis(), Ruzicka(),
+                      TotalVariation(), Manhattan(), Euclidean(), Hellinger(), Chord(),
+                      JensenShannon(), MorisitaHorn()]
+            if is_similarity(index)
+                @test similarity(index, x, x) ≈ 1.0
+                @test dissimilarity(index, x, x) ≈ 0.0
+            else
+                @test dissimilarity(index, x, x) ≈ 0.0
+            end
+        end
+        @test similarity(Bhattacharyya(), x, x) ≈ 1.0
+        @test dissimilarity(Bhattacharyya(), x, x) ≈ 0.0
+        @test dissimilarity(KullbackLeibler(), x, x) ≈ 0.0
+        @test dissimilarity(ShannonDifference(), x, x) ≈ 0.0
+        @test dissimilarity(JensenDifference(), x, x) ≈ 0.0
+    end
+
+    # --- Symmetry for all symmetric indices ---
+    # is_symmetric(index) == true iff f(a,b) = f(b,a); KullbackLeibler is the exception.
+    for (a, b) in [([1, 2, 3], [3, 1, 2]), ([4, 1, 0, 2], [1, 3, 2, 0])]
+        for index in [Jaccard(), SorensenDice(), BrayCurtis(), Ruzicka(),
+                      TotalVariation(), Hellinger(), JensenShannon(), MorisitaHorn()]
+            @test dissimilarity(index, a, b) ≈ dissimilarity(index, b, a)
+        end
+    end
+
+    # --- Triangle inequality for metric indices ---
+    # For any triplet (a,b,c): d(a,c) ≤ d(a,b) + d(b,c).
+    # Indices with is_metric == true must satisfy this exactly (up to float tolerance).
+    a, b, c = [4, 2, 0, 1], [1, 3, 2, 0], [0, 1, 4, 3]
+    for index in [Jaccard(), TotalVariation(), Manhattan(), Euclidean(), Hellinger(),
+                  Chord(), JensenShannon()]
+        dab = dissimilarity(index, a, b)
+        dbc = dissimilarity(index, b, c)
+        dac = dissimilarity(index, a, c)
+        @test dac ≤ dab + dbc + 1e-10
+    end
+
+    # --- Pairwise matrix properties ---
+    # Diagonal must be 0 (distances) or 1 (similarities); off-diagonal symmetric.
+    mat = [1 1 2 0 5; 3 0 1 1 0; 2 3 0 2 1]
+    for index in [BrayCurtis(), Jaccard(), Hellinger(), JensenShannon()]
+        D = dissimilarity(index, mat)
+        @test all(≈(0.0), diag(D))
+        @test D ≈ D'
+    end
+    S = similarity(Jaccard(), mat)
+    @test all(≈(1.0), diag(S))
+    @test S ≈ S'
+end
+
+@testset "analytic bounds" begin
+    # Properties that hold for any valid abundance vector.
+    # These serve as lightweight property tests over representative inputs.
+    function check_alpha_bounds(x)
+        n = richness(x)
+        H = shannon_entropy(x)
+        # Shannon entropy ≤ log₂(n), equality iff uniform (Cover & Thomas §2.6).
+        @test H ≤ log2(n) + 1e-10
+        # Pielou evenness ∈ [0, 1], achieves 1 iff uniform (Pielou 1966).
+        J = pielou_evenness(x)
+        @test 0 ≤ J ≤ 1 + 1e-10
+        # GiniSimpson ∈ [0, 1−1/n] for n≥2 (Simpson 1949).
+        G = gini_simpson_index(x)
+        @test 0 ≤ G ≤ 1 - 1 / n + 1e-10
+        # SampleCoverage ∈ [0, 1] (Good 1953, "The population frequencies of species").
+        @test 0 ≤ sample_coverage(x) ≤ 1
+        # Richness estimators ≥ observed richness (Chao 1984, §2).
+        @test chao1(x) ≥ n - 1e-10
+        # ACE requires sample coverage > 0; skip vectors where all rare species are singletons.
+        if count(==(1), x) < sum(v for v in x if v ≤ 10)
+            @test ace(x) ≥ n - 1e-10
+        end
+        # Hill numbers are non-increasing in q for non-uniform distributions (Hill 1973).
+        if n > 1
+            @test hill_number(x, 0) ≥ hill_number(x, 1) - 1e-10
+            @test hill_number(x, 1) ≥ hill_number(x, 2) - 1e-10
+        end
+    end
+
+    function check_pairwise_bounds(a, b)
+        # Bounded [0,1] incidence and abundance similarity/dissimilarity indices.
+        # For these, similarity(index, a, b) + dissimilarity(index, a, b) = 1 by construction.
+        for index in [Jaccard(), SorensenDice(), Overlap(), BrayCurtis(), Ruzicka(),
+                      TotalVariation(), Hellinger()]
+            s = similarity(index, a, b)
+            d = dissimilarity(index, a, b)
+            @test 0 ≤ s ≤ 1 + 1e-10
+            @test 0 ≤ d ≤ 1 + 1e-10
+            @test s + d ≈ 1.0
+        end
+        # Jensen-Shannon divergence ∈ [0, 1] in bits (Lin 1991 Theorem 3).
+        @test 0 ≤ jensen_difference(a, b) ≤ 1 + 1e-10
+        # Jensen-Shannon distance (√divergence) ∈ [0, 1] in bits.
+        @test 0 ≤ jensen_shannon_distance(a, b) ≤ 1 + 1e-10
+        # Bhattacharyya coefficient ∈ [0, 1].
+        # Note: Bhattacharyya *distance* = -log(coefficient) ∈ [0, ∞], not bounded to 1.
+        # dissimilarity + similarity ≠ 1 for this index.
+        @test 0 ≤ bhattacharyya_coefficient(a, b) ≤ 1 + 1e-10
+    end
+
+    # Use assemblages where ACE is well-defined: at least one non-singleton rare species.
+    assemblages = [[1, 2, 3], [10, 10, 10], [1, 2, 3, 4, 100], [5, 3, 1], [2, 2]]
+    for x in assemblages
+        check_alpha_bounds(x)
+    end
+
+    pairs = [
+        ([1, 2, 3], [3, 2, 1]),
+        ([4, 1, 0, 5], [1, 3, 2, 4]),
+        ([10, 1, 0], [0, 10, 1]),   # overlapping support (avoids infinite Bhattacharyya)
+        ([1, 1, 1], [1, 1, 1]),
+    ]
+    for (a, b) in pairs
+        check_pairwise_bounds(a, b)
+    end
 end
