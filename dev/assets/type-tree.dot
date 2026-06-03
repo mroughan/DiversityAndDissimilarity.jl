@@ -1,0 +1,100 @@
+digraph DiversityAndDissimilarityTypes {
+  graph [rankdir=TB, bgcolor="transparent", pad="0.2", nodesep="0.35", ranksep="0.55"];
+  node [style="filled", fillcolor="#f8fafc", color="#334155", fontname="Helvetica", fontsize=11];
+  edge [color="#64748b", arrowsize=0.7];
+
+  subgraph cluster_DiversityIndex {
+    label="DiversityIndex tree";
+    color="#cbd5e1";
+    fontname="Helvetica";
+    ACE [label="ACE", shape=ellipse];
+    AlphaDiversityIndex [label="AlphaDiversityIndex", shape=box];
+    Bhattacharyya [label="Bhattacharyya", shape=ellipse];
+    BrayCurtis [label="BrayCurtis", shape=ellipse];
+    Canberra [label="Canberra", shape=ellipse];
+    Chao1 [label="Chao1", shape=ellipse];
+    Chord [label="Chord", shape=ellipse];
+    DiversityIndex [label="DiversityIndex", shape=box];
+    Euclidean [label="Euclidean", shape=ellipse];
+    FisherAlpha [label="FisherAlpha", shape=ellipse];
+    GiniSimpson [label="GiniSimpson", shape=ellipse];
+    GreenbergDiversityIndex [label="GreenbergDiversityIndex", shape=ellipse];
+    Hellinger [label="Hellinger", shape=ellipse];
+    Hill [label="Hill", shape=ellipse];
+    InverseSimpson [label="InverseSimpson", shape=ellipse];
+    Jaccard [label="Jaccard", shape=ellipse];
+    JensenDifference_E__ShannonEstimator__S_ [label="JensenDifference{E<:ShannonEstimator, S}", shape=ellipse];
+    JensenShannon_E__ShannonEstimator__S_ [label="JensenShannon{E<:ShannonEstimator, S}", shape=ellipse];
+    KullbackLeibler_E__ShannonEstimator__S_ [label="KullbackLeibler{E<:ShannonEstimator, S}", shape=ellipse];
+    LinguisticDiversityIndex [label="LinguisticDiversityIndex", shape=ellipse];
+    Manhattan [label="Manhattan", shape=ellipse];
+    MorisitaHorn [label="MorisitaHorn", shape=ellipse];
+    Overlap [label="Overlap", shape=ellipse];
+    PairwiseIndex [label="PairwiseIndex", shape=box];
+    PielouEvenness [label="PielouEvenness", shape=ellipse];
+    Renyi [label="Renyi", shape=ellipse];
+    Richness [label="Richness", shape=ellipse];
+    Ruzicka [label="Ruzicka", shape=ellipse];
+    SampleCoverage [label="SampleCoverage", shape=ellipse];
+    ShannonDifference_E__ShannonEstimator__S_ [label="ShannonDifference{E<:ShannonEstimator, S}", shape=ellipse];
+    Shannon_E__ShannonEstimator_ [label="Shannon{E<:ShannonEstimator}", shape=ellipse];
+    Simpson [label="Simpson", shape=ellipse];
+    SorensenDice [label="SorensenDice", shape=ellipse];
+    TotalVariation [label="TotalVariation", shape=ellipse];
+    Tsallis [label="Tsallis", shape=ellipse];
+  }
+
+  subgraph cluster_ShannonEstimator {
+    label="ShannonEstimator tree";
+    color="#cbd5e1";
+    fontname="Helvetica";
+    AddGamma [label="AddGamma", shape=ellipse];
+    Basharin [label="Basharin", shape=ellipse];
+    ChaoShen [label="ChaoShen", shape=ellipse];
+    HausserStrimmer [label="HausserStrimmer", shape=ellipse];
+    MillerMadow [label="MillerMadow", shape=ellipse];
+    Plugin [label="Plugin", shape=ellipse];
+    ShannonEstimator [label="ShannonEstimator", shape=box];
+  }
+
+  AlphaDiversityIndex -> ACE;
+  ShannonEstimator -> AddGamma;
+  DiversityIndex -> AlphaDiversityIndex;
+  ShannonEstimator -> Basharin;
+  PairwiseIndex -> Bhattacharyya;
+  PairwiseIndex -> BrayCurtis;
+  PairwiseIndex -> Canberra;
+  AlphaDiversityIndex -> Chao1;
+  ShannonEstimator -> ChaoShen;
+  PairwiseIndex -> Chord;
+  PairwiseIndex -> Euclidean;
+  AlphaDiversityIndex -> FisherAlpha;
+  AlphaDiversityIndex -> GiniSimpson;
+  AlphaDiversityIndex -> GreenbergDiversityIndex;
+  ShannonEstimator -> HausserStrimmer;
+  PairwiseIndex -> Hellinger;
+  AlphaDiversityIndex -> Hill;
+  AlphaDiversityIndex -> InverseSimpson;
+  PairwiseIndex -> Jaccard;
+  PairwiseIndex -> JensenDifference_E__ShannonEstimator__S_;
+  PairwiseIndex -> JensenShannon_E__ShannonEstimator__S_;
+  PairwiseIndex -> KullbackLeibler_E__ShannonEstimator__S_;
+  AlphaDiversityIndex -> LinguisticDiversityIndex;
+  PairwiseIndex -> Manhattan;
+  ShannonEstimator -> MillerMadow;
+  PairwiseIndex -> MorisitaHorn;
+  PairwiseIndex -> Overlap;
+  DiversityIndex -> PairwiseIndex;
+  AlphaDiversityIndex -> PielouEvenness;
+  ShannonEstimator -> Plugin;
+  AlphaDiversityIndex -> Renyi;
+  AlphaDiversityIndex -> Richness;
+  PairwiseIndex -> Ruzicka;
+  AlphaDiversityIndex -> SampleCoverage;
+  PairwiseIndex -> ShannonDifference_E__ShannonEstimator__S_;
+  AlphaDiversityIndex -> Shannon_E__ShannonEstimator_;
+  AlphaDiversityIndex -> Simpson;
+  PairwiseIndex -> SorensenDice;
+  PairwiseIndex -> TotalVariation;
+  AlphaDiversityIndex -> Tsallis;
+}
