@@ -1,0 +1,21 @@
+\begin{table}[t]
+\centering
+\caption{Selected warmed, per-call benchmark results from the generated benchmark report on an Intel Core Ultra 9 285K with Julia 1.12.6 using one Julia thread. Times are seconds.}
+\label{tab:benchmarks}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrr}
+\toprule
+Scenario & Task & DiversityIndices.jl & Python/R reference & Reference stack\\
+\midrule
+default & richness & 0.0000577 & 0.0000287 & NumPy\\
+default & alpha summary & 0.000455 & 0.000934 & NumPy partial summary\\
+default & Bray--Curtis matrix & 0.00500 & 0.00605 & SciPy\\
+default & Jaccard matrix & 0.000315 & 0.0145 & SciPy\\
+default & Hellinger matrix & 0.00523 & 0.0839 & NumPy\\
+large & Bray--Curtis matrix & 0.0863 & 0.0832 & SciPy\\
+large & Jaccard matrix & 0.00336 & 0.197 & SciPy\\
+\bottomrule
+\end{tabular}
+}
+\end{table}

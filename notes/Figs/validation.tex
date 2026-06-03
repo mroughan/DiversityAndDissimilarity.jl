@@ -1,0 +1,18 @@
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  node distance=0.9cm,
+  box/.style={draw, rounded corners, align=center, minimum width=4.2cm, minimum height=0.75cm},
+  arrow/.style={->, thick}
+]
+\node[box, fill=blue!8] (cases) {Reference cases\\formulas and external conventions};
+\node[box, fill=green!8, below=of cases] (evaluate) {Evaluate with\\\texttt{validate\_reference\_cases}};
+\node[box, fill=orange!10, below=of evaluate] (tests) {Package tests and\\documentation examples};
+\node[box, fill=purple!8, below=of tests] (paper) {Reproducible benchmark\\and validation artifacts};
+\draw[arrow] (cases) -- (evaluate);
+\draw[arrow] (evaluate) -- (tests);
+\draw[arrow] (tests) -- (paper);
+\end{tikzpicture}
+\caption{The validation corpus makes convention choices executable and visible in tests, documentation, and paper artifacts.}
+\label{fig:validation}
+\end{figure}

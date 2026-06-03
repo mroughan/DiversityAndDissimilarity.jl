@@ -1,0 +1,7 @@
+case,role,taxon_01,taxon_02,taxon_03,taxon_04,taxon_05,taxon_06,taxon_07,taxon_08
+incidence_overlap,left,1,1,0,1,0,0,1,0
+incidence_overlap,right,1,0,1,1,0,1,0,0
+abundance_gradient,left,9,2,0,4,1,0,3,0
+abundance_gradient,right,3,5,2,0,1,4,0,0
+probability_profile,left,20,5,0,0,10,0,0,5
+probability_profile,right,4,4,4,4,4,4,4,4

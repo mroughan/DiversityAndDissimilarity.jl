@@ -1,0 +1,10 @@
+task,dataset,subset,index,diversityindices_call,r_vegan_call,python_reference_call,expected_convention
+shannon_natural_log,community_counts.csv,all numeric taxa,Shannon,"entropy(Shannon(base=ℯ), x)","vegan::diversity(x, index='shannon')","skbio.diversity.alpha.shannon(x, base=e)","entropy in nats"
+gini_simpson,community_counts.csv,all numeric taxa,GiniSimpson,"diversity(GiniSimpson(), x)","vegan::diversity(x, index='simpson')","skbio.diversity.alpha.simpson(x)","1 - Simpson concentration"
+inverse_simpson,community_counts.csv,all numeric taxa,InverseSimpson,"diversity(InverseSimpson(), x)","vegan::diversity(x, index='invsimpson')","skbio.diversity.alpha.inv_simpson(x)","reciprocal Simpson concentration"
+richness,community_counts.csv,all numeric taxa,Richness,"richness(x)","vegan::specnumber(x)","numpy.count_nonzero(x)","positive abundance count"
+sample_coverage,community_counts.csv,all numeric taxa,SampleCoverage,"sample_coverage(x)","custom Good-Turing helper","custom Good-Turing helper","1 - singleton_count / total_count"
+bray_curtis,community_counts.csv,all numeric taxa,BrayCurtis,"distance(BrayCurtis(), x, y)","vegan::vegdist(m, method='bray')","scipy.spatial.distance.braycurtis(x, y)","abundance dissimilarity"
+jaccard_incidence,pairwise_vectors.csv,incidence_overlap,Jaccard,"similarity(Jaccard(), x, y)","vegan::vegdist(m, method='jaccard', binary=TRUE)","scipy.spatial.distance.jaccard(x .> 0, y .> 0)","incidence similarity or complement distance"
+sorensen_incidence,pairwise_vectors.csv,incidence_overlap,SorensenDice,"similarity(SorensenDice(), x, y)","vegan::vegdist(m, method='bray', binary=TRUE)","custom Dice/Sorensen helper","2a/(2a+b+c)"
+hellinger,community_counts.csv,all numeric taxa,Hellinger,"distance(Hellinger(), x, y)","vegdist(decostand(m, 'hellinger'), method='euclidean')","custom normalized Hellinger helper","Euclidean distance after square-root relative abundance"

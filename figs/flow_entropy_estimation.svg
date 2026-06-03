@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="120.94523mm"
+   height="190.98082mm"
+   viewBox="0 0 120.94523 190.98082"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   sodipodi:docname="flow_entropy_estimation.svg">
+  <defs
+     id="defs2">
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker1962"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#160000;fill-opacity:1;fill-rule:evenodd;stroke:#160000;stroke-width:1.00000003pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path1960"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker1904"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#160000;fill-opacity:1;fill-rule:evenodd;stroke:#160000;stroke-width:1.00000003pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path1902"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker1172"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow1Send">
+      <path
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         style="fill:#160000;fill-opacity:1;fill-rule:evenodd;stroke:#160000;stroke-width:1.00000003pt;stroke-opacity:1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         id="path1170"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send"
+       style="overflow:visible"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path853"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#160000;fill-opacity:1;fill-rule:evenodd;stroke:#160000;stroke-width:1.00000003pt;stroke-opacity:1"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="50.915475"
+     inkscape:cy="546.81839"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:window-width="1550"
+     inkscape:window-height="883"
+     inkscape:window-x="1331"
+     inkscape:window-y="564"
+     inkscape:window-maximized="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid815"
+       originx="-19.846918"
+       originy="-69.172274" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-19.846907,-36.846907)">
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#160000;stroke-width:0.30618623;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect817"
+       width="50"
+       height="30"
+       x="20"
+       y="37" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.04999995;font-family:calibri;-inkscape-font-specification:calibri;letter-spacing:4.7439785px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="44.981396"
+       y="53.658813"
+       id="text821"><tspan
+         sodipodi:role="line"
+         id="tspan819"
+         x="45.113689"
+         y="53.658813"
+         style="text-align:center;letter-spacing:0.26458332px;text-anchor:middle;stroke-width:0.26458332">Large data</tspan></text>
+    <path
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#160000;stroke-width:2.70000005;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#Arrow1Send)"
+       d="M 69.999999,52 H 100"
+       id="path836"
+       inkscape:connector-curvature="0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path1168"
+       d="M 45,67 V 97"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#160000;stroke-width:2.70000005;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker1172)" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.04999995;font-family:calibri;-inkscape-font-specification:calibri;letter-spacing:4.7439785px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="80"
+       y="47"
+       id="text1759"><tspan
+         sodipodi:role="line"
+         id="tspan1757"
+         x="80"
+         y="47"
+         style="letter-spacing:0.5291667px;stroke-width:0.26458332">YES</tspan></text>
+    <text
+       id="text1763"
+       y="82.71875"
+       x="48.061012"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.04999995;font-family:calibri;-inkscape-font-specification:calibri;letter-spacing:4.7439785px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="letter-spacing:0.5291667px;stroke-width:0.26458332"
+         y="82.71875"
+         x="48.061012"
+         id="tspan1761"
+         sodipodi:role="line">NO</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.04999995;font-family:calibri;-inkscape-font-specification:calibri;letter-spacing:4.7439785px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="106.52549"
+       y="53.792767"
+       id="text1805"><tspan
+         sodipodi:role="line"
+         id="tspan1803"
+         x="106.52549"
+         y="53.792767"
+         style="letter-spacing:0.5291667px;stroke-width:0.26458332">plugin</tspan></text>
+    <rect
+       y="97"
+       x="20"
+       height="30"
+       width="50"
+       id="rect1822"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#160000;stroke-width:0.30618623;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <text
+       id="text1826"
+       y="110.18431"
+       x="44.922485"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.04999995;font-family:calibri;-inkscape-font-specification:calibri;letter-spacing:4.7439785px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="text-align:center;letter-spacing:0.26458332px;text-anchor:middle;stroke-width:0.26458332"
+         y="110.18431"
+         x="45.054779"
+         id="tspan1824"
+         sodipodi:role="line">Known, finite</tspan><tspan
+         id="tspan1850"
+         style="text-align:center;letter-spacing:0.26458332px;text-anchor:middle;stroke-width:0.26458332"
+         y="116.85181"
+         x="45.054779"
+         sodipodi:role="line">support</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path1830"
+       d="M 69.999999,112 H 100"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#160000;stroke-width:2.70000005;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker1904)" />
+    <path
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#160000;stroke-width:2.70000005;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker1172)"
+       d="m 45,127 v 30"
+       id="path1834"
+       inkscape:connector-curvature="0" />
+    <text
+       id="text1838"
+       y="107"
+       x="80"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.04999995;font-family:calibri;-inkscape-font-specification:calibri;letter-spacing:4.7439785px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="letter-spacing:0.5291667px;stroke-width:0.26458332"
+         y="107"
+         x="80"
+         id="tspan1836"
+         sodipodi:role="line">YES</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.04999995;font-family:calibri;-inkscape-font-specification:calibri;letter-spacing:4.7439785px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="48.061012"
+       y="142.71875"
+       id="text1842"><tspan
+         sodipodi:role="line"
+         id="tspan1840"
+         x="48.061012"
+         y="142.71875"
+         style="letter-spacing:0.5291667px;stroke-width:0.26458332">NO</tspan></text>
+    <text
+       id="text1846"
+       y="113.79277"
+       x="106.52549"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.04999995;font-family:calibri;-inkscape-font-specification:calibri;letter-spacing:4.7439785px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="letter-spacing:0.5291667px;stroke-width:0.26458332"
+         y="113.79277"
+         x="106.52549"
+         id="tspan1844"
+         sodipodi:role="line">shrinkage </tspan><tspan
+         style="letter-spacing:0.5291667px;stroke-width:0.26458332"
+         y="120.46027"
+         x="106.52549"
+         sodipodi:role="line"
+         id="tspan2041">or Basharin</tspan></text>
+    <rect
+       y="157"
+       x="20"
+       height="30"
+       width="50"
+       id="rect1852"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#160000;stroke-width:0.30618623;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <text
+       id="text1856"
+       y="170.45158"
+       x="45.079063"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.04999995;font-family:calibri;-inkscape-font-specification:calibri;letter-spacing:4.7439785px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="text-align:center;letter-spacing:0.26458332px;text-anchor:middle;stroke-width:0.26458332"
+         y="170.45158"
+         x="45.211353"
+         id="tspan1854"
+         sodipodi:role="line">Known</tspan><tspan
+         id="tspan1880"
+         style="text-align:center;letter-spacing:0.26458332px;text-anchor:middle;stroke-width:0.26458332"
+         y="177.11908"
+         x="45.211357"
+         sodipodi:role="line">distribution</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path1860"
+       d="M 69.999999,172 H 100"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#160000;stroke-width:2.70000005;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker1962)" />
+    <path
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#160000;stroke-width:2.70000005;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-end:url(#marker1172)"
+       d="m 45,187 v 30"
+       id="path1864"
+       inkscape:connector-curvature="0" />
+    <text
+       id="text1868"
+       y="167"
+       x="80"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.04999995;font-family:calibri;-inkscape-font-specification:calibri;letter-spacing:4.7439785px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="letter-spacing:0.5291667px;stroke-width:0.26458332"
+         y="167"
+         x="80"
+         id="tspan1866"
+         sodipodi:role="line">YES</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.04999995;font-family:calibri;-inkscape-font-specification:calibri;letter-spacing:4.7439785px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="48.061012"
+       y="202.71875"
+       id="text1872"><tspan
+         sodipodi:role="line"
+         id="tspan1870"
+         x="48.061012"
+         y="202.71875"
+         style="letter-spacing:0.5291667px;stroke-width:0.26458332">NO</tspan></text>
+    <text
+       id="text1876"
+       y="173.79277"
+       x="106.52549"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.04999995;font-family:calibri;-inkscape-font-specification:calibri;letter-spacing:4.7439785px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       xml:space="preserve"><tspan
+         style="letter-spacing:0.5291667px;stroke-width:0.26458332"
+         y="173.79277"
+         x="106.52549"
+         id="tspan1874"
+         sodipodi:role="line">parametric</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3499999px;line-height:1.04999995;font-family:calibri;-inkscape-font-specification:calibri;letter-spacing:4.7439785px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="29.070223"
+       y="227.78122"
+       id="text2006"><tspan
+         sodipodi:role="line"
+         id="tspan2004"
+         x="29.070223"
+         y="227.78122"
+         style="letter-spacing:0.5291667px;stroke-width:0.26458332">Chao-Shen</tspan></text>
+  </g>
+</svg>

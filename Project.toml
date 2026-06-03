@@ -1,0 +1,21 @@
+name = "DiversityIndices"
+uuid = "df0f3bba-7b58-4bd8-a920-29562eaa68f5"
+authors = ["Matthew Roughan"]
+description = "Lightweight Julia tools for ecological diversity, entropy, richness estimation, and pairwise assemblage similarity and dissimilarity calculations."
+version = "0.1.0"
+
+[deps]
+Tables = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
+
+[compat]
+DataFrames = "1"
+Tables = "1"
+Test = "1"
+julia = "1.10"
+
+[extras]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["DataFrames", "Test"]

@@ -1,0 +1,21 @@
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+  node distance=1.1cm and 1.4cm,
+  box/.style={draw, rounded corners, align=center, minimum width=3.1cm, minimum height=0.85cm},
+  arrow/.style={->, thick}
+]
+\node[box, fill=blue!8] (types) {Dispatchable\\index types};
+\node[box, fill=green!8, right=of types] (traits) {Convention-aware\\traits};
+\node[box, fill=orange!10, right=of traits] (metadata) {Metadata\\catalog};
+\node[box, fill=purple!8, below=of traits] (ops) {Generic operations\\\texttt{diversity}, \texttt{distance}};
+\node[box, fill=gray!10, below=of metadata] (audit) {Reports\\validation and audit};
+\draw[arrow] (types) -- (traits);
+\draw[arrow] (traits) -- (metadata);
+\draw[arrow] (types) -- (ops);
+\draw[arrow] (metadata) -- (audit);
+\draw[arrow] (ops) -- (audit);
+\end{tikzpicture}
+\caption{The package separates index identity, convention metadata, and numerical evaluation. This supports generic workflows while keeping naming and output conventions explicit.}
+\label{fig:framework}
+\end{figure}
