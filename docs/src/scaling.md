@@ -1,6 +1,6 @@
 # Scaling And Performance
 
-Most functions in `DiversityIndices` are single-pass or small-number-of-pass
+Most functions in `DiversityAndDissimilarity` are single-pass or small-number-of-pass
 summaries over species abundance vectors. The main scaling variables are:
 
 - ``n``: sample size, or total count in one assemblage.

@@ -1,20 +1,20 @@
 using Documenter
-using DiversityIndices
+using DiversityAndDissimilarity
 
 DocMeta.setdocmeta!(
-    DiversityIndices,
+    DiversityAndDissimilarity,
     :DocTestSetup,
-    :(using DiversityIndices);
+    :(using DiversityAndDissimilarity);
     recursive=true,
 )
 
 makedocs(;
-    modules=[DiversityIndices],
-    sitename="DiversityIndices.jl",
+    modules=[DiversityAndDissimilarity],
+    sitename="DiversityAndDissimilarity.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://mroughan.github.io/DiversityIndices.jl",
-        repolink="https://github.com/mroughan/DiversityIndices.jl",
+        canonical="https://mroughan.github.io/DiversityAndDissimilarity.jl",
+        repolink="https://github.com/mroughan/DiversityAndDissimilarity.jl",
         assets=String[],
     ),
     pages=[
@@ -46,6 +46,6 @@ makedocs(;
 
 if get(ENV, "CI", "false") == "true"
     deploydocs(;
-        repo="github.com/mroughan/DiversityIndices.jl",
+        repo="github.com/mroughan/DiversityAndDissimilarity.jl",
     )
 end

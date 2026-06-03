@@ -1,6 +1,6 @@
 # From R vegan
 
-This guide maps common `vegan` diversity workflows to `DiversityIndices.jl`.
+This guide maps common `vegan` diversity workflows to `DiversityAndDissimilarity.jl`.
 The goal is not to duplicate every `vegan` feature, but to make the common
 single-community and pairwise calculations easy to translate.
 
@@ -15,7 +15,7 @@ library(vegan)
 In Julia:
 
 ```julia
-using DiversityIndices
+using DiversityAndDissimilarity
 ```
 
 Both packages commonly use a community matrix with samples/sites in rows and
@@ -23,7 +23,7 @@ taxa/species in columns.
 
 ## Alpha Diversity
 
-| vegan | DiversityIndices.jl | Notes |
+| vegan | DiversityAndDissimilarity.jl | Notes |
 |---|---|---|
 | `specnumber(x)` | `richness(x)` | Observed positive-abundance taxa. |
 | `diversity(x, index = "shannon")` | `entropy(Shannon(; base=ℯ), x)` | `vegan` defaults to natural logs; this package defaults to `base=2`. |
@@ -35,7 +35,7 @@ taxa/species in columns.
 | `estimateR(x)` | `chao1(x)` / `ace(x)` | This package exposes Chao1 and ACE directly. |
 
 ```jldoctest
-julia> using DiversityIndices
+julia> using DiversityAndDissimilarity
 
 julia> x = [1, 1, 2];
 
@@ -61,10 +61,10 @@ For a community matrix, the same function returns one summary per row.
 
 ## Pairwise Distances
 
-`vegan::vegdist` returns a compact R `dist` object. `DiversityIndices.jl`
+`vegan::vegdist` returns a compact R `dist` object. `DiversityAndDissimilarity.jl`
 returns a dense symmetric matrix for community-matrix input.
 
-| vegan | DiversityIndices.jl | Notes |
+| vegan | DiversityAndDissimilarity.jl | Notes |
 |---|---|---|
 | `vegdist(x, method = "bray")` | `bray_curtis_distance(x)` | Bray-Curtis dissimilarity. |
 | `vegdist(x, method = "jaccard", binary = TRUE)` | `jaccard_distance(x)` | Presence/absence Jaccard. |
@@ -74,7 +74,7 @@ returns a dense symmetric matrix for community-matrix input.
 | `vegdist(x, method = "canberra")` | `canberra_distance(x)` | This package uses the averaged positive-denominator form documented in its API. |
 
 ```jldoctest
-julia> using DiversityIndices
+julia> using DiversityAndDissimilarity
 
 julia> community = [
            1 1 2 0 5
@@ -112,7 +112,7 @@ metadata such as site IDs, blocks, or coordinates.
 
 ## Convention Differences
 
-- Shannon entropy defaults to `base=2` in `DiversityIndices.jl`; use `base=ℯ`
+- Shannon entropy defaults to `base=2` in `DiversityAndDissimilarity.jl`; use `base=ℯ`
   to match `vegan`'s default natural-log convention.
 - [`Simpson`](@ref) in this package is the concentration
   ``\sum_i p_i^2``. Use [`GiniSimpson`](@ref) or
@@ -120,7 +120,7 @@ metadata such as site IDs, blocks, or coordinates.
 - Pairwise community-matrix functions return dense matrices. For very large
   numbers of sites, memory grows quadratically.
 - Broader ordination, constrained analysis, rarefaction curves, and many
-  ecological modeling tools remain `vegan` strengths. `DiversityIndices.jl`
+  ecological modeling tools remain `vegan` strengths. `DiversityAndDissimilarity.jl`
   focuses on lightweight diversity, entropy, richness, and pairwise
   similarity/dissimilarity calculations.
 

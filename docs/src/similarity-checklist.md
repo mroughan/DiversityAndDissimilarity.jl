@@ -1,7 +1,7 @@
 # Similarity And Dissimilarity Availability Checklist
 
 This checklist compares pairwise similarity, dissimilarity, distance, and
-overlap indices in `DiversityIndices.jl` with a selection of commonly used
+overlap indices in `DiversityAndDissimilarity.jl` with a selection of commonly used
 biodiversity, community-ecology, microbiome, and probability-comparison
 packages. Alpha-diversity indices are covered separately in
 [Diversity Index Availability Checklist](index-checklist.md).
@@ -18,14 +18,14 @@ Last checked: 2026-05-15.
 - `[ ]`: not documented as available in the checked source.
 
 Package names and conventions are not perfectly standardized. Some packages
-return a distance or dissimilarity where `DiversityIndices.jl` exposes both
+return a distance or dissimilarity where `DiversityAndDissimilarity.jl` exposes both
 similarity and dissimilarity forms. This checklist intentionally focuses on
 indices comparing sets/incidence data, abundance vectors, probability vectors,
 or probability mass on a tree. It excludes edit distances and string metrics.
 
 ## Checklist
 
-| Index or feature | DiversityIndices.jl | Diversity.jl | vegan | iNEXT | scikit-bio | EcoPy | Microbiome.jl | SciPy | SpadeR | entropart / hill packages | Notes |
+| Index or feature | DiversityAndDissimilarity.jl | Diversity.jl | vegan | iNEXT | scikit-bio | EcoPy | Microbiome.jl | SciPy | SpadeR | entropart / hill packages | Notes |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | Jaccard incidence similarity/distance | [x] | [ ] | [x] | [ ] | [~] | [x] | [x] | [x] | [x] | [ ] | `Jaccard()` / `jaccard_index`; vegan `vegdist(method="jaccard")`; EcoPy `distance(..., "jaccard")`; SciPy boolean `jaccard`; SpadeR includes incidence estimators. |
 | Sorensen-Dice incidence similarity/distance | [x] | [ ] | [~] | [ ] | [~] | [x] | [ ] | [x] | [x] | [ ] | `SorensenDice()`; EcoPy `distance(..., "sorensen")`; SciPy boolean `dice`; vegan derives related binary forms through `betadiver` / transformations. |

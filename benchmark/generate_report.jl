@@ -244,7 +244,7 @@ end
 function write_markdown(path, rows, failures, python, figures, environment)
     generated = Dates.format(now(), dateformat"yyyy-mm-dd HH:MM:SS")
     open(path, "w") do io
-        println(io, "# DiversityIndices Benchmark Report")
+        println(io, "# DiversityAndDissimilarity Benchmark Report")
         println(io)
         println(io, "Generated: $(generated)")
         println(io)

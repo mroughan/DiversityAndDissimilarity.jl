@@ -1,9 +1,9 @@
 using Aqua
-using DiversityIndices
+using DiversityAndDissimilarity
 using JET
 using Test
 
 @testset "package quality" begin
-    Aqua.test_all(DiversityIndices)
-    JET.test_package(DiversityIndices; target_modules=(DiversityIndices,))
+    Aqua.test_all(DiversityAndDissimilarity)
+    JET.test_package(DiversityAndDissimilarity; target_modules=(DiversityAndDissimilarity,))
 end

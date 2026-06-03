@@ -1,11 +1,11 @@
-# DiversityIndices.jl
+# DiversityAndDissimilarity.jl
 
-[![CI](https://github.com/mroughan/DiversityIndices.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/mroughan/DiversityIndices.jl/actions/workflows/CI.yml)
-[![Quality](https://github.com/mroughan/DiversityIndices.jl/actions/workflows/Quality.yml/badge.svg)](https://github.com/mroughan/DiversityIndices.jl/actions/workflows/Quality.yml)
-[![Documentation](https://github.com/mroughan/DiversityIndices.jl/actions/workflows/documentation.yml/badge.svg)](https://github.com/mroughan/DiversityIndices.jl/actions/workflows/documentation.yml)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://mroughan.github.io/DiversityIndices.jl/dev)
+[![CI](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/CI.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/CI.yml)
+[![Quality](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Quality.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/Quality.yml)
+[![Documentation](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/documentation.yml/badge.svg)](https://github.com/mroughan/DiversityAndDissimilarity.jl/actions/workflows/documentation.yml)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://mroughan.github.io/DiversityAndDissimilarity.jl/dev)
 
-`DiversityIndices` provides ecology-style diversity indices for species
+`DiversityAndDissimilarity` provides ecology-style diversity indices for species
 abundance data, linguistic-demography category counts, observation vectors,
 and pairwise assemblage comparisons.
 
@@ -27,7 +27,7 @@ availability checklists against common ecology and biodiversity tools.
 From the Julia package prompt:
 
 ```julia
-pkg> add DiversityIndices
+pkg> add DiversityAndDissimilarity
 ```
 
 Or, while developing from this repository:
@@ -37,12 +37,12 @@ pkg> activate .
 pkg> test
 ```
 
-`DiversityIndices` supports Julia 1.10 and newer 1.x releases.
+`DiversityAndDissimilarity` supports Julia 1.10 and newer 1.x releases.
 
 ## Quick Start
 
 ```julia
-using DiversityIndices
+using DiversityAndDissimilarity
 
 assemblage = Dict(:oak => 12, :ash => 5, :elm => 3)
 

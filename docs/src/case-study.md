@@ -14,7 +14,7 @@ The workflow demonstrates how the package keeps conventions, labels, coverage,
 pairwise matrices, and uncertainty diagnostics together.
 
 ```julia
-using DiversityIndices
+using DiversityAndDissimilarity
 using Random
 
 community = [

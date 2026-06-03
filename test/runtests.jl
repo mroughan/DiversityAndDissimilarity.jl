@@ -1,5 +1,5 @@
 using DataFrames
-using DiversityIndices
+using DiversityAndDissimilarity
 using Test
 
 function test_valid_probabilities(data; frequencies=true)

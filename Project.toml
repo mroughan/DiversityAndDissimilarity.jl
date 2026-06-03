@@ -1,4 +1,4 @@
-name = "DiversityIndices"
+name = "DiversityAndDissimilarity"
 uuid = "df0f3bba-7b58-4bd8-a920-29562eaa68f5"
 authors = ["Matthew Roughan"]
 description = "Lightweight Julia tools for ecological diversity, entropy, richness estimation, and pairwise assemblage similarity and dissimilarity calculations."

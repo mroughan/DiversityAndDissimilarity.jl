@@ -1,4 +1,4 @@
-task,dataset,subset,index,diversityindices_call,r_vegan_call,python_reference_call,expected_convention
+task,dataset,subset,index,diversityanddissimilarity_call,r_vegan_call,python_reference_call,expected_convention
 shannon_natural_log,community_counts.csv,all numeric taxa,Shannon,"entropy(Shannon(base=ℯ), x)","vegan::diversity(x, index='shannon')","skbio.diversity.alpha.shannon(x, base=e)","entropy in nats"
 gini_simpson,community_counts.csv,all numeric taxa,GiniSimpson,"diversity(GiniSimpson(), x)","vegan::diversity(x, index='simpson')","skbio.diversity.alpha.simpson(x)","1 - Simpson concentration"
 inverse_simpson,community_counts.csv,all numeric taxa,InverseSimpson,"diversity(InverseSimpson(), x)","vegan::diversity(x, index='invsimpson')","skbio.diversity.alpha.inv_simpson(x)","reciprocal Simpson concentration"

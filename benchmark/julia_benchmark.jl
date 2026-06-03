@@ -1,4 +1,4 @@
-using DiversityIndices
+using DiversityAndDissimilarity
 
 function simulated_community(nsites::Integer=400, ntaxa::Integer=200; total::Integer=10_000)
     matrix = Matrix{Float64}(undef, nsites, ntaxa)
@@ -47,17 +47,17 @@ function main()
     warmup(community)
 
     println("language,package,task,nsites,ntaxa,repeats,inner,best_seconds")
-    println(join(("Julia", "DiversityIndices.jl", "richness", nsites, ntaxa, repeats,
+    println(join(("Julia", "DiversityAndDissimilarity.jl", "richness", nsites, ntaxa, repeats,
         inner, best_time(() -> richness(community); repeats, inner)), ","))
-    println(join(("Julia", "DiversityIndices.jl", "shannon_entropy", nsites, ntaxa, repeats,
+    println(join(("Julia", "DiversityAndDissimilarity.jl", "shannon_entropy", nsites, ntaxa, repeats,
         inner, best_time(() -> shannon_entropy(community); repeats, inner)), ","))
-    println(join(("Julia", "DiversityIndices.jl", "alpha_diversity", nsites, ntaxa, repeats,
+    println(join(("Julia", "DiversityAndDissimilarity.jl", "alpha_diversity", nsites, ntaxa, repeats,
         inner, best_time(() -> alpha_diversity(community); repeats, inner)), ","))
-    println(join(("Julia", "DiversityIndices.jl", "bray_curtis_distance_matrix", nsites, ntaxa, repeats,
+    println(join(("Julia", "DiversityAndDissimilarity.jl", "bray_curtis_distance_matrix", nsites, ntaxa, repeats,
         inner, best_time(() -> bray_curtis_distance(community); repeats, inner)), ","))
-    println(join(("Julia", "DiversityIndices.jl", "jaccard_distance_matrix", nsites, ntaxa, repeats,
+    println(join(("Julia", "DiversityAndDissimilarity.jl", "jaccard_distance_matrix", nsites, ntaxa, repeats,
         inner, best_time(() -> jaccard_distance(community); repeats, inner)), ","))
-    println(join(("Julia", "DiversityIndices.jl", "hellinger_distance_matrix", nsites, ntaxa, repeats,
+    println(join(("Julia", "DiversityAndDissimilarity.jl", "hellinger_distance_matrix", nsites, ntaxa, repeats,
         inner, best_time(() -> hellinger_distance(community); repeats, inner)), ","))
 end
 

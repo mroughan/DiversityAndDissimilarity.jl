@@ -23,7 +23,7 @@ and related transformations across Julia, R, and Python.
 - `data/pairwise_vectors.csv`: hand-checkable paired vectors for pairwise
   similarity and dissimilarity formulas.
 - `cross_package_manifest.csv`: package-call manifest mapping each validation
-  task to the intended convention in DiversityIndices.jl, R vegan, SciPy, and
+  task to the intended convention in DiversityAndDissimilarity.jl, R vegan, SciPy, and
   scikit-bio-style APIs.
 
 These are validation inputs, not ecological observations. They are simulated to

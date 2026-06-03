@@ -34,7 +34,7 @@ types, or similarity-versus-dissimilarity conventions across software
 ecosystems.  These differences create a reproducibility problem for
 data-intensive ecological workflows, where alpha-diversity summaries,
 estimator diagnostics, and pairwise dissimilarity matrices are often combined
-in downstream analyses.  We present \texttt{DiversityIndices.jl}, a Julia
+in downstream analyses.  We present \texttt{DiversityAndDissimilarity.jl}, a Julia
 package designed as an ecoinformatics infrastructure layer for reproducible
 diversity computation.  Its three core contributions are: (1) a
 convention-aware metadata and trait system that exposes index families, input
@@ -100,7 +100,7 @@ may be treated as a metric by downstream algorithms even when it does not
 satisfy metric assumptions.  These problems are subtle because they need not
 produce errors: they produce plausible but differently defined results.
 
-We present \texttt{DiversityIndices.jl}, a Julia package designed to make
+We present \texttt{DiversityAndDissimilarity.jl}, a Julia package designed to make
 these conventions explicit and executable.  The package provides scalar,
 matrix, and table-oriented biodiversity calculations, but its main novelty is
 not the existence of another index library.  Instead, the package treats
@@ -174,7 +174,7 @@ through the same dispatch and metadata interface.
 
 \subsection{Convention-aware index metadata}
 
-\texttt{DiversityIndices.jl} represents indices as small dispatchable objects
+\texttt{DiversityAndDissimilarity.jl} represents indices as small dispatchable objects
 and exposes their interpretation through trait-like metadata functions.
 For each supported index, the package records the index family, expected input
 mode, output mode, numerical range, metric status, aliases, convention notes,
@@ -258,7 +258,7 @@ documentation builds, and manuscript-generation scripts.  Performance
 reproducibility is provided by benchmark scripts that generate tabular
 results, figures, and environment metadata.
 
-The benchmark corpus compares \texttt{DiversityIndices.jl} with R
+The benchmark corpus compares \texttt{DiversityAndDissimilarity.jl} with R
 \texttt{vegan} and Python/NumPy/SciPy on simulated community matrices.  The
 benchmarks include richness, alpha-diversity summaries, Bray--Curtis distance
 matrices, Hellinger distance matrices, and incidence Jaccard matrices.  The
@@ -279,7 +279,7 @@ ecoinformatics tasks.
 The repository also includes a cross-package validation data directory.  It
 contains a simulated sample-by-taxon community matrix, hand-checkable paired
 vectors, and a manifest mapping validation tasks to equivalent
-\texttt{DiversityIndices.jl}, R \texttt{vegan}, SciPy, and scikit-bio-style
+\texttt{DiversityAndDissimilarity.jl}, R \texttt{vegan}, SciPy, and scikit-bio-style
 calls.  These files are intended as a seed for a larger biodiversity software
 concordance suite.  They separate the validation data from the package-specific
 function calls and from the convention being tested.
@@ -341,7 +341,7 @@ artifacts rather than manually copied results.
 
 \subsection{Contribution to ecological informatics}
 
-\texttt{DiversityIndices.jl} contributes to ecological informatics by treating
+\texttt{DiversityAndDissimilarity.jl} contributes to ecological informatics by treating
 biodiversity calculation as an information-management problem as well as a
 numerical one.  The package does not merely compute indices; it records and
 exposes the interpretive context needed to reuse those computations.  This is
@@ -397,7 +397,7 @@ and a more compelling contribution to ecological informatics.
 Reproducible biodiversity analysis requires more than correct formulas.
 It requires explicit conventions, executable validation, portable workflow
 diagnostics, and performance reports that can be regenerated as software and
-hardware change.  \texttt{DiversityIndices.jl} provides these elements through
+hardware change.  \texttt{DiversityAndDissimilarity.jl} provides these elements through
 a convention-aware metadata layer and an executable validation and benchmark
 corpus.  By treating diversity and similarity indices as related computational
 objects, the package supports coherent, auditable biodiversity workflows for
@@ -407,7 +407,7 @@ ecological informatics.
 
 The software, validation cases, benchmark scripts, documentation, manuscript
 source, validation datasets, workflow case-study scripts, and
-figure-generation artifacts are available in the \texttt{DiversityIndices.jl}
+figure-generation artifacts are available in the \texttt{DiversityAndDissimilarity.jl}
 source repository.  Benchmark tables, case-study tables, and figures used in
 this manuscript are generated from repository scripts rather than hand-entered
 values.

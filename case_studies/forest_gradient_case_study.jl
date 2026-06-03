@@ -1,4 +1,4 @@
-using DiversityIndices
+using DiversityAndDissimilarity
 using Random
 using Statistics
 

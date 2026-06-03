@@ -1,6 +1,6 @@
 # Framework
 
-`DiversityIndices.jl` exposes index metadata and workflow diagnostics in
+`DiversityAndDissimilarity.jl` exposes index metadata and workflow diagnostics in
 addition to numeric index values. These helpers make conventions explicit and
 make validation reproducible.
 

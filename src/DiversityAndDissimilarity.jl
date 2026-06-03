@@ -1,4 +1,4 @@
-module DiversityIndices
+module DiversityAndDissimilarity
 
 import Tables
 

@@ -10,7 +10,7 @@ The scikit-bio diversity tutorial uses the following six-sample community
 matrix. Each row is a sample and each column is a taxon count.
 
 ```jldoctest
-julia> using DiversityIndices
+julia> using DiversityAndDissimilarity
 
 julia> data = [
            [23, 64, 14, 0, 0, 3, 1],
@@ -67,7 +67,7 @@ For `x = [1, 1, 2]`, the relative abundances are
 ``p = [1/4, 1/4, 1/2]``:
 
 ```jldoctest
-julia> using DiversityIndices
+julia> using DiversityAndDissimilarity
 
 julia> x = [1, 1, 2];
 
@@ -94,7 +94,7 @@ The vegan `vegdist` documentation describes Bray-Curtis dissimilarity as
 ```
 
 ```jldoctest
-julia> using DiversityIndices
+julia> using DiversityAndDissimilarity
 
 julia> bray_curtis_distance([1, 2, 3], [2, 2, 0])
 0.4
@@ -103,7 +103,7 @@ julia> bray_curtis_distance([1, 2, 3], [2, 2, 0])
 Presence/absence pairwise conventions:
 
 ```jldoctest
-julia> using DiversityIndices
+julia> using DiversityAndDissimilarity
 
 julia> left = [1, 1, 0, 1];
 

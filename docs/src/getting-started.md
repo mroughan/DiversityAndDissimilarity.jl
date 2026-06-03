@@ -4,7 +4,7 @@ Load the package and create an assemblage as a dictionary from species to
 abundance:
 
 ```julia
-using DiversityIndices
+using DiversityAndDissimilarity
 
 assemblage = Dict(:oak => 12, :ash => 5, :elm => 3)
 ```

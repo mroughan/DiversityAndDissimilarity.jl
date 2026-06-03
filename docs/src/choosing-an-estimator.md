@@ -2,7 +2,7 @@
 
 Shannon entropy estimation is sensitive to sample size and to how much is known
 about the support. The flowchart below is a compact decision aid for the
-estimators available in `DiversityIndices`.
+estimators available in `DiversityAndDissimilarity`.
 
 ![Flowchart for Shannon entropy estimator choice](assets/flow_entropy_estimation.svg)
 
@@ -25,7 +25,7 @@ finite-sample bias are not a practical concern. This is the direct empirical
 estimator:
 
 ```jldoctest estimatorchoice
-julia> using DiversityIndices
+julia> using DiversityAndDissimilarity
 
 julia> assemblage = Dict(:oak => 12, :ash => 5, :elm => 3);
 
@@ -145,7 +145,7 @@ These are also ordinary Julia calls, so they can be put in tests for an
 analysis pipeline. For example:
 
 ```julia
-using DiversityIndices
+using DiversityAndDissimilarity
 using Test
 
 @testset "Shannon estimator sensitivity" begin

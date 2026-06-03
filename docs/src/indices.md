@@ -1,6 +1,6 @@
 # Index Overview
 
-`DiversityIndices` separates its index types into two related groups:
+`DiversityAndDissimilarity` separates its index types into two related groups:
 
 - Diversity indices summarize one assemblage at a time.
 - Similarity and dissimilarity indices compare two assemblages.

@@ -1,7 +1,7 @@
 # Diversity Index Availability Checklist
 
 This checklist compares alpha-diversity indices and related single-assemblage
-features in `DiversityIndices.jl` with a selection of commonly used
+features in `DiversityAndDissimilarity.jl` with a selection of commonly used
 biodiversity and community ecology packages. Pairwise similarity and
 dissimilarity indices are covered separately in
 [Similarity And Dissimilarity Availability Checklist](similarity-checklist.md).
@@ -22,7 +22,7 @@ convention differences where they matter.
 
 ## Checklist
 
-| Index or feature | DiversityIndices.jl | Diversity.jl | vegan | iNEXT | scikit-bio | EcoPy | Microbiome.jl | SciPy | SpadeR | entropart | Notes |
+| Index or feature | DiversityAndDissimilarity.jl | Diversity.jl | vegan | iNEXT | scikit-bio | EcoPy | Microbiome.jl | SciPy | SpadeR | entropart | Notes |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | Observed richness / number of taxa | [x] | [x] | [x] | [x] | [x] | [x] | [ ] | [ ] | [x] | [x] | `Richness()` / `richness`; vegan `specnumber`; scikit-bio `sobs` / `observed_features`; EcoPy `spRich`. |
 | Chao / ACE richness estimators | [x] | [ ] | [x] | [x] | [x] | [ ] | [ ] | [ ] | [x] | [~] | `Chao1()` / `chao1` and `ACE()` / `ace`; vegan `estimateR` / `specpool`; iNEXT `ChaoRichness`; scikit-bio `chao1` and `ace`; SpadeR is explicitly focused on richness prediction and diversity estimation. |

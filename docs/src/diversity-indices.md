@@ -1,7 +1,7 @@
 # Diversity Indices
 
 Diversity and entropy indices summarize a single assemblage. In
-`DiversityIndices`, use [`entropy`](@ref) for entropy units and
+`DiversityAndDissimilarity`, use [`entropy`](@ref) for entropy units and
 [`diversity`](@ref) for diversity / effective-diversity units:
 
 ```julia

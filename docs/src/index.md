@@ -1,6 +1,6 @@
-# DiversityIndices.jl
+# DiversityAndDissimilarity.jl
 
-`DiversityIndices` provides ecology-style diversity indices for species
+`DiversityAndDissimilarity` provides ecology-style diversity indices for species
 abundance data, observation vectors, and pairwise assemblage comparisons.
 
 The package is built around small dispatchable index types and generic
@@ -21,7 +21,7 @@ If you are coming from R, start with the
 [vegan migration guide](vegan-migration.md). If you are choosing between
 packages, the [diversity](index-checklist.md) and
 [similarity/dissimilarity](similarity-checklist.md) checklists summarize where
-`DiversityIndices.jl` overlaps with common ecology and biodiversity tools.
+`DiversityAndDissimilarity.jl` overlaps with common ecology and biodiversity tools.
 
 ```@contents
 Pages = [
@@ -45,7 +45,7 @@ Depth = 2
 
 ## Supported Julia Versions
 
-`DiversityIndices` supports Julia 1.10 and newer 1.x releases.
+`DiversityAndDissimilarity` supports Julia 1.10 and newer 1.x releases.
 
 ## Quality Checks
 

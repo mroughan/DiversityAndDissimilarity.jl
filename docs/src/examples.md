@@ -6,7 +6,7 @@ dependencies in the core library.
 ## Alpha Summary
 
 ```julia
-using DiversityIndices
+using DiversityAndDissimilarity
 
 assemblage = Dict(:oak => 12, :ash => 5, :elm => 3)
 

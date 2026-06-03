@@ -1,4 +1,4 @@
-PAPER = diversityindices
+PAPER = diversityanddissimilarity
 BUILD = build
 
 .PHONY: all clean

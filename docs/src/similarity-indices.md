@@ -1,7 +1,7 @@
 # Similarity And Dissimilarity Indices
 
 Similarity and dissimilarity indices compare two assemblages. In
-`DiversityIndices`, use [`similarity`](@ref), [`dissimilarity`](@ref), or the
+`DiversityAndDissimilarity`, use [`similarity`](@ref), [`dissimilarity`](@ref), or the
 alias [`distance`](@ref) with an index object:
 
 ```julia
