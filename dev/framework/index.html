@@ -1,46 +1,457 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Framework · DiversityAndDissimilarity.jl</title><meta name="title" content="Framework · DiversityAndDissimilarity.jl"/><meta property="og:title" content="Framework · DiversityAndDissimilarity.jl"/><meta property="twitter:title" content="Framework · DiversityAndDissimilarity.jl"/><meta name="description" content="Documentation for DiversityAndDissimilarity.jl."/><meta property="og:description" content="Documentation for DiversityAndDissimilarity.jl."/><meta property="twitter:description" content="Documentation for DiversityAndDissimilarity.jl."/><meta property="og:url" content="https://mroughan.github.io/DiversityAndDissimilarity.jl/framework/"/><meta property="twitter:url" content="https://mroughan.github.io/DiversityAndDissimilarity.jl/framework/"/><link rel="canonical" href="https://mroughan.github.io/DiversityAndDissimilarity.jl/framework/"/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">DiversityAndDissimilarity.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../getting-started/">Getting Started</a></li><li><a class="tocitem" href="../examples/">Examples</a></li><li><a class="tocitem" href="../vegan-migration/">From R vegan</a></li><li class="is-active"><a class="tocitem" href>Framework</a><ul class="internal"><li><a class="tocitem" href="#Index-Metadata-And-Traits"><span>Index Metadata And Traits</span></a></li><li><a class="tocitem" href="#Reference-Validation"><span>Reference Validation</span></a></li><li><a class="tocitem" href="#Estimator-Reports"><span>Estimator Reports</span></a></li><li><a class="tocitem" href="#Diversity-Audit"><span>Diversity Audit</span></a></li><li><a class="tocitem" href="#Uncertainty-Audit"><span>Uncertainty Audit</span></a></li></ul></li><li><a class="tocitem" href="../case-study/">Workflow Case Study</a></li><li><span class="tocitem">Indices</span><ul><li><a class="tocitem" href="../indices/">Overview</a></li><li><a class="tocitem" href="../diversity-indices/">Diversity Indices</a></li><li><a class="tocitem" href="../choosing-an-estimator/">Choosing An Estimator</a></li><li><a class="tocitem" href="../similarity-indices/">Similarity And Dissimilarity Indices</a></li><li><a class="tocitem" href="../similarity-index-catalog/">Similarity And Dissimilarity Catalog</a></li><li><a class="tocitem" href="../scaling/">Scaling And Performance</a></li><li><a class="tocitem" href="../benchmarks/">Benchmarks</a></li><li><a class="tocitem" href="../reference-examples/">Reference Examples</a></li><li><a class="tocitem" href="../release-readiness/">Release Readiness</a></li></ul></li><li><span class="tocitem">Availability Checklists</span><ul><li><a class="tocitem" href="../index-checklist/">Diversity Indices</a></li><li><a class="tocitem" href="../similarity-checklist/">Similarity And Dissimilarity</a></li></ul></li><li><a class="tocitem" href="../api/">API Reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Framework</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Framework</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/mroughan/DiversityAndDissimilarity.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/main/docs/src/framework.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Framework"><a class="docs-heading-anchor" href="#Framework">Framework</a><a id="Framework-1"></a><a class="docs-heading-anchor-permalink" href="#Framework" title="Permalink"></a></h1><p><code>DiversityAndDissimilarity.jl</code> exposes index metadata and workflow diagnostics in addition to numeric index values. These helpers make conventions explicit and make validation reproducible.</p><h2 id="Index-Metadata-And-Traits"><a class="docs-heading-anchor" href="#Index-Metadata-And-Traits">Index Metadata And Traits</a><a id="Index-Metadata-And-Traits-1"></a><a class="docs-heading-anchor-permalink" href="#Index-Metadata-And-Traits" title="Permalink"></a></h2><p>Use <a href="#DiversityAndDissimilarity.index_metadata"><code>index_metadata</code></a> to inspect how an index is represented:</p><pre><code class="language-julia hljs">index_metadata(BrayCurtis())
-index_metadata(GiniSimpson())</code></pre><p>The lower-level trait helpers are useful when writing generic workflows:</p><pre><code class="language-julia hljs">index_family(BrayCurtis())
-input_mode(BrayCurtis())
-output_mode(BrayCurtis())
-is_metric(Jaccard())
-is_triangular(Jaccard())
-is_nonnegative(KullbackLeibler())
-is_bounded(JensenShannon())
-is_semimetric(BrayCurtis())
-is_similarity(Jaccard())
-is_dissimilarity(BrayCurtis())
-is_symmetric(KullbackLeibler())
-index_range(PielouEvenness())
-index_bounds(BrayCurtis())
-requires_probabilities(Hellinger())
-supports_matrix_kernel(Jaccard())</code></pre><p>These traits are intentionally simple symbols and named tuples, so users can branch on them without depending on internal implementation details. Properties that are not encoded for an index return <code>:unknown</code> where a Boolean answer would overstate what the package knows.</p><p><code>is_metric</code> follows the usual metric convention: nonnegative, zero only for identical inputs, symmetric, and triangular. The related helpers expose weaker properties:</p><ul><li><code>is_triangular</code> checks the triangle inequality only.</li><li><code>is_pseudometric</code> allows distinct inputs to have zero distance.</li><li><code>is_quasimetric</code> allows asymmetry while retaining the triangle inequality.</li><li><code>is_metametric</code> means nonnegative, symmetric, and zero for identical inputs, without requiring identity of indiscernibles or the triangle inequality.</li><li><code>is_semimetric</code> means nonnegative, symmetric, and zero only for identical inputs, without requiring the triangle inequality.</li><li><code>is_premetric</code> means nonnegative and zero for identical inputs.</li><li><code>is_supermetric</code> is reserved for reverse-triangle or supermetric-style properties; most implemented indices return <code>false</code> or <code>:unknown</code>.</li></ul><p>Use <a href="#DiversityAndDissimilarity.index_bounds"><code>index_bounds</code></a> when the interpretation of a range matters. For a similarity, the lower bound commonly means no overlap or complete dissimilarity; for a dissimilarity or distance, the lower bound commonly means identical or indistinguishable inputs.</p><p>The full descriptor set is:</p><pre><code class="language-julia hljs">is_finite(index)
-is_symmetric(index)
-is_nonnegative(index)
-is_bounded(index)
-is_metric(index)
-is_triangular(index)
-is_pseudometric(index)
-is_quasimetric(index)
-is_metametric(index)
-is_semimetric(index)
-is_premetric(index)
-is_supermetric(index)
-is_similarity(index)
-is_dissimilarity(index)</code></pre><p><code>index_metadata(index)</code> includes these values, the basic <a href="#DiversityAndDissimilarity.index_range"><code>index_range</code></a>, and the interpreted <a href="#DiversityAndDissimilarity.index_bounds"><code>index_bounds</code></a> tuple.</p><h2 id="Reference-Validation"><a class="docs-heading-anchor" href="#Reference-Validation">Reference Validation</a><a id="Reference-Validation-1"></a><a class="docs-heading-anchor-permalink" href="#Reference-Validation" title="Permalink"></a></h2><p><a href="#DiversityAndDissimilarity.reference_cases"><code>reference_cases</code></a> returns curated examples that pin package conventions to formulas and external package behavior. <a href="#DiversityAndDissimilarity.validate_reference_cases"><code>validate_reference_cases</code></a> evaluates them:</p><pre><code class="language-julia hljs">validate_reference_cases()</code></pre><p>This is a lightweight validation corpus rather than a replacement for the full test suite. It is meant to make convention choices visible and reproducible.</p><h2 id="Estimator-Reports"><a class="docs-heading-anchor" href="#Estimator-Reports">Estimator Reports</a><a id="Estimator-Reports-1"></a><a class="docs-heading-anchor-permalink" href="#Estimator-Reports" title="Permalink"></a></h2><p><a href="#DiversityAndDissimilarity.estimator_report"><code>estimator_report</code></a> compares Shannon estimators and reports basic coverage diagnostics:</p><pre><code class="language-julia hljs">estimator_report([1, 1, 2, 0, 5]; support=6)</code></pre><p>The report includes observed richness, singleton and doubleton counts, sample coverage, estimator outputs, and warnings about common support/coverage issues.</p><h2 id="Diversity-Audit"><a class="docs-heading-anchor" href="#Diversity-Audit">Diversity Audit</a><a id="Diversity-Audit-1"></a><a class="docs-heading-anchor-permalink" href="#Diversity-Audit" title="Permalink"></a></h2><p><a href="#DiversityAndDissimilarity.diversity_audit"><code>diversity_audit</code></a> combines input validation, row-wise alpha summaries, estimator diagnostics, and a labeled pairwise distance matrix:</p><pre><code class="language-julia hljs">audit = diversity_audit(
-    community;
-    labels=[&quot;plot-a&quot;, &quot;plot-b&quot;],
-    pairwise_index=BrayCurtis(),
-)
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Framework · DiversityAndDissimilarity.jl</title><meta name="title" content="Framework · DiversityAndDissimilarity.jl"/><meta property="og:title" content="Framework · DiversityAndDissimilarity.jl"/><meta property="twitter:title" content="Framework · DiversityAndDissimilarity.jl"/><meta name="description" content="Documentation for DiversityAndDissimilarity.jl."/><meta property="og:description" content="Documentation for DiversityAndDissimilarity.jl."/><meta property="twitter:description" content="Documentation for DiversityAndDissimilarity.jl."/><meta property="og:url" content="https://mroughan.github.io/DiversityAndDissimilarity.jl/framework/"/><meta property="twitter:url" content="https://mroughan.github.io/DiversityAndDissimilarity.jl/framework/"/><link rel="canonical" href="https://mroughan.github.io/DiversityAndDissimilarity.jl/framework/"/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">DiversityAndDissimilarity.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../getting-started/">Getting Started</a></li><li><a class="tocitem" href="../examples/">Examples</a></li><li><a class="tocitem" href="../vegan-migration/">From R vegan</a></li><li><span class="tocitem">Indices</span><ul><li><a class="tocitem" href="../indices/">Indices</a></li><li><a class="tocitem" href="../diversity-indices/">Diversity Indices</a></li><li><a class="tocitem" href="../choosing-an-estimator/">Choosing An Estimator</a></li><li><a class="tocitem" href="../similarity-indices/">Similarity And Dissimilarity Indices</a></li><li><a class="tocitem" href="../similarity-index-catalog/">Similarity And Dissimilarity Catalog</a></li><li><a class="tocitem" href="../scaling/">Scaling And Performance</a></li><li><a class="tocitem" href="../benchmarks/">Benchmarks</a></li></ul></li><li><span class="tocitem">Framework</span><ul><li class="is-active"><a class="tocitem" href>Framework</a><ul class="internal"><li><a class="tocitem" href="#Index-Metadata-And-Traits"><span>Index Metadata And Traits</span></a></li><li><a class="tocitem" href="#Index-Bounds"><span>Index Bounds</span></a></li><li><a class="tocitem" href="#Metric-Hierarchy"><span>Metric Hierarchy</span></a></li><li><a class="tocitem" href="#Reference-Validation"><span>Reference Validation</span></a></li><li><a class="tocitem" href="#Estimator-Reports"><span>Estimator Reports</span></a></li><li><a class="tocitem" href="#Diversity-Audit"><span>Diversity Audit</span></a></li><li><a class="tocitem" href="#Uncertainty-Audit"><span>Uncertainty Audit</span></a></li></ul></li><li><a class="tocitem" href="../case-study/">Workflow Case Study</a></li><li><a class="tocitem" href="../reference-examples/">Reference Examples</a></li><li><a class="tocitem" href="../release-readiness/">Release Readiness</a></li></ul></li><li><span class="tocitem">Availability Checklists</span><ul><li><a class="tocitem" href="../checklists/">Availability Checklists</a></li><li><a class="tocitem" href="../index-checklist/">Diversity Indices</a></li><li><a class="tocitem" href="../similarity-checklist/">Similarity And Dissimilarity</a></li></ul></li><li><a class="tocitem" href="../api/">API Reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Framework</a></li><li class="is-active"><a href>Framework</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Framework</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/mroughan/DiversityAndDissimilarity.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/main/docs/src/framework.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Framework"><a class="docs-heading-anchor" href="#Framework">Framework</a><a id="Framework-1"></a><a class="docs-heading-anchor-permalink" href="#Framework" title="Permalink"></a></h1><p><code>DiversityAndDissimilarity.jl</code> exposes index metadata and workflow diagnostics in addition to numeric index values. These helpers make conventions explicit and make validation reproducible.</p><h2 id="Index-Metadata-And-Traits"><a class="docs-heading-anchor" href="#Index-Metadata-And-Traits">Index Metadata And Traits</a><a id="Index-Metadata-And-Traits-1"></a><a class="docs-heading-anchor-permalink" href="#Index-Metadata-And-Traits" title="Permalink"></a></h2><p>Use <a href="#DiversityAndDissimilarity.index_metadata"><code>index_metadata</code></a> to inspect how an index is represented:</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
 
-audit.alpha
-audit.estimator_report
-audit.pairwise
-audit.warnings</code></pre><p>For Tables.jl-compatible inputs, use <code>species</code> and <code>label</code> to separate species columns from metadata:</p><pre><code class="language-julia hljs">diversity_audit(table; species=[:oak, :ash, :elm], label=:site)</code></pre><h2 id="Uncertainty-Audit"><a class="docs-heading-anchor" href="#Uncertainty-Audit">Uncertainty Audit</a><a id="Uncertainty-Audit-1"></a><a class="docs-heading-anchor-permalink" href="#Uncertainty-Audit" title="Permalink"></a></h2><p><a href="#DiversityAndDissimilarity.uncertainty_audit"><code>uncertainty_audit</code></a> wraps the bootstrap tools into a compact report for workflow checks. It reports Shannon entropy and effective-diversity intervals for each sample together with labels, sample coverage, richness, and warnings:</p><pre><code class="language-julia hljs">uncertainty_audit(
-    community;
-    labels=[&quot;plot-a&quot;, &quot;plot-b&quot;],
-    nboot=500,
-)</code></pre><p>Use a modest <code>nboot</code> while developing a workflow and a larger value for final reports.</p><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.index_metadata"><a class="docstring-binding" href="#DiversityAndDissimilarity.index_metadata"><code>DiversityAndDissimilarity.index_metadata</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">index_metadata(index)</code></pre><p>Return convention-aware metadata for an index: family, input and output modes, range, metric status, formula, aliases, and implementation notes.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L296-L301">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.index_family"><a class="docstring-binding" href="#DiversityAndDissimilarity.index_family"><code>DiversityAndDissimilarity.index_family</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">index_family(index)</code></pre><p>Return a symbolic family label for an index, such as <code>:entropy</code>, <code>:richness</code>, <code>:evenness</code>, <code>:incidence</code>, <code>:abundance</code>, or <code>:probability</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L1-L6">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.input_mode"><a class="docstring-binding" href="#DiversityAndDissimilarity.input_mode"><code>DiversityAndDissimilarity.input_mode</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">input_mode(index)</code></pre><p>Return the expected input style for an index: <code>:single_assemblage</code>, <code>:pairwise</code>, or <code>:either</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L26-L31">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.output_mode"><a class="docstring-binding" href="#DiversityAndDissimilarity.output_mode"><code>DiversityAndDissimilarity.output_mode</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">output_mode(index)</code></pre><p>Return the conventional output form, such as <code>:entropy</code>, <code>:diversity</code>, <code>:similarity</code>, <code>:dissimilarity</code>, <code>:distance</code>, <code>:coefficient</code>, or <code>:estimate</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L35-L40">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_finite"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_finite"><code>DiversityAndDissimilarity.is_finite</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_finite(index)</code></pre><p>Return whether the index is expected to return finite values for valid finite inputs. This is separate from <a href="#DiversityAndDissimilarity.is_bounded"><code>is_bounded</code></a>: an index can be finite on every finite data set while having no fixed finite upper bound.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L53-L59">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_metric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_metric"><code>DiversityAndDissimilarity.is_metric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_metric(index)</code></pre><p>Return whether the package&#39;s distance/dissimilarity form is a metric under the usual assumptions for the index.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L63-L68">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_triangular"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_triangular"><code>DiversityAndDissimilarity.is_triangular</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_triangular(index)</code></pre><p>Return whether the package&#39;s distance/dissimilarity form is known to obey the triangle inequality. Returns <code>:unknown</code> when this package does not encode a claim.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L72-L78">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_nonnegative"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_nonnegative"><code>DiversityAndDissimilarity.is_nonnegative</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_nonnegative(index)</code></pre><p>Return whether the index output is known to be nonnegative.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L83-L87">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_bounded"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_bounded"><code>DiversityAndDissimilarity.is_bounded</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_bounded(index)</code></pre><p>Return whether the conventional output range has a finite upper bound.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L90-L94">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_pseudometric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_pseudometric"><code>DiversityAndDissimilarity.is_pseudometric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_pseudometric(index)</code></pre><p>Return whether the distance/dissimilarity form is known to be a pseudometric: nonnegative, symmetric, zero for identical inputs, and triangular, while allowing distinct inputs to have zero distance.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L100-L106">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_quasimetric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_quasimetric"><code>DiversityAndDissimilarity.is_quasimetric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_quasimetric(index)</code></pre><p>Return whether the distance/dissimilarity form is known to be a quasimetric: nonnegative, zero only for identical inputs, and triangular, without requiring symmetry. Metrics are also quasimetrics under this convention.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L111-L117">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_metametric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_metametric"><code>DiversityAndDissimilarity.is_metametric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_metametric(index)</code></pre><p>Return whether the distance/dissimilarity form is known to be a metametric under this package&#39;s convention: nonnegative, symmetric, and zero for identical inputs, without requiring identity of indiscernibles or the triangle inequality. Returns <code>:unknown</code> where that classification is not encoded.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L121-L128">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_semimetric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_semimetric"><code>DiversityAndDissimilarity.is_semimetric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_semimetric(index)</code></pre><p>Return whether the distance/dissimilarity form is known to be a semimetric under this package&#39;s convention: nonnegative, symmetric, zero only for identical inputs, but not necessarily triangular.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L133-L139">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_premetric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_premetric"><code>DiversityAndDissimilarity.is_premetric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_premetric(index)</code></pre><p>Return whether the distance/dissimilarity form is known to be a premetric: nonnegative and zero for identical inputs, without requiring symmetry or the triangle inequality.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L144-L150">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_supermetric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_supermetric"><code>DiversityAndDissimilarity.is_supermetric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_supermetric(index)</code></pre><p>Return whether the index is known to obey a supermetric or reverse-triangle style condition. This property is uncommon for the indices implemented here, so unknown cases return <code>:unknown</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L154-L160">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_similarity"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_similarity"><code>DiversityAndDissimilarity.is_similarity</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_similarity(index)</code></pre><p>Return whether the primary output mode is a similarity or similarity coefficient.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L164-L169">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_dissimilarity"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_dissimilarity"><code>DiversityAndDissimilarity.is_dissimilarity</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_dissimilarity(index)</code></pre><p>Return whether the primary output mode is a dissimilarity or distance.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L172-L176">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_dissimiliarty"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_dissimiliarty"><code>DiversityAndDissimilarity.is_dissimiliarty</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_dissimiliarty(index)</code></pre><p>Deprecated misspelling of <a href="#DiversityAndDissimilarity.is_dissimilarity"><code>is_dissimilarity</code></a>, retained as a forgiving alias.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L179-L184">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_symmetric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_symmetric"><code>DiversityAndDissimilarity.is_symmetric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_symmetric(index)</code></pre><p>Return whether the pairwise form satisfies <code>f(a, b) == f(b, a)</code> for all inputs.</p><p>Most indices are symmetric. <a href="../similarity-indices/#DiversityAndDissimilarity.KullbackLeibler"><code>KullbackLeibler</code></a> is the notable exception: <code>dissimilarity(KullbackLeibler(), a, b)</code> computes <span>$D_{KL}(a \Vert b)$</span> which generally differs from <span>$D_{KL}(b \Vert a)$</span>. Community distance matrices for asymmetric indices are not symmetric matrices.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L187-L196">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.index_range"><a class="docstring-binding" href="#DiversityAndDissimilarity.index_range"><code>DiversityAndDissimilarity.index_range</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">index_range(index)</code></pre><p>Return a conventional numeric range for the index output when it is known.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L200-L204">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.index_bounds"><a class="docstring-binding" href="#DiversityAndDissimilarity.index_bounds"><code>DiversityAndDissimilarity.index_bounds</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">index_bounds(index)</code></pre><p>Return a named tuple describing the conventional numeric bounds and the usual interpretation of those bounds. Unknown meanings are returned as <code>:unknown</code>.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L217-L222">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.requires_probabilities"><a class="docstring-binding" href="#DiversityAndDissimilarity.requires_probabilities"><code>DiversityAndDissimilarity.requires_probabilities</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">requires_probabilities(index)</code></pre><p>Return whether an index is naturally defined on normalized probability vectors.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L279-L283">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.supports_matrix_kernel"><a class="docstring-binding" href="#DiversityAndDissimilarity.supports_matrix_kernel"><code>DiversityAndDissimilarity.supports_matrix_kernel</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">supports_matrix_kernel(index)</code></pre><p>Return whether this package has a specialized matrix implementation for the index.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L287-L292">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.reference_cases"><a class="docstring-binding" href="#DiversityAndDissimilarity.reference_cases"><code>DiversityAndDissimilarity.reference_cases</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">reference_cases()</code></pre><p>Return curated cross-package and formula reference cases used to validate conventions.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L380-L385">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.validate_reference_cases"><a class="docstring-binding" href="#DiversityAndDissimilarity.validate_reference_cases"><code>DiversityAndDissimilarity.validate_reference_cases</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">validate_reference_cases(; cases=reference_cases())</code></pre><p>Evaluate reference cases and return one result named tuple per case.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L399-L403">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.estimator_report"><a class="docstring-binding" href="#DiversityAndDissimilarity.estimator_report"><code>DiversityAndDissimilarity.estimator_report</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">estimator_report(data; support=nothing, base=2, frequencies=true, species=nothing)</code></pre><p>Return a compact report comparing Shannon entropy estimators and basic coverage diagnostics for one assemblage.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L416-L421">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.diversity_audit"><a class="docstring-binding" href="#DiversityAndDissimilarity.diversity_audit"><code>DiversityAndDissimilarity.diversity_audit</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">diversity_audit(data; species=nothing, labels=nothing, label=nothing,
-                pairwise_index=BrayCurtis())</code></pre><p>Return validation diagnostics, alpha summaries, estimator diagnostics, and an optional labeled pairwise matrix for a diversity workflow.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L466-L472">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.uncertainty_audit"><a class="docstring-binding" href="#DiversityAndDissimilarity.uncertainty_audit"><code>DiversityAndDissimilarity.uncertainty_audit</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">uncertainty_audit(data; species=nothing, labels=nothing, label=nothing,
+julia&gt; m = index_metadata(BrayCurtis());
+
+julia&gt; m.family
+:abundance
+
+julia&gt; m.output_mode
+:dissimilarity
+
+julia&gt; m.is_metric
+false
+
+julia&gt; m.is_semimetric
+true
+
+julia&gt; m.bounds.lower_meaning
+&quot;minimal dissimilarity; identical or indistinguishable inputs&quot;</code></pre><p>The lower-level trait helpers are useful when writing generic workflows. Properties that are not encoded for an index return <code>:unknown</code> where a Boolean answer would overstate what the package knows.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; index_family(BrayCurtis())
+:abundance
+
+julia&gt; input_mode(BrayCurtis())
+:pairwise
+
+julia&gt; output_mode(BrayCurtis())
+:dissimilarity
+
+julia&gt; is_metric(Jaccard())
+true
+
+julia&gt; is_triangular(BrayCurtis())
+false
+
+julia&gt; is_triangular(Overlap())
+:unknown
+
+julia&gt; is_nonnegative(KullbackLeibler())
+true
+
+julia&gt; is_bounded(JensenShannon())
+true
+
+julia&gt; is_semimetric(BrayCurtis())
+true
+
+julia&gt; is_similarity(Jaccard())
+true
+
+julia&gt; is_dissimilarity(BrayCurtis())
+true
+
+julia&gt; is_symmetric(KullbackLeibler())
+false
+
+julia&gt; index_range(PielouEvenness())
+(lower = 0.0, upper = 1.0)
+
+julia&gt; requires_probabilities(Hellinger())
+true
+
+julia&gt; supports_matrix_kernel(Jaccard())
+true</code></pre><h2 id="Index-Bounds"><a class="docs-heading-anchor" href="#Index-Bounds">Index Bounds</a><a id="Index-Bounds-1"></a><a class="docs-heading-anchor-permalink" href="#Index-Bounds" title="Permalink"></a></h2><p><a href="#DiversityAndDissimilarity.index_bounds"><code>index_bounds</code></a> adds semantic meaning to the numeric range. For similarities, the lower bound conventionally means no overlap; for dissimilarities and distances, it means identical inputs.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; b = index_bounds(Jaccard());
+
+julia&gt; b.lower, b.upper
+(0.0, 1.0)
+
+julia&gt; b.lower_meaning
+&quot;minimal similarity; conventionally complete dissimilarity or no overlap&quot;
+
+julia&gt; b.upper_meaning
+&quot;maximal similarity; conventionally identical or complete overlap&quot;</code></pre><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; b = index_bounds(KullbackLeibler());
+
+julia&gt; b.upper
+Inf
+
+julia&gt; b.upper_meaning
+&quot;unbounded dissimilarity; larger values mean greater separation&quot;</code></pre><h2 id="Metric-Hierarchy"><a class="docs-heading-anchor" href="#Metric-Hierarchy">Metric Hierarchy</a><a id="Metric-Hierarchy-1"></a><a class="docs-heading-anchor-permalink" href="#Metric-Hierarchy" title="Permalink"></a></h2><p><a href="#DiversityAndDissimilarity.is_metric"><code>is_metric</code></a> follows the usual <a href="https://en.wikipedia.org/wiki/Metric_space">metric space</a> convention: nonnegative, zero only for identical inputs, symmetric, and satisfying the <a href="https://en.wikipedia.org/wiki/Triangle_inequality">triangle inequality</a>. The related helpers expose progressively weaker properties:</p><table><tr><th style="text-align: right">Trait</th><th style="text-align: right">Wikipedia</th><th style="text-align: right">Requires</th><th style="text-align: right">Notes</th></tr><tr><td style="text-align: right"><a href="#DiversityAndDissimilarity.is_metric"><code>is_metric</code></a></td><td style="text-align: right"><a href="https://en.wikipedia.org/wiki/Metric_space">Metric space</a></td><td style="text-align: right">nonneg + d=0 iff same + symmetric + triangular</td><td style="text-align: right">Full metric</td></tr><tr><td style="text-align: right"><a href="#DiversityAndDissimilarity.is_pseudometric"><code>is_pseudometric</code></a></td><td style="text-align: right"><a href="https://en.wikipedia.org/wiki/Pseudometric_space">Pseudometric space</a></td><td style="text-align: right">nonneg + symmetric + d=0 for same + triangular</td><td style="text-align: right">Distinct inputs may have zero distance</td></tr><tr><td style="text-align: right"><a href="#DiversityAndDissimilarity.is_quasimetric"><code>is_quasimetric</code></a></td><td style="text-align: right"><a href="https://en.wikipedia.org/wiki/Quasimetric_space">Quasimetric</a></td><td style="text-align: right">nonneg + d=0 iff same + triangular</td><td style="text-align: right">No symmetry required</td></tr><tr><td style="text-align: right"><a href="#DiversityAndDissimilarity.is_metametric"><code>is_metametric</code></a></td><td style="text-align: right"><a href="https://en.wikipedia.org/wiki/Metric_space#Generalizations">Generalizations</a></td><td style="text-align: right">nonneg + symmetric + d=0 for same</td><td style="text-align: right">No triangle inequality; no identity of indiscernibles</td></tr><tr><td style="text-align: right"><a href="#DiversityAndDissimilarity.is_semimetric"><code>is_semimetric</code></a></td><td style="text-align: right"><a href="https://en.wikipedia.org/wiki/Semimetric_space">Semimetric space</a></td><td style="text-align: right">nonneg + symmetric + d=0 iff same</td><td style="text-align: right">No triangle inequality</td></tr><tr><td style="text-align: right"><a href="#DiversityAndDissimilarity.is_premetric"><code>is_premetric</code></a></td><td style="text-align: right"><a href="https://en.wikipedia.org/wiki/Premetric_space">Premetric space</a></td><td style="text-align: right">nonneg + d=0 for same</td><td style="text-align: right">Most permissive</td></tr><tr><td style="text-align: right"><a href="#DiversityAndDissimilarity.is_supermetric"><code>is_supermetric</code></a></td><td style="text-align: right"><a href="https://en.wikipedia.org/wiki/Ultrametric_space">Ultrametric space</a></td><td style="text-align: right">reverse-triangle condition</td><td style="text-align: right">Uncommon; most indices return <code>false</code> or <code>:unknown</code></td></tr></table><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_metric(Jaccard())
+true
+
+julia&gt; is_pseudometric(ShannonDifference())
+true
+
+julia&gt; is_metametric(BrayCurtis())
+true
+
+julia&gt; is_semimetric(BrayCurtis())
+true
+
+julia&gt; is_premetric(KullbackLeibler())
+true
+
+julia&gt; is_supermetric(Jaccard())
+false</code></pre><p>The full descriptor set with typical results:</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_finite(KullbackLeibler())
+false
+
+julia&gt; is_symmetric(KullbackLeibler())
+false
+
+julia&gt; is_nonnegative(KullbackLeibler())
+true
+
+julia&gt; is_bounded(KullbackLeibler())
+false
+
+julia&gt; is_metric(KullbackLeibler())
+false
+
+julia&gt; is_triangular(KullbackLeibler())
+false
+
+julia&gt; is_pseudometric(KullbackLeibler())
+false
+
+julia&gt; is_quasimetric(KullbackLeibler())
+false
+
+julia&gt; is_metametric(KullbackLeibler())
+false
+
+julia&gt; is_premetric(KullbackLeibler())
+true
+
+julia&gt; is_supermetric(KullbackLeibler())
+false
+
+julia&gt; is_similarity(KullbackLeibler())
+false
+
+julia&gt; is_dissimilarity(KullbackLeibler())
+true</code></pre><h2 id="Reference-Validation"><a class="docs-heading-anchor" href="#Reference-Validation">Reference Validation</a><a id="Reference-Validation-1"></a><a class="docs-heading-anchor-permalink" href="#Reference-Validation" title="Permalink"></a></h2><p><a href="#DiversityAndDissimilarity.reference_cases"><code>reference_cases</code></a> returns curated examples that pin package conventions to formulas and external package behavior. <a href="#DiversityAndDissimilarity.validate_reference_cases"><code>validate_reference_cases</code></a> evaluates them:</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; results = validate_reference_cases();
+
+julia&gt; all(r -&gt; r.passed, results)
+true
+
+julia&gt; results[1].name
+&quot;vegan_shannon_natural_log&quot;
+
+julia&gt; results[1].observed ≈ 1.0397207708399179
+true</code></pre><h2 id="Estimator-Reports"><a class="docs-heading-anchor" href="#Estimator-Reports">Estimator Reports</a><a id="Estimator-Reports-1"></a><a class="docs-heading-anchor-permalink" href="#Estimator-Reports" title="Permalink"></a></h2><p><a href="#DiversityAndDissimilarity.estimator_report"><code>estimator_report</code></a> compares Shannon estimators and reports basic coverage diagnostics:</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; r = estimator_report([1, 1, 2, 0, 5]);
+
+julia&gt; r.observed_richness
+4
+
+julia&gt; r.singletons
+2
+
+julia&gt; r.sample_coverage
+0.7777777777777778
+
+julia&gt; r.estimates[1].name
+:plugin</code></pre><p>The report includes observed richness, singleton and doubleton counts, sample coverage, estimator outputs, and warnings about common support/coverage issues.</p><h2 id="Diversity-Audit"><a class="docs-heading-anchor" href="#Diversity-Audit">Diversity Audit</a><a id="Diversity-Audit-1"></a><a class="docs-heading-anchor-permalink" href="#Diversity-Audit" title="Permalink"></a></h2><p><a href="#DiversityAndDissimilarity.diversity_audit"><code>diversity_audit</code></a> combines input validation, row-wise alpha summaries, estimator diagnostics, and a labeled pairwise distance matrix:</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; community = [1 1 2 0 5; 3 0 1 1 0];
+
+julia&gt; audit = diversity_audit(community; labels=[&quot;plot-a&quot;, &quot;plot-b&quot;]);
+
+julia&gt; audit.n_samples
+2
+
+julia&gt; audit.n_taxa
+5
+
+julia&gt; audit.pairwise.labels
+2-element Vector{String}:
+ &quot;plot-a&quot;
+ &quot;plot-b&quot;
+
+julia&gt; audit.alpha[1].richness
+4</code></pre><p>For Tables.jl-compatible inputs, use <code>species</code> and <code>label</code> to separate species columns from metadata:</p><pre><code class="language-julia hljs">diversity_audit(table; species=[:oak, :ash, :elm], label=:site)</code></pre><h2 id="Uncertainty-Audit"><a class="docs-heading-anchor" href="#Uncertainty-Audit">Uncertainty Audit</a><a id="Uncertainty-Audit-1"></a><a class="docs-heading-anchor-permalink" href="#Uncertainty-Audit" title="Permalink"></a></h2><p><a href="#DiversityAndDissimilarity.uncertainty_audit"><code>uncertainty_audit</code></a> wraps the bootstrap tools into a compact report for workflow checks. It reports Shannon entropy and effective-diversity intervals for each sample together with labels, sample coverage, richness, and warnings:</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; community = [1 1 2 0 5; 3 0 1 1 0];
+
+julia&gt; ua = uncertainty_audit(community; labels=[&quot;plot-a&quot;, &quot;plot-b&quot;], nboot=50);
+
+julia&gt; length(ua.reports)
+2
+
+julia&gt; ua.reports[1].label
+&quot;plot-a&quot;
+
+julia&gt; ua.reports[1].richness
+4</code></pre><p>Use a modest <code>nboot</code> while developing a workflow and a larger value for final reports.</p><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.index_metadata"><a class="docstring-binding" href="#DiversityAndDissimilarity.index_metadata"><code>DiversityAndDissimilarity.index_metadata</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">index_metadata(index)</code></pre><p>Return convention-aware metadata for an index as a named tuple, including: family, input and output modes, numeric range and interpreted bounds, all property trait values, formula, aliases, and implementation notes.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; m = index_metadata(BrayCurtis());
+
+julia&gt; m.family
+:abundance
+
+julia&gt; m.output_mode
+:dissimilarity
+
+julia&gt; m.is_metric
+false
+
+julia&gt; m.is_semimetric
+true
+
+julia&gt; m.is_symmetric
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L620-L647">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.index_family"><a class="docstring-binding" href="#DiversityAndDissimilarity.index_family"><code>DiversityAndDissimilarity.index_family</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">index_family(index)</code></pre><p>Return a symbolic family label for an index, such as <code>:entropy</code>, <code>:richness</code>, <code>:evenness</code>, <code>:incidence</code>, <code>:abundance</code>, or <code>:probability</code>.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; index_family(Shannon())
+:entropy
+
+julia&gt; index_family(BrayCurtis())
+:abundance
+
+julia&gt; index_family(Jaccard())
+:incidence</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L1-L19">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.input_mode"><a class="docstring-binding" href="#DiversityAndDissimilarity.input_mode"><code>DiversityAndDissimilarity.input_mode</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">input_mode(index)</code></pre><p>Return the expected input style for an index: <code>:single_assemblage</code>, <code>:pairwise</code>, or <code>:either</code>.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; input_mode(Shannon())
+:single_assemblage
+
+julia&gt; input_mode(BrayCurtis())
+:pairwise</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L39-L54">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.output_mode"><a class="docstring-binding" href="#DiversityAndDissimilarity.output_mode"><code>DiversityAndDissimilarity.output_mode</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">output_mode(index)</code></pre><p>Return the conventional output form, such as <code>:entropy</code>, <code>:diversity</code>, <code>:similarity</code>, <code>:dissimilarity</code>, <code>:distance</code>, <code>:coefficient</code>, or <code>:estimate</code>.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; output_mode(Shannon())
+:entropy
+
+julia&gt; output_mode(Jaccard())
+:similarity
+
+julia&gt; output_mode(BrayCurtis())
+:dissimilarity
+
+julia&gt; output_mode(Hellinger())
+:distance</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L58-L79">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_finite"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_finite"><code>DiversityAndDissimilarity.is_finite</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_finite(index)</code></pre><p>Return whether the index is expected to return finite values for valid finite inputs. This is separate from <a href="#DiversityAndDissimilarity.is_bounded"><code>is_bounded</code></a>: an index can be finite on every finite data set while having no fixed finite upper bound.</p><p><a href="../similarity-indices/#DiversityAndDissimilarity.KullbackLeibler"><code>KullbackLeibler</code></a> returns <code>Inf</code> when <code>right</code> has zero probability where <code>left</code> has positive probability, so <code>is_finite</code> returns <code>false</code> for it.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_finite(JensenShannon())
+true
+
+julia&gt; is_finite(KullbackLeibler())
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L92-L111">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_metric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_metric"><code>DiversityAndDissimilarity.is_metric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_metric(index)</code></pre><p>Return whether the package&#39;s distance/dissimilarity form is a <a href="https://en.wikipedia.org/wiki/Metric_space">metric</a> under the usual assumptions for the index: nonnegative, zero only for identical inputs, symmetric, and satisfying the <a href="https://en.wikipedia.org/wiki/Triangle_inequality">triangle inequality</a>.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_metric(Jaccard())
+true
+
+julia&gt; is_metric(BrayCurtis())
+false
+
+julia&gt; is_metric(JensenShannon())
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L115-L136">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_triangular"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_triangular"><code>DiversityAndDissimilarity.is_triangular</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_triangular(index)</code></pre><p>Return whether the package&#39;s distance/dissimilarity form is known to obey the <a href="https://en.wikipedia.org/wiki/Triangle_inequality">triangle inequality</a>. Returns <code>:unknown</code> when this package does not encode a claim.</p><p>All indices for which <a href="#DiversityAndDissimilarity.is_metric"><code>is_metric</code></a> is <code>true</code> are also triangular.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_triangular(Jaccard())
+true
+
+julia&gt; is_triangular(BrayCurtis())
+false
+
+julia&gt; is_triangular(Overlap())
+:unknown</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L140-L161">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_nonnegative"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_nonnegative"><code>DiversityAndDissimilarity.is_nonnegative</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_nonnegative(index)</code></pre><p>Return whether the index output is known to be nonnegative.</p><p>All indices implemented in this package return nonnegative values for valid inputs.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_nonnegative(Shannon())
+true
+
+julia&gt; is_nonnegative(KullbackLeibler())
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L166-L183">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_bounded"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_bounded"><code>DiversityAndDissimilarity.is_bounded</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_bounded(index)</code></pre><p>Return whether the conventional output range has a finite upper bound.</p><p>Uses <a href="#DiversityAndDissimilarity.index_range"><code>index_range</code></a> to determine boundedness. Indices such as <a href="../similarity-indices/#DiversityAndDissimilarity.BrayCurtis"><code>BrayCurtis</code></a>, <a href="../similarity-indices/#DiversityAndDissimilarity.Jaccard"><code>Jaccard</code></a>, and <a href="../similarity-indices/#DiversityAndDissimilarity.JensenShannon"><code>JensenShannon</code></a> are bounded in <code>[0, 1]</code>. Entropy, richness, and divergence indices are typically unbounded above.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_bounded(Jaccard())
+true
+
+julia&gt; is_bounded(KullbackLeibler())
+false
+
+julia&gt; is_bounded(JensenShannon())
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L186-L208">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_pseudometric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_pseudometric"><code>DiversityAndDissimilarity.is_pseudometric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_pseudometric(index)</code></pre><p>Return whether the distance/dissimilarity form is known to be a <a href="https://en.wikipedia.org/wiki/Pseudometric_space">pseudometric</a>: nonnegative, symmetric, zero for identical inputs, and satisfying the triangle inequality, while allowing distinct inputs to have zero distance.</p><p>Returns <code>:unknown</code> where that classification is not encoded.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_pseudometric(Jaccard())
+true
+
+julia&gt; is_pseudometric(ShannonDifference())
+true
+
+julia&gt; is_pseudometric(BrayCurtis())
+false
+
+julia&gt; is_pseudometric(Overlap())
+:unknown</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L214-L239">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_quasimetric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_quasimetric"><code>DiversityAndDissimilarity.is_quasimetric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_quasimetric(index)</code></pre><p>Return whether the distance/dissimilarity form is known to be a <a href="https://en.wikipedia.org/wiki/Quasimetric_space">quasimetric</a>: nonnegative, zero only for identical inputs, and satisfying the triangle inequality, without requiring symmetry. Every metric is also a quasimetric.</p><p>Returns <code>:unknown</code> where that classification is not encoded.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_quasimetric(Jaccard())
+true
+
+julia&gt; is_quasimetric(BrayCurtis())
+false
+
+julia&gt; is_quasimetric(Overlap())
+:unknown</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L244-L266">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_metametric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_metametric"><code>DiversityAndDissimilarity.is_metametric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_metametric(index)</code></pre><p>Return whether the distance/dissimilarity form is known to be a metametric (see <a href="https://en.wikipedia.org/wiki/Metric_space#Generalizations">generalizations of metric spaces</a>) under this package&#39;s convention: nonnegative, symmetric, and zero for identical inputs, without requiring the identity of indiscernibles or the <a href="https://en.wikipedia.org/wiki/Triangle_inequality">triangle inequality</a>. Returns <code>:unknown</code> where that classification is not encoded.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_metametric(BrayCurtis())
+true
+
+julia&gt; is_metametric(KullbackLeibler())
+false
+
+julia&gt; is_metametric(Jaccard())
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L270-L292">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_semimetric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_semimetric"><code>DiversityAndDissimilarity.is_semimetric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_semimetric(index)</code></pre><p>Return whether the distance/dissimilarity form is known to be a <a href="https://en.wikipedia.org/wiki/Semimetric_space">semimetric</a> under this package&#39;s convention: nonnegative, symmetric, zero only for identical inputs, but not necessarily satisfying the <a href="https://en.wikipedia.org/wiki/Triangle_inequality">triangle inequality</a>.</p><p>Returns <code>:unknown</code> where that classification is not encoded.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_semimetric(BrayCurtis())
+true
+
+julia&gt; is_semimetric(Overlap())
+false
+
+julia&gt; is_semimetric(Jaccard())
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L297-L320">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_premetric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_premetric"><code>DiversityAndDissimilarity.is_premetric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_premetric(index)</code></pre><p>Return whether the distance/dissimilarity form is known to be a <a href="https://en.wikipedia.org/wiki/Premetric_space">premetric</a>: nonnegative and zero for identical inputs, without requiring symmetry or the <a href="https://en.wikipedia.org/wiki/Triangle_inequality">triangle inequality</a>. This is the weakest of the standard metric-like properties.</p><p>Returns <code>:unknown</code> where that classification is not encoded.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_premetric(BrayCurtis())
+true
+
+julia&gt; is_premetric(KullbackLeibler())
+true
+
+julia&gt; is_premetric(Shannon())
+:unknown</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L325-L348">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_supermetric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_supermetric"><code>DiversityAndDissimilarity.is_supermetric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_supermetric(index)</code></pre><p>Return whether the index is known to obey a supermetric or reverse-triangle style condition, as in an <a href="https://en.wikipedia.org/wiki/Ultrametric_space">ultrametric</a> (<span>$d(x,z) \leq \max(d(x,y), d(y,z))$</span>). This property is uncommon for the indices implemented here, so unknown cases return <code>:unknown</code>.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_supermetric(Jaccard())
+false
+
+julia&gt; is_supermetric(BrayCurtis())
+:unknown</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L352-L370">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_similarity"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_similarity"><code>DiversityAndDissimilarity.is_similarity</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_similarity(index)</code></pre><p>Return whether the primary output mode is a similarity or similarity coefficient.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_similarity(Jaccard())
+true
+
+julia&gt; is_similarity(Bhattacharyya())
+true
+
+julia&gt; is_similarity(BrayCurtis())
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L374-L392">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_dissimilarity"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_dissimilarity"><code>DiversityAndDissimilarity.is_dissimilarity</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_dissimilarity(index)</code></pre><p>Return whether the primary output mode is a dissimilarity or distance.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_dissimilarity(BrayCurtis())
+true
+
+julia&gt; is_dissimilarity(Hellinger())
+true
+
+julia&gt; is_dissimilarity(Jaccard())
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L395-L412">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_dissimiliarty"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_dissimiliarty"><code>DiversityAndDissimilarity.is_dissimiliarty</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_dissimiliarty(index)</code></pre><p>Deprecated misspelling of <a href="#DiversityAndDissimilarity.is_dissimilarity"><code>is_dissimilarity</code></a>, retained as a forgiving alias.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L415-L420">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.is_symmetric"><a class="docstring-binding" href="#DiversityAndDissimilarity.is_symmetric"><code>DiversityAndDissimilarity.is_symmetric</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_symmetric(index)</code></pre><p>Return whether the pairwise form satisfies <code>f(a, b) == f(b, a)</code> for all inputs.</p><p>Most indices are symmetric. <a href="../similarity-indices/#DiversityAndDissimilarity.KullbackLeibler"><code>KullbackLeibler</code></a> is the notable exception: <code>dissimilarity(KullbackLeibler(), a, b)</code> computes <span>$D_{KL}(a \Vert b)$</span> which generally differs from <span>$D_{KL}(b \Vert a)$</span>. Community distance matrices for asymmetric indices are not symmetric matrices.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; is_symmetric(BrayCurtis())
+true
+
+julia&gt; is_symmetric(KullbackLeibler())
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L423-L442">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.index_range"><a class="docstring-binding" href="#DiversityAndDissimilarity.index_range"><code>DiversityAndDissimilarity.index_range</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">index_range(index)</code></pre><p>Return a conventional numeric range for the index output when it is known.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; index_range(Jaccard())
+(lower = 0.0, upper = 1.0)
+
+julia&gt; index_range(Shannon())
+(lower = 0.0, upper = Inf)
+
+julia&gt; index_range(JensenDifference())
+(lower = 0.0, upper = 1.0)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L446-L463">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.index_bounds"><a class="docstring-binding" href="#DiversityAndDissimilarity.index_bounds"><code>DiversityAndDissimilarity.index_bounds</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">index_bounds(index)</code></pre><p>Return a named tuple describing the conventional numeric bounds and the usual interpretation of those bounds. Unknown meanings are returned as <code>:unknown</code>.</p><p>The fields <code>lower_meaning</code> and <code>upper_meaning</code> explain what the extremes conventionally signify. For a similarity, the lower bound means complete dissimilarity or no overlap; for a dissimilarity or distance, it means identical or indistinguishable inputs.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; b = index_bounds(Jaccard());
+
+julia&gt; b.lower, b.upper
+(0.0, 1.0)
+
+julia&gt; b.lower_meaning
+&quot;minimal similarity; conventionally complete dissimilarity or no overlap&quot;
+
+julia&gt; b.upper_meaning
+&quot;maximal similarity; conventionally identical or complete overlap&quot;</code></pre><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; b = index_bounds(BrayCurtis());
+
+julia&gt; b.lower_meaning
+&quot;minimal dissimilarity; identical or indistinguishable inputs&quot;
+
+julia&gt; b.upper_meaning
+&quot;maximal dissimilarity under the index convention&quot;</code></pre><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; b = index_bounds(KullbackLeibler());
+
+julia&gt; b.upper
+Inf
+
+julia&gt; b.upper_meaning
+&quot;unbounded dissimilarity; larger values mean greater separation&quot;</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L476-L525">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.requires_probabilities"><a class="docstring-binding" href="#DiversityAndDissimilarity.requires_probabilities"><code>DiversityAndDissimilarity.requires_probabilities</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">requires_probabilities(index)</code></pre><p>Return whether an index is naturally defined on normalized probability vectors.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; requires_probabilities(Hellinger())
+true
+
+julia&gt; requires_probabilities(BrayCurtis())
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L582-L596">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.supports_matrix_kernel"><a class="docstring-binding" href="#DiversityAndDissimilarity.supports_matrix_kernel"><code>DiversityAndDissimilarity.supports_matrix_kernel</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">supports_matrix_kernel(index)</code></pre><p>Return whether this package has a specialized matrix implementation for the index. Indices with a matrix kernel compute pairwise distance matrices more efficiently than the fallback that calls the pairwise method once per pair.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; supports_matrix_kernel(BrayCurtis())
+true
+
+julia&gt; supports_matrix_kernel(Canberra())
+false</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L600-L616">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.reference_cases"><a class="docstring-binding" href="#DiversityAndDissimilarity.reference_cases"><code>DiversityAndDissimilarity.reference_cases</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">reference_cases()</code></pre><p>Return curated cross-package and formula reference cases used to validate conventions.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L726-L731">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.validate_reference_cases"><a class="docstring-binding" href="#DiversityAndDissimilarity.validate_reference_cases"><code>DiversityAndDissimilarity.validate_reference_cases</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">validate_reference_cases(; cases=reference_cases())</code></pre><p>Evaluate reference cases and return one result named tuple per case.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; results = validate_reference_cases();
+
+julia&gt; all(r -&gt; r.passed, results)
+true
+
+julia&gt; results[1].name
+&quot;vegan_shannon_natural_log&quot;</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L745-L761">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.estimator_report"><a class="docstring-binding" href="#DiversityAndDissimilarity.estimator_report"><code>DiversityAndDissimilarity.estimator_report</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">estimator_report(data; support=nothing, base=2, frequencies=true, species=nothing)</code></pre><p>Return a compact report comparing Shannon entropy estimators and basic coverage diagnostics for one assemblage.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; r = estimator_report([1, 1, 2, 0, 5]);
+
+julia&gt; r.observed_richness
+4
+
+julia&gt; r.singletons
+2
+
+julia&gt; r.estimates[1].name
+:plugin</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L774-L794">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.diversity_audit"><a class="docstring-binding" href="#DiversityAndDissimilarity.diversity_audit"><code>DiversityAndDissimilarity.diversity_audit</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">diversity_audit(data; species=nothing, labels=nothing, label=nothing,
+                pairwise_index=BrayCurtis())</code></pre><p>Return validation diagnostics, alpha summaries, estimator diagnostics, and an optional labeled pairwise matrix for a diversity workflow.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; community = [1 1 2 0 5; 3 0 1 1 0];
+
+julia&gt; audit = diversity_audit(community; labels=[&quot;a&quot;, &quot;b&quot;]);
+
+julia&gt; audit.n_samples
+2
+
+julia&gt; audit.n_taxa
+5
+
+julia&gt; audit.pairwise.labels
+2-element Vector{String}:
+ &quot;a&quot;
+ &quot;b&quot;</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L839-L864">source</a></section></details></article><article><details class="docstring" open="true"><summary id="DiversityAndDissimilarity.uncertainty_audit"><a class="docstring-binding" href="#DiversityAndDissimilarity.uncertainty_audit"><code>DiversityAndDissimilarity.uncertainty_audit</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">uncertainty_audit(data; species=nothing, labels=nothing, label=nothing,
                   index=Shannon(), nboot=1000, level=0.95,
-                  quantities=(:entropy, :diversity), rng=nothing)</code></pre><p>Return bootstrap uncertainty summaries for Shannon entropy and effective diversity alongside sample labels and coverage diagnostics. For matrices and Tables.jl-compatible inputs, one report is returned per sample.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/a0f05f59a59931aafe011cda640a0ee1fb115e72/src/framework.jl#L494-L502">source</a></section></details></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../vegan-migration/">« From R vegan</a><a class="docs-footer-nextpage" href="../case-study/">Workflow Case Study »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Wednesday 3 June 2026 06:56">Wednesday 3 June 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+                  quantities=(:entropy, :diversity), rng=nothing)</code></pre><p>Return bootstrap uncertainty summaries for Shannon entropy and effective diversity alongside sample labels and coverage diagnostics. For matrices and Tables.jl-compatible inputs, one report is returned per sample.</p><pre><code class="language-julia-repl hljs">julia&gt; using DiversityAndDissimilarity
+
+julia&gt; community = [1 1 2 0 5; 3 0 1 1 0];
+
+julia&gt; ua = uncertainty_audit(community; labels=[&quot;a&quot;, &quot;b&quot;], nboot=50, rng=nothing);
+
+julia&gt; length(ua.reports)
+2
+
+julia&gt; ua.labels
+2-element Vector{String}:
+ &quot;a&quot;
+ &quot;b&quot;
+
+julia&gt; ua.reports[1].label
+&quot;a&quot;</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/mroughan/DiversityAndDissimilarity.jl/blob/faf89d7174ca4abd039824a1d08c3dd2e8ec69c7/src/framework.jl#L886-L913">source</a></section></details></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../benchmarks/">« Benchmarks</a><a class="docs-footer-nextpage" href="../case-study/">Workflow Case Study »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Wednesday 3 June 2026 07:18">Wednesday 3 June 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
