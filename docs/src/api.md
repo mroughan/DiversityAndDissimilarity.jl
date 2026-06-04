@@ -1,7 +1,7 @@
 # API Reference
 
 This page is a compact index of the public API. Full docstrings are grouped by
-topic on the diversity and similarity pages.
+topic on the diversity, dissimilarity, and framework pages.
 
 ## Core Types
 

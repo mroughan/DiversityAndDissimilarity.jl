@@ -1,165 +1,142 @@
-# Similarity And Dissimilarity Indices
+# Dissimilarity Indices
 
-Similarity and dissimilarity indices compare two assemblages. In
-`DiversityAndDissimilarity`, use [`similarity`](@ref), [`dissimilarity`](@ref), or the
-alias [`distance`](@ref) with an index object:
+Pairwise indices compare two assemblages. Some are naturally similarities,
+some are dissimilarities or distances, and some are information divergences.
+`DiversityAndDissimilarity.jl` exposes the convention explicitly through
+[`similarity`](@ref), [`dissimilarity`](@ref), and [`distance`](@ref).
 
-```julia
-similarity(Jaccard(), left, right)
-dissimilarity(Jaccard(), left, right)
-distance(Jaccard(), left, right)
-similarity(SorensenDice(), left, right)
-dissimilarity(BrayCurtis(), left, right)
-distance(Hellinger(), left, right)
-jensen_shannon_distance(left, right)
+```jldoctest dissimilaritypage
+julia> using DiversityAndDissimilarity
+
+julia> left = Dict(:oak => 12, :ash => 5);
+
+julia> right = Dict(:ash => 4, :elm => 7);
+
+julia> similarity(Jaccard(), left, right)
+0.3333333333333333
+
+julia> dissimilarity(BrayCurtis(), left, right)
+0.7142857142857143
 ```
 
-The two main styles are incidence comparisons and abundance comparisons.
-See [Similarity And Dissimilarity Catalog](@ref) for a broader list of
-set-based, abundance-based, and probability-based indices.
+## Available Methods
+
+| Family | Types and helpers | Main options | Typical use |
+|---|---|---|---|
+| Incidence | [`Jaccard`](@ref), [`SorensenDice`](@ref), [`Overlap`](@ref) | `frequencies` | Presence/absence overlap and turnover. |
+| Abundance | [`BrayCurtis`](@ref), [`Ruzicka`](@ref), [`Canberra`](@ref), [`MorisitaHorn`](@ref) | `frequencies` | Ecological abundance comparisons with aligned taxa. |
+| Probability distances | [`TotalVariation`](@ref), [`Manhattan`](@ref), [`Euclidean`](@ref), [`Hellinger`](@ref), [`Chord`](@ref), [`Bhattacharyya`](@ref) | `frequencies` | Comparisons of normalized composition. |
+| Information divergences | [`KullbackLeibler`](@ref), [`ShannonDifference`](@ref), [`JensenDifference`](@ref), [`JensenShannon`](@ref) | `base`, `estimator`, `support`, `distance` | Directional KL, entropy differences, and Jensen-Shannon divergence/distance. |
+| Matrix helpers | [`labeled_distance`](@ref), [`labeled_dissimilarity`](@ref), [`labeled_similarity`](@ref) | `labels`, `label`, `species` | Pairwise matrices with sample labels. |
 
 ## Choosing A Measure
 
-Use incidence indices when only presence/absence matters, or when abundance
-counts are not comparable across samples. Use abundance indices when shared
-species should count more if they are also similarly abundant. Use probability
-distances when samples have different total effort and the comparison should be
-about composition rather than absolute count.
-
-Common defaults:
-
-- Use [`Jaccard`](@ref) for a simple presence/absence turnover question.
+- Use [`Jaccard`](@ref) for simple presence/absence turnover.
 - Use [`SorensenDice`](@ref) when shared presences should receive more weight
   than in Jaccard.
-- Use [`Overlap`](@ref) when asking whether the smaller assemblage is nested in
-  the larger one.
-- Use [`BrayCurtis`](@ref) for ecological abundance data when abundance
-  differences should matter and joint absences should not.
-- Use [`Ruzicka`](@ref) when you want the abundance analogue of Jaccard.
-- Use [`Hellinger`](@ref) or [`Chord`](@ref) before ordination-style workflows
-  where Euclidean geometry on transformed relative abundances is desirable.
-- Use [`TotalVariation`](@ref) for a direct probability-composition difference
-  with a clear ``[0,1]`` range.
-- Use [`JensenShannon`](@ref) for an information-theoretic, symmetric
-  probability comparison; the square-root distance is metric.
-- Use [`MorisitaHorn`](@ref) when dominant shared species should drive
-  similarity and sample-size sensitivity should be reduced.
+- Use [`Overlap`](@ref) when asking whether a smaller assemblage is nested in a
+  larger one.
+- Use [`BrayCurtis`](@ref) as a robust default for ecological abundance data.
+- Use [`Ruzicka`](@ref) when you want an abundance analogue of Jaccard.
+- Use [`Hellinger`](@ref) or [`Chord`](@ref) before Euclidean-style workflows
+  on transformed relative abundances.
+- Use [`TotalVariation`](@ref) for a bounded probability-composition
+  difference with direct mass interpretation.
+- Use [`JensenShannon`](@ref) for a symmetric information-theoretic metric.
+- Use [`KullbackLeibler`](@ref) only when the direction
+  `left || right` is scientifically meaningful.
 
-## Incidence Comparisons
+## Incidence Examples
 
-Incidence comparisons use species presence or absence. [`Jaccard`](@ref),
-[`SorensenDice`](@ref), and [`Overlap`](@ref) compare the species sets ``A`` and
-``B``:
+Incidence comparisons use species presence or absence:
 
 ```math
-J(A,B) = \\frac{|A \\cap B|}{|A \\cup B|}
+J(A,B) = \frac{|A \cap B|}{|A \cup B|}, \qquad
+S(A,B) = \frac{2|A \cap B|}{|A| + |B|}.
 ```
+
+```jldoctest dissimilaritypage
+julia> a = [1, 1, 0, 1];
+
+julia> b = [1, 0, 1, 1];
+
+julia> similarity(Jaccard(), a, b)
+0.5
+
+julia> dissimilarity(Jaccard(), a, b)
+0.5
+
+julia> similarity(SorensenDice(), a, b)
+0.6666666666666666
+```
+
+## Abundance Examples
+
+Abundance comparisons use aligned abundance vectors. For dictionaries, taxa are
+aligned by key. For numeric vectors, positions are corresponding taxa.
 
 ```math
-S(A,B) = \\frac{2|A \\cap B|}{|A| + |B|}
+BC(x,y) = \frac{\sum_i |x_i-y_i|}{\sum_i (x_i+y_i)}.
 ```
 
-```math
-O(A,B) = \\frac{|A \\cap B|}{\\min(|A|, |B|)}
+```jldoctest dissimilaritypage
+julia> x = [1, 2, 3];
+
+julia> y = [2, 2, 0];
+
+julia> bray_curtis_dissimilarity(x, y)
+0.4
+
+julia> ruzicka_similarity(x, y)
+0.42857142857142855
+
+julia> canberra_distance(x, y)
+0.4444444444444444
 ```
 
-| Index | Similarity range | Dissimilarity range | Most useful when |
-|---|---:|---:|---|
-| [`Jaccard`](@ref) | ``[0,1]`` | ``[0,1]`` | Measuring species turnover with no shared-absence term. |
-| [`SorensenDice`](@ref) | ``[0,1]`` | ``[0,1]`` | Emphasizing shared species more strongly than Jaccard. |
-| [`Overlap`](@ref) | ``[0,1]`` | ``[0,1]`` | Detecting nested assemblages, especially with unequal richness. |
-
-For these indices, dissimilarity is defined as one minus similarity.
-
-## Abundance Comparisons
-
-Abundance comparisons use aligned abundance vectors ``x`` and ``y``. For
-dictionaries, species are aligned by key. For numeric vectors with
-`frequencies=true`, positions are treated as corresponding species and the
-vectors must have the same length.
-
-[`BrayCurtis`](@ref) and [`Ruzicka`](@ref) are both bounded ecological
-dissimilarities that ignore joint absences:
-
-```math
-BC(x,y) = \\frac{\\sum_i |x_i - y_i|}{\\sum_i (x_i + y_i)}.
-```
-
-```math
-R(x,y) = \\frac{\\sum_i \\min(x_i,y_i)}{\\sum_i \\max(x_i,y_i)}.
-```
-
-[`Canberra`](@ref) averages relative coordinate-wise differences:
-
-```math
-C(x,y) =
-\\frac{1}{m}\\sum_{i:x_i+y_i>0}\\frac{|x_i-y_i|}{x_i+y_i}.
-```
-
-[`MorisitaHorn`](@ref) is an abundance-overlap similarity that is dominated by
+[`MorisitaHorn`](@ref) is an abundance-overlap similarity dominated by shared
 common taxa:
 
-```math
-MH(x,y) =
-\\frac{2\\sum_i x_i y_i}{(\\lambda_x + \\lambda_y) N_x N_y}.
+```julia
+morisita_horn_similarity(x, y)
+morisita_horn_distance(x, y)
 ```
 
-| Index | Returned form | Range | Most useful when |
-|---|---|---:|---|
-| [`BrayCurtis`](@ref) | dissimilarity | ``[0,1]`` | Ecological abundance data with unequal sample totals; robust default for community matrices. |
-| [`Ruzicka`](@ref) | similarity or ``1-R`` | ``[0,1]`` | You want a quantitative Jaccard interpretation using shared abundance over total abundance envelope. |
-| [`Canberra`](@ref) | averaged distance | ``[0,1]`` | Rare taxa or low-abundance coordinates should have strong relative influence. |
-| [`MorisitaHorn`](@ref) | similarity or ``1-MH`` | usually ``[0,1]`` | Dominant shared taxa should drive similarity; useful with count abundance data. |
+## Probability And Information Examples
 
-## Probability Comparisons
-
-Probability comparisons first normalize aligned abundance vectors to
-probabilities ``p`` and ``q``. They are useful when sampling effort differs and
-the scientific question is about composition.
+Probability comparisons normalize aligned abundances to `p` and `q`.
 
 ```math
-TV(p,q) = \\frac{1}{2}\\sum_i |p_i - q_i|
+TV(p,q) = \frac{1}{2}\sum_i |p_i-q_i|.
 ```
 
 ```math
-H(p,q) =
-\\frac{1}{\\sqrt{2}}\\sqrt{\\sum_i (\\sqrt{p_i} - \\sqrt{q_i})^2}
+D_{KL}(p \Vert q) = \sum_i p_i \log_b\frac{p_i}{q_i}.
 ```
 
 ```math
-JS(p,q) =
-\\frac{1}{2}D_{KL}(p \\Vert m) + \\frac{1}{2}D_{KL}(q \\Vert m),
-\\qquad m = \\frac{p+q}{2}.
+JS(p,q) = \frac{1}{2}D_{KL}(p \Vert m) +
+          \frac{1}{2}D_{KL}(q \Vert m), \qquad m = \frac{p+q}{2}.
 ```
 
-```math
-D_{KL}(p \\Vert q) = \\sum_i p_i \\log_b \\frac{p_i}{q_i}
+```jldoctest dissimilaritypage
+julia> total_variation_distance([1, 0, 0], [0, 1, 0])
+1.0
+
+julia> hellinger_distance([1, 0, 0], [0, 1, 0])
+1.0
+
+julia> jensen_shannon_distance([1, 0], [0, 1])
+1.0
+
+julia> dissimilarity(KullbackLeibler(), [1, 0], [0, 1])
+Inf
 ```
 
-```math
-J_H(p,q) =
-H_b\\left(\\frac{p+q}{2}\\right) - \\frac{H_b(p)+H_b(q)}{2}
-```
-
-| Index | Returned form | Range with default conventions | Most useful when |
-|---|---|---:|---|
-| [`TotalVariation`](@ref) | distance | ``[0,1]`` | You want the maximum compositional probability mass that differs between samples. |
-| [`Manhattan`](@ref) | distance | ``[0,2]`` | You need an L1 distance; equals ``2TV`` for probability vectors. |
-| [`Euclidean`](@ref) | distance | ``[0,\\sqrt{2}]`` | You need a familiar L2 geometry on relative abundances. |
-| [`Hellinger`](@ref) | distance | ``[0,1]`` | You want a bounded metric that moderates dominant taxa through square-root transformation. |
-| [`Chord`](@ref) | distance | ``[0,\\sqrt{2}]`` | You want Euclidean distance after square-root probability transformation. |
-| [`Bhattacharyya`](@ref) | coefficient / distance | coefficient ``[0,1]``; distance ``[0,\\infty]`` | You want probability overlap, especially in classification or distributional overlap settings. |
-| [`KullbackLeibler`](@ref) | asymmetric divergence | ``[0,\\infty]`` | You want ``D_{KL}(p \\Vert q)`` and have a directional reference/comparison interpretation. |
-| [`ShannonDifference`](@ref) | dissimilarity | support-dependent | You want to compare entropy magnitudes; note this is **not** a distributional divergence — two assemblages with disjoint species but the same entropy score zero. |
-| [`JensenDifference`](@ref) | divergence | ``[0,1]`` with `base=2` | You want the Jensen-Shannon divergence (raw, not square-rooted). Identical to `JensenShannon(distance=false)`. |
-| [`JensenShannon`](@ref) | distance by default | ``[0,1]`` with `base=2` | You want a symmetric information-theoretic metric; the default square-root form is a proper distance. Use `distance=false` to get the raw divergence (same as `JensenDifference`). |
-
-[`KullbackLeibler`](@ref) is directional: `dissimilarity(KullbackLeibler(), left, right)`
-returns ``D_{KL}(left \\Vert right)``. It returns `Inf` if `right` has zero
-probability where `left` has positive probability. Pairwise matrices for this
-index are not symmetric: entry ``(i,j)`` is ``D_{KL}(i \\Vert j)`` and generally
-differs from entry ``(j,i)``. You can check this programmatically with
-`is_symmetric(KullbackLeibler())`, which returns `false`.
+[`KullbackLeibler`](@ref) is asymmetric, so pairwise matrices are not forced to
+be symmetric. [`JensenShannon`](@ref) returns the square-root distance by
+default; use `JensenShannon(; distance=false)` or [`JensenDifference`](@ref)
+for the raw divergence.
 
 ## Low-Sample Divergence Corrections
 
@@ -173,100 +150,76 @@ kullback_leibler_divergence(left, right; estimator=AddGamma(0.5))  # Jeffreys
 kullback_leibler_divergence(left, right; estimator=HausserStrimmer())
 kullback_leibler_divergence(left, right; estimator=ChaoShen())
 
-jensen_difference(left, right; estimator=MillerMadow())
 jensen_shannon_divergence(left, right; estimator=AddGamma(0.5), support=10)
 jensen_shannon_distance(left, right; estimator=ChaoShen())
 ```
 
-The correction modes have different interpretations:
+Use `support` when the finite category universe is known. `AddGamma(1)` is
+Laplace smoothing; `AddGamma(0.5)` is Jeffreys smoothing. `ChaoShen()` applies
+sample-coverage logic for unseen mass.
 
-- [`MillerMadow`](@ref) applies a first-order entropy bias correction: it
-  subtracts ``(S-1)/(2n \log b)`` from the plugin divergence, where ``S`` and
-  ``n`` are the observed support size and total count of the *left* distribution.
-  This corrects for bias in ``H(p)`` but leaves the cross-entropy term
-  uncorrected; it is a heuristic first-order adjustment.
-- [`AddGamma`](@ref) applies Bayesian pseudocount smoothing. `AddGamma(1)` is
-  Laplace smoothing and `AddGamma(0.5)` is Jeffreys smoothing.
-- [`HausserStrimmer`](@ref) shrinks probabilities toward a uniform distribution
-  over the aligned or supplied support.
-- [`ChaoShen`](@ref) uses Good-Turing sample coverage to assign unseen mass to
-  categories missing from one side and to a residual unseen category.
+## Community Matrices
 
-For `AddGamma` and `HausserStrimmer`, pass `support` when the finite category
-universe is known and larger than the observed aligned support.
+Passing a community matrix computes all pairwise comparisons across rows:
 
-## Community Distance Matrices
+```jldoctest dissimilaritypage
+julia> community = [
+           1 1 2 0 5
+           3 0 1 1 0
+       ];
 
-Passing a community matrix as the only data argument computes all pairwise
-comparisons across rows. Rows are sites/samples and columns are species/taxa.
-The same method works for Tables.jl-compatible inputs, including DataFrames,
-using `species` to choose the species columns.
+julia> distance(BrayCurtis(), community)
+2×2 Matrix{Float64}:
+ 0.0       0.714286
+ 0.714286  0.0
 
-```julia
-distance(BrayCurtis(), community)
-dissimilarity(Jaccard(), community)
-similarity(SorensenDice(), community)
-distance(Hellinger(), community)
-jensen_shannon_distance(community)
-
-bray_curtis_distance(table; species=[:oak, :ash, :elm])
+julia> labeled_distance(BrayCurtis(), community; labels=["plot-a", "plot-b"]).labels
+2-element Vector{String}:
+ "plot-a"
+ "plot-b"
 ```
 
-Use labeled wrappers when sample/site identifiers should travel with the
-matrix:
+For Tables.jl-compatible inputs, use `species` to select taxa columns and
+`label` to carry sample identifiers.
 
-```julia
-labeled_distance(BrayCurtis(), community; labels=["plot-a", "plot-b"])
-labeled_distance(BrayCurtis(), table; label=:site, species=[:oak, :ash, :elm])
-```
+## Availability Checklist
 
-These return named tuples with `labels` and `matrix` fields.
+Legend: `[x]` is available directly; `[~]` is available indirectly or with a
+different convention; `[ ]` is not documented as available in the checked
+source. Last checked: 2026-05-15.
 
-Pairwise comparison of two vectors is linear in the aligned support size. A
-full community distance matrix is more expensive: for ``M`` samples and ``P``
-species columns, dense pairwise distances are ``O(M^2P)`` time and return an
-``M \\times M`` result. This is often the limiting step for large datasets; see
-[Scaling And Performance](@ref) for guidance on when to avoid building the full
-matrix.
+| Index or feature | DiversityAndDissimilarity.jl | Diversity.jl | vegan | iNEXT | scikit-bio | EcoPy | Microbiome.jl | SciPy | SpadeR | entropart / hill packages | Notes |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| Jaccard incidence similarity/distance | [x] | [ ] | [x] | [ ] | [~] | [x] | [x] | [x] | [x] | [ ] | `Jaccard()` / `jaccard_index`; vegan `vegdist(method="jaccard")`; SciPy boolean `jaccard`. |
+| Sorensen-Dice incidence similarity/distance | [x] | [ ] | [~] | [ ] | [~] | [x] | [ ] | [x] | [x] | [ ] | `SorensenDice()`; SciPy boolean `dice`; related vegan forms exist through binary transformations. |
+| Overlap / Szymkiewicz-Simpson | [x] | [ ] | [~] | [ ] | [~] | [ ] | [ ] | [ ] | [ ] | [ ] | `Overlap()` / `overlap_similarity`; nestedness-sensitive incidence overlap. |
+| Simple matching / Sokal-Michener | [ ] | [ ] | [ ] | [ ] | [~] | [x] | [ ] | [x] | [ ] | [ ] | Requires meaningful shared absences and a fixed species universe. |
+| Russell-Rao | [ ] | [ ] | [ ] | [ ] | [~] | [ ] | [ ] | [x] | [ ] | [ ] | Shared-absence-sensitive boolean coefficient. |
+| Kulczynski / Mountford / Raup-Crick incidence | [ ] | [ ] | [x] | [ ] | [~] | [ ] | [ ] | [ ] | [~] | [ ] | Available in vegan or specialist packages; conventions vary. |
+| Chao-Jaccard / Chao-Sorensen | [ ] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [x] | [~] | Adjusts overlap for unseen shared species. |
+| Bray-Curtis dissimilarity | [x] | [ ] | [x] | [ ] | [~] | [x] | [x] | [x] | [~] | [ ] | `BrayCurtis()`; vegan `vegdist(method="bray")`; SciPy `braycurtis`. |
+| Quantitative Sorensen / Bray-Curtis similarity | [~] | [ ] | [~] | [ ] | [~] | [x] | [~] | [~] | [~] | [ ] | Derivable as `1 - bray_curtis_distance`; naming conventions vary. |
+| Ruzicka / quantitative Jaccard | [x] | [ ] | [~] | [ ] | [~] | [ ] | [ ] | [ ] | [ ] | [ ] | `Ruzicka()` / `ruzicka_similarity`; abundance version of Jaccard. |
+| Percentage similarity / Renkonen | [ ] | [ ] | [~] | [ ] | [ ] | [ ] | [ ] | [ ] | [~] | [ ] | Probability overlap `sum(min(p,q))`; complement is total variation. |
+| Total variation distance | [x] | [ ] | [~] | [ ] | [~] | [ ] | [ ] | [~] | [ ] | [ ] | `TotalVariation()` / `total_variation_distance`; equals Bray-Curtis for normalized probabilities. |
+| Manhattan / L1 distance | [x] | [ ] | [x] | [ ] | [~] | [x] | [ ] | [x] | [ ] | [ ] | `Manhattan()`; for probabilities equals `2 * total variation`. |
+| Euclidean / L2 distance | [x] | [ ] | [x] | [ ] | [~] | [x] | [ ] | [x] | [ ] | [ ] | General distance frequently used on transformed data. |
+| Chord distance | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | `Chord()` / `chord_distance`. |
+| Hellinger distance | [x] | [ ] | [x] | [ ] | [~] | [~] | [x] | [ ] | [ ] | [ ] | `Hellinger()` / `hellinger_distance`; vegan and Microbiome.jl document related workflows. |
+| Bhattacharyya coefficient / distance | [x] | [ ] | [~] | [ ] | [~] | [ ] | [ ] | [~] | [ ] | [ ] | `Bhattacharyya()`; probability-overlap family related to Hellinger. |
+| Morisita / Morisita-Horn | [x] | [ ] | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [~] | [~] | `MorisitaHorn()` / `morisita_horn_similarity`; vegan `morisita` and `horn`. |
+| Canberra distance | [x] | [ ] | [x] | [ ] | [~] | [x] | [ ] | [x] | [ ] | [ ] | `Canberra()` / `canberra_distance`; denominator convention varies. |
+| Clark / Cao / binomial / Gower / chi-square | [ ] | [ ] | [x] | [ ] | [~] | [~] | [ ] | [ ] | [ ] | [ ] | Ecological dissimilarities available elsewhere; not core here. |
+| Kullback-Leibler divergence | [x] | [ ] | [ ] | [ ] | [~] | [ ] | [ ] | [~] | [ ] | [x] | `KullbackLeibler()`; asymmetric with low-sample correction options. |
+| Jeffreys divergence | [ ] | [ ] | [ ] | [ ] | [~] | [ ] | [ ] | [ ] | [ ] | [~] | Symmetrized KL; not currently implemented. |
+| Shannon entropy difference | [x] | [ ] | [ ] | [ ] | [~] | [ ] | [ ] | [ ] | [ ] | [~] | `ShannonDifference()` compares entropy values, not shared taxa. |
+| Jensen / Jensen-Shannon divergence / distance | [x] | [ ] | [ ] | [ ] | [~] | [ ] | [ ] | [x] | [ ] | [~] | `JensenDifference()` and `JensenShannon()`; square root of JS divergence is a metric. |
+| Aitchison / robust Aitchison | [ ] | [ ] | [ ] | [ ] | [~] | [ ] | [~] | [ ] | [ ] | [~] | Compositional-data distance after CLR-style transforms; requires zero handling. |
+| Wasserstein / earth mover's | [ ] | [ ] | [ ] | [ ] | [~] | [ ] | [ ] | [x] | [ ] | [ ] | Requires a ground distance among taxa/features. |
+| UniFrac and phylogenetic pairwise distances | [ ] | [x] | [ ] | [ ] | [x] | [ ] | [~] | [ ] | [ ] | [~] | Out of scope here; Diversity.jl and scikit-bio are stronger phylogenetic options. |
+| Multiple-site beta diversity | [ ] | [x] | [x] | [~] | [~] | [x] | [ ] | [ ] | [~] | [x] | Multi-community rather than pairwise-only comparison. |
 
-## Convenience Functions
-
-Convenience functions call the same generic methods:
-
-```julia
-jaccard_index(left, right)
-jaccard_similarity(left, right)
-jaccard_distance(left, right)
-sorensen_index(left, right)
-sorensen_dice_index(left, right)
-sorensen_distance(left, right)
-sorensen_dice_distance(left, right)
-sorensen_dice_dissimilarity(left, right)
-bray_curtis_distance(left, right)
-bray_curtis_dissimilarity(left, right)
-overlap_similarity(left, right)
-overlap_distance(left, right)
-ruzicka_similarity(left, right)
-quantitative_jaccard_similarity(left, right)
-ruzicka_distance(left, right)
-quantitative_jaccard_distance(left, right)
-total_variation_distance(left, right)
-manhattan_distance(left, right)
-euclidean_distance(left, right)
-canberra_distance(left, right)
-hellinger_distance(left, right)
-chord_distance(left, right)
-bhattacharyya_coefficient(left, right)
-bhattacharyya_distance(left, right)
-kullback_leibler_divergence(left, right)
-shannon_difference(left, right)
-jensen_difference(left, right)
-jensen_shannon_similarity(left, right)
-jensen_shannon_divergence(left, right)
-jensen_shannon_distance(left, right)
-morisita_horn_similarity(left, right)
-morisita_horn_distance(left, right)
-```
+## Reference
 
 ```@docs
 Jaccard
