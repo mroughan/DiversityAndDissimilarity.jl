@@ -9,10 +9,11 @@
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://mroughan.github.io/DiversityAndDissimilarity.jl/dev)
 
 `DiversityAndDissimilarity` provides ecology-style diversity indices for species
-abundance data, linguistic-demography category counts, observation vectors,
+abundance data, linguistic and demography category counts, observation vectors,
 and pairwise assemblage comparisons for dissimilarity or divergence.
-
-The package is small and dependency-free. It is designed around dispatchable
+ 
+The package is small and has very limited dependencies. 
+It is designed around dispatchable
 index types such as `Richness()`, `Shannon()`, `Renyi()`, `Tsallis()`,
 `Simpson()`, `Jaccard()`, `BrayCurtis()`, `Hellinger()`, and
 `JensenShannon()`, plus convenience functions for common workflows.
