@@ -25,22 +25,23 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces The validation corpus makes convention choices executable and visible in tests, documentation, and paper artifacts.}}{6}{figure.10}\protected@file@percent }
 \newlabel{fig:validation}{{2}{6}{The validation corpus makes convention choices executable and visible in tests, documentation, and paper artifacts}{figure.10}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Workflow helpers and audit reports}{6}{subsection.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Reproducibility and Benchmark Methods}{7}{section.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Results}{8}{section.13}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Reproducible convention checks}{8}{subsection.14}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Benchmark results}{8}{subsection.15}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Selected warmed, per-call benchmark results from the generated benchmark report on an Intel Core Ultra 9 285K with Julia 1.12.6 using one Julia thread. Times are seconds.}}{9}{table.16}\protected@file@percent }
-\newlabel{tab:benchmarks}{{1}{9}{Selected warmed, per-call benchmark results from the generated benchmark report on an Intel Core Ultra 9 285K with Julia 1.12.6 using one Julia thread. Times are seconds}{table.16}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Selected Jaccard distance matrix timings after bitset incidence encoding. The benchmark is workflow-level and hardware-dependent, but illustrates the algorithmic benefit of packed incidence representation.}}{9}{figure.17}\protected@file@percent }
-\newlabel{fig:jaccard}{{3}{9}{Selected Jaccard distance matrix timings after bitset incidence encoding. The benchmark is workflow-level and hardware-dependent, but illustrates the algorithmic benefit of packed incidence representation}{figure.17}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Workflow case study with uncertainty audit}{9}{subsection.18}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Selected workflow case-study audit results. Shannon values are bootstrap estimates with percentile intervals from \texttt  {uncertainty\_audit}.}}{10}{table.19}\protected@file@percent }
-\newlabel{tab:case-study}{{2}{10}{Selected workflow case-study audit results. Shannon values are bootstrap estimates with percentile intervals from \texttt {uncertainty\_audit}}{table.19}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion}{10}{section.20}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Contribution to ecological informatics}{10}{subsection.21}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Limitations}{11}{subsection.22}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Future work}{11}{subsection.23}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{11}{section.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Validated input pathway}{7}{subsection.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Reproducibility and Benchmark Methods}{8}{section.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Results}{9}{section.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Reproducible convention checks}{9}{subsection.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Benchmark results}{9}{subsection.16}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Selected warmed, per-call benchmark results on Intel(R) Core(TM) Ultra 9 285K with Julia 1.12.6 using 1 Julia thread(s). Times in seconds. \emph  {Julia (safe)} validates on every call (the default user experience); \emph  {Julia (pre)} calls \texttt  {validate} once before the timing loop, matching the Python and R calling convention. Dashes indicate no direct equivalent in that stack.}}{10}{table.17}\protected@file@percent }
+\newlabel{tab:benchmarks}{{1}{10}{Selected warmed, per-call benchmark results on Intel(R) Core(TM) Ultra 9 285K with Julia 1.12.6 using 1 Julia thread(s). Times in seconds. \emph {Julia (safe)} validates on every call (the default user experience); \emph {Julia (pre)} calls \texttt {validate} once before the timing loop, matching the Python and R calling convention. Dashes indicate no direct equivalent in that stack}{table.17}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Workflow case study with uncertainty audit}{10}{subsection.19}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Jaccard distance matrix timings after bitset incidence encoding. \emph  {Julia (safe)} includes per-call validation; \emph  {Julia (pre)} validates once before the loop, matching the SciPy and R/\texttt  {vegan} calling convention. The benchmark is workflow-level and hardware-dependent, but illustrates the algorithmic benefit of packed incidence representation.}}{11}{figure.18}\protected@file@percent }
+\newlabel{fig:jaccard}{{3}{11}{Jaccard distance matrix timings after bitset incidence encoding. \emph {Julia (safe)} includes per-call validation; \emph {Julia (pre)} validates once before the loop, matching the SciPy and R/\texttt {vegan} calling convention. The benchmark is workflow-level and hardware-dependent, but illustrates the algorithmic benefit of packed incidence representation}{figure.18}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion}{11}{section.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Contribution to ecological informatics}{11}{subsection.22}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Selected workflow case-study audit results. Shannon values are bootstrap estimates with percentile intervals from \texttt  {uncertainty\_audit}.}}{12}{table.20}\protected@file@percent }
+\newlabel{tab:case-study}{{2}{12}{Selected workflow case-study audit results. Shannon values are bootstrap estimates with percentile intervals from \texttt {uncertainty\_audit}}{table.20}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Limitations}{12}{subsection.23}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Future work}{13}{subsection.24}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{13}{section.25}\protected@file@percent }
 \bibstyle{elsarticle-harv}
 \bibdata{references}
 \bibcite{chao1984nonparametric}{{1}{1984}{{Chao}}{{}}}
@@ -58,4 +59,4 @@
 \bibcite{whittaker1960vegetation}{{13}{1960}{{Whittaker}}{{}}}
 \bibcite{wilkinson2016fair}{{14}{2016}{{Wilkinson et~al.}}{{Wilkinson, Dumontier, Aalbersberg, Appleton, Axton, Baak, Blomberg, Boiten, da~Silva~Santos, Bourne, Bouwman, Brookes, Clark, Crosas, Dillo, Dumon, Edmunds, Evelo, Finkers, Gonzalez-Beltran, Gray, Groth, Goble, Grethe, Heringa, 't~Hoen, Hooft, Kuhn, Kok, Kok, Lusher, Martone, Mons, Packer, Persson, Rocca-Serra, Roos, van Schaik, Sansone, Schultes, Sengstag, Slater, Strawn, Swertz, Thompson, van~der Lei, van Mulligen, Velterop, Waagmeester, Wittenburg, Wolstencroft, Zhao and Mons}}}
 \bibcite{wu2016minimax}{{15}{2016}{{Wu and Yang}}{{}}}
-\gdef \@abspage@last{15}
+\gdef \@abspage@last{16}

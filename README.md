@@ -11,7 +11,14 @@
 `DiversityAndDissimilarity` provides ecology-style diversity indices for species
 abundance data, linguistic and demography category counts, observation vectors,
 and pairwise assemblage comparisons for dissimilarity or divergence.
- 
+
+This is an early package, and still needs additional testing and
+verification. All the main pathways appear to be good, but there may
+be (i) corner cases that are unexplored and (ii) differences in
+conventions for folks coming to this package from different
+disciplines. Testing is ongoing and comments are welcome through the
+Issues tab. 
+
 The package is small and has very limited dependencies. 
 It is designed around dispatchable
 index types such as `Richness()`, `Shannon()`, `Renyi()`, `Tsallis()`,
@@ -22,12 +29,19 @@ the package exposes those conventions explicitly; for example,
 `LinguisticDiversityIndex()` and `GreenbergDiversityIndex()` are aliases by
 interpretation for Gini-Simpson diversity.
 
-If you are coming from R, the documentation includes a
-[vegan migration guide](docs/src/vegan-migration.md) for the
-[vegan](https://vegandevs.github.io/vegan/) package.
-If you are choosing between packages, the documentation also includes
-[availability checklists](docs/src/index-checklist.md) against common ecology
-and biodiversity tools.
+The maintained manual has six top-level pages:
+
+- [Introduction](docs/src/index.md)
+- [Diversity Indices](docs/src/diversity-indices.md)
+- [Dissimilarity Indices](docs/src/similarity-indices.md)
+- [Framework](docs/src/framework.md)
+- [Additional Information](docs/src/additional-information.md)
+- [API Reference](docs/src/api.md)
+
+The [Additional Information](docs/src/additional-information.md) page includes
+the R [vegan](https://vegandevs.github.io/vegan/) translation notes, estimator
+guidance, validation examples, scaling notes, and local documentation build
+instructions.
 
 ## Installation
 
@@ -389,10 +403,19 @@ julia --project=docs docs/make.jl
 
 The generated site is written to `docs/build/`.
 
-Useful entry points include the [getting-started guide](docs/src/getting-started.md),
-the [vegan migration guide](docs/src/vegan-migration.md), the
-[index availability checklists](docs/src/index-checklist.md), and the
-[benchmark notes](docs/src/benchmarks.md).
+Useful local entry points are:
+
+- [Introduction](docs/src/index.md)
+- [Diversity Indices](docs/src/diversity-indices.md)
+- [Dissimilarity Indices](docs/src/similarity-indices.md)
+- [Framework](docs/src/framework.md)
+- [Additional Information](docs/src/additional-information.md)
+- [API Reference](docs/src/api.md)
+
+Repository-level notes include [ARCHITECTURE.md](ARCHITECTURE.md),
+[CONTRIBUTIONS.md](CONTRIBUTIONS.md), the [benchmark notes](benchmark/README.md),
+the [validation notes](validation/README.md), and the
+[annotated bibliography](notes/annotated_bibliography.md).
 
 ## Benchmarks
 
@@ -434,6 +457,8 @@ release.
 
 ## Disclosure
 
-This package was developed with assistance from OpenAI Codex, an AI coding
-assistant based on GPT-5. Code design decisions were human mediated, and the
-resulting code was manually reviewed.
+This package was developed with assistance from [Claude Code](https://claude.ai/code)
+(claude-sonnet-4-6), an AI coding assistant from Anthropic. AI assistance was
+used for code generation, refactoring, documentation, and benchmarking tasks
+across multiple development sessions. All design decisions were human-mediated
+and the resulting code was manually reviewed.

@@ -1,46 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="378" viewBox="0 0 1040 378">
+<svg xmlns="http://www.w3.org/2000/svg" width="1060" height="502" viewBox="0 0 1060 502">
 <rect width="100%" height="100%" fill="#ffffff"/>
 <text x="24" y="32" font-family="sans-serif" font-size="20" font-weight="700" fill="#222222">Alpha-Diversity Summary Across Scenarios</text>
 <text x="24" y="54" font-family="sans-serif" font-size="12" fill="#555555">Log-scaled best elapsed time in seconds. Zero values reflect timer resolution and are drawn at half the smallest positive time.</text>
-<line x1="374.8104081578819" y1="60" x2="374.8104081578819" y2="330" stroke="#eeeeee" stroke-width="1"/>
-<text x="374.8104081578819" y="348" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666666">1e-4</text>
-<line x1="671.3674446746256" y1="60" x2="671.3674446746256" y2="330" stroke="#eeeeee" stroke-width="1"/>
-<text x="671.3674446746256" y="348" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666666">1e-3</text>
-<text x="258" y="83" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">small / Julia</text>
-<rect x="270" y="71.0" width="221.21744850009893" height="18" fill="#4063d8" rx="2"/>
-<text x="499.21744850009895" y="83" font-family="sans-serif" font-size="11" fill="#333333">0.00024690412</text>
-<text x="258" y="107" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">small / Python</text>
-<rect x="270" y="95.0" width="89.2725634167585" height="18" fill="#389826" rx="2"/>
-<text x="367.2725634167585" y="107" font-family="sans-serif" font-size="11" fill="#333333">8.863512892276048e-05</text>
-<text x="258" y="131" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">default / Julia</text>
-<rect x="270" y="119.0" width="412.9892657803583" height="18" fill="#4063d8" rx="2"/>
-<text x="690.9892657803583" y="131" font-family="sans-serif" font-size="11" fill="#333333">0.00109443295</text>
-<text x="258" y="155" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">default / Python</text>
-<rect x="270" y="143.0" width="394.1013900471431" height="18" fill="#389826" rx="2"/>
-<text x="672.1013900471431" y="155" font-family="sans-serif" font-size="11" fill="#333333">0.0009451454039663077</text>
-<text x="258" y="179" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">many_sites / Julia</text>
-<rect x="270" y="167.0" width="518.5160091483791" height="18" fill="#4063d8" rx="2"/>
-<text x="796.5160091483791" y="179" font-family="sans-serif" font-size="11" fill="#333333">0.0024832976666666665</text>
-<text x="258" y="203" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">many_sites / Python</text>
-<rect x="270" y="191.0" width="512.6952525699064" height="18" fill="#389826" rx="2"/>
-<text x="790.6952525699064" y="203" font-family="sans-serif" font-size="11" fill="#333333">0.002373564289882779</text>
-<text x="258" y="227" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">wide / Julia</text>
-<rect x="270" y="215.0" width="504.07712402029733" height="18" fill="#4063d8" rx="2"/>
-<text x="782.0771240202973" y="227" font-family="sans-serif" font-size="11" fill="#333333">0.002219935666666667</text>
-<text x="258" y="251" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">wide / Python</text>
-<rect x="270" y="239.0" width="587.9090894676478" height="18" fill="#389826" rx="2"/>
-<text x="865.9090894676478" y="251" font-family="sans-serif" font-size="11" fill="#333333">0.004256224337344368</text>
-<text x="258" y="275" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">large / Julia</text>
-<rect x="270" y="263.0" width="579.3206326115301" height="18" fill="#4063d8" rx="2"/>
-<text x="857.3206326115301" y="275" font-family="sans-serif" font-size="11" fill="#333333">0.003981658</text>
-<text x="258" y="299" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">large / Python</text>
-<rect x="270" y="287.0" width="600.0" height="18" fill="#389826" rx="2"/>
-<text x="878.0" y="299" font-family="sans-serif" font-size="11" fill="#333333">0.0046751489862799644</text>
-<rect x="895" y="68" width="12" height="12" fill="#4063d8" rx="2"/>
-<text x="913" y="79" font-family="sans-serif" font-size="12" fill="#333333">Julia</text>
-<rect x="895" y="90" width="12" height="12" fill="#389826" rx="2"/>
-<text x="913" y="101" font-family="sans-serif" font-size="12" fill="#333333">Python</text>
-<rect x="895" y="112" width="12" height="12" fill="#9558b2" rx="2"/>
-<text x="913" y="123" font-family="sans-serif" font-size="12" fill="#333333">R</text>
-<line x1="270" y1="330" x2="870" y2="330" stroke="#bbbbbb" stroke-width="1"/>
+<line x1="374.78392362495305" y1="64" x2="374.78392362495305" y2="454" stroke="#eeeeee" stroke-width="1"/>
+<text x="374.78392362495305" y="472" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666666">1e-4</text>
+<line x1="679.9119168353077" y1="64" x2="679.9119168353077" y2="454" stroke="#eeeeee" stroke-width="1"/>
+<text x="679.9119168353077" y="472" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#666666">1e-3</text>
+<text x="258" y="87" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">small / Julia (safe)</text>
+<rect x="270" y="75.0" width="224.89446953189326" height="18" fill="#4063d8" rx="2"/>
+<text x="502.89446953189326" y="87" font-family="sans-serif" font-size="11" fill="#333333">0.00024753686</text>
+<text x="258" y="111" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">small / Julia (pre)</text>
+<rect x="270" y="99.0" width="223.97094125237402" height="18" fill="#8fa8f4" rx="2"/>
+<text x="501.970941252374" y="111" font-family="sans-serif" font-size="11" fill="#333333">0.00024581772</text>
+<text x="258" y="135" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">small / Python</text>
+<rect x="270" y="123.0" width="91.85267847307236" height="18" fill="#389826" rx="2"/>
+<text x="369.8526784730724" y="135" font-family="sans-serif" font-size="11" fill="#333333">9.070270927622914e-05</text>
+<text x="258" y="159" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">default / Julia (safe)</text>
+<rect x="270" y="147.0" width="422.8111501958468" height="18" fill="#4063d8" rx="2"/>
+<text x="700.8111501958467" y="159" font-family="sans-serif" font-size="11" fill="#333333">0.0011022366000000001</text>
+<text x="258" y="183" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">default / Julia (pre)</text>
+<rect x="270" y="171.0" width="415.7086105770645" height="18" fill="#8fa8f4" rx="2"/>
+<text x="693.7086105770645" y="183" font-family="sans-serif" font-size="11" fill="#333333">0.0010447144000000001</text>
+<text x="258" y="207" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">default / Python</text>
+<rect x="270" y="195.0" width="402.93964503921165" height="18" fill="#389826" rx="2"/>
+<text x="680.9396450392117" y="207" font-family="sans-serif" font-size="11" fill="#333333">0.0009487453964538873</text>
+<text x="258" y="231" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">many_sites / Julia (safe)</text>
+<rect x="270" y="219.0" width="532.8571729574026" height="18" fill="#4063d8" rx="2"/>
+<text x="810.8571729574026" y="231" font-family="sans-serif" font-size="11" fill="#333333">0.002528891</text>
+<text x="258" y="255" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">many_sites / Julia (pre)</text>
+<rect x="270" y="243.0" width="522.8285595292167" height="18" fill="#8fa8f4" rx="2"/>
+<text x="800.8285595292167" y="255" font-family="sans-serif" font-size="11" fill="#333333">0.0023445700000000002</text>
+<text x="258" y="279" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">many_sites / Python</text>
+<rect x="270" y="267.0" width="514.127274177189" height="18" fill="#389826" rx="2"/>
+<text x="792.127274177189" y="279" font-family="sans-serif" font-size="11" fill="#333333">0.0021955653404196105</text>
+<text x="258" y="303" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">wide / Julia (safe)</text>
+<rect x="270" y="291.0" width="515.359009242262" height="18" fill="#4063d8" rx="2"/>
+<text x="793.359009242262" y="303" font-family="sans-serif" font-size="11" fill="#333333">0.0022160683333333334</text>
+<text x="258" y="327" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">wide / Julia (pre)</text>
+<rect x="270" y="315.0" width="502.0215804480363" height="18" fill="#8fa8f4" rx="2"/>
+<text x="780.0215804480363" y="327" font-family="sans-serif" font-size="11" fill="#333333">0.0020038823333333334</text>
+<text x="258" y="351" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">wide / Python</text>
+<rect x="270" y="339.0" width="601.9641259362801" height="18" fill="#389826" rx="2"/>
+<text x="879.9641259362801" y="351" font-family="sans-serif" font-size="11" fill="#333333">0.004260055332755049</text>
+<text x="258" y="375" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">large / Julia (safe)</text>
+<rect x="270" y="363.0" width="605.0" height="18" fill="#4063d8" rx="2"/>
+<text x="883.0" y="375" font-family="sans-serif" font-size="11" fill="#333333">0.004358778</text>
+<text x="258" y="399" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">large / Julia (pre)</text>
+<rect x="270" y="387.0" width="588.4434604394465" height="18" fill="#8fa8f4" rx="2"/>
+<text x="866.4434604394465" y="399" font-family="sans-serif" font-size="11" fill="#333333">0.003846837</text>
+<text x="258" y="423" text-anchor="end" font-family="sans-serif" font-size="12" fill="#333333">large / Python</text>
+<rect x="270" y="411.0" width="599.8782129915542" height="18" fill="#389826" rx="2"/>
+<text x="877.8782129915542" y="423" font-family="sans-serif" font-size="11" fill="#333333">0.00419352320022881</text>
+<rect x="900" y="72" width="12" height="12" fill="#4063d8" rx="2"/>
+<text x="918" y="83" font-family="sans-serif" font-size="12" fill="#333333">Julia (safe)</text>
+<rect x="900" y="94" width="12" height="12" fill="#8fa8f4" rx="2"/>
+<text x="918" y="105" font-family="sans-serif" font-size="12" fill="#333333">Julia (pre)</text>
+<rect x="900" y="116" width="12" height="12" fill="#389826" rx="2"/>
+<text x="918" y="127" font-family="sans-serif" font-size="12" fill="#333333">Python</text>
+<rect x="900" y="138" width="12" height="12" fill="#9558b2" rx="2"/>
+<text x="918" y="149" font-family="sans-serif" font-size="12" fill="#333333">R</text>
+<line x1="270" y1="454" x2="875" y2="454" stroke="#bbbbbb" stroke-width="1"/>
 </svg>

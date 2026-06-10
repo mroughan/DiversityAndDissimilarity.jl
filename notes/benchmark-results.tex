@@ -1,20 +1,21 @@
 \begin{table}[t]
 \centering
-\caption{Selected warmed, per-call benchmark results from the generated benchmark report on an Intel Core Ultra 9 285K with Julia 1.12.6 using one Julia thread. Times are seconds.}
+\caption{Selected warmed, per-call benchmark results on Intel(R) Core(TM) Ultra 9 285K with Julia 1.12.6 using 1 Julia thread(s). Times in seconds. \emph{Julia (safe)} validates on every call (the default user experience); \emph{Julia (pre)} calls \texttt{validate} once before the timing loop, matching the Python and R calling convention. Dashes indicate no direct equivalent in that stack.}
 \label{tab:benchmarks}
 \small
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{llrrr}
+\begin{tabular}{llrrrr}
 \toprule
-Scenario & Task & DiversityAndDissimilarity.jl & Python/R reference & Reference stack\\
+Scenario & Task & Julia (safe) & Julia (pre) & Python & R/\texttt{vegan}\\
 \midrule
-default & richness & 0.0000577 & 0.0000287 & NumPy\\
-default & alpha summary & 0.000455 & 0.000934 & NumPy partial summary\\
-default & Bray--Curtis matrix & 0.00500 & 0.00605 & SciPy\\
-default & Jaccard matrix & 0.000315 & 0.0145 & SciPy\\
-default & Hellinger matrix & 0.00523 & 0.0839 & NumPy\\
-large & Bray--Curtis matrix & 0.0863 & 0.0832 & SciPy\\
-large & Jaccard matrix & 0.00336 & 0.197 & SciPy\\
+default & richness & $5.8 \times 10^{-5}$ & $5.87 \times 10^{-6}$ & $2.88 \times 10^{-5}$ & $4 \times 10^{-4}$\\
+default & Shannon entropy & $2.99 \times 10^{-4}$ & $2.45 \times 10^{-4}$ & $7.91 \times 10^{-4}$ & $1.75 \times 10^{-3}$\\
+default & Bray--Curtis matrix & $5 \times 10^{-3}$ & $4.94 \times 10^{-3}$ & $6.06 \times 10^{-3}$ & $8.15 \times 10^{-3}$\\
+default & Jaccard matrix & $3.33 \times 10^{-4}$ & $2.56 \times 10^{-4}$ & $1.45 \times 10^{-2}$ & $9.4 \times 10^{-3}$\\
+default & Hellinger matrix & $5.25 \times 10^{-3}$ & $5.16 \times 10^{-3}$ & $8.31 \times 10^{-2}$ & ---\\
+\midrule
+large & Bray--Curtis matrix & $7.31 \times 10^{-2}$ & $7.15 \times 10^{-2}$ & $8.37 \times 10^{-2}$ & $1.29 \times 10^{-1}$\\
+large & Jaccard matrix & $3.39 \times 10^{-3}$ & $2.87 \times 10^{-3}$ & $1.98 \times 10^{-1}$ & $1.38 \times 10^{-1}$\\
 \bottomrule
 \end{tabular}
 }

@@ -15,9 +15,9 @@ end
     @test counts(["a", "b", "a"]) == Dict("a" => 2, "b" => 1)
     @test proportions(Dict(:a => 2, :b => 2)) == [0.5, 0.5]
     @test proportions([1 1 2 0 5; 3 0 1 1 0]) ≈ [
-        1 / 9 1 / 9 2 / 9 0 5 / 9
-        3 / 5 0 1 / 5 1 / 5 0
-    ]
+                                                  1 / 9     1 / 9     2 / 9     0        5 / 9
+                                                  3 / 5         0     1 / 5     1 / 5    0
+                                                ]
     @test test_valid_probabilities(Dict(:a => 2, :b => 2)) == [0.5, 0.5]
     @test test_valid_probabilities([1, 2, 3]) ≈ [1 / 6, 2 / 6, 3 / 6]
     @test test_valid_probabilities([0.1, 0.2, 0.3]) ≈ [1 / 6, 2 / 6, 3 / 6]
@@ -30,7 +30,7 @@ end
     @test_throws ArgumentError proportions([1 2; 0 0])
     @test_throws ArgumentError proportions([1 -1; 1 1])
 end
-
+ 
 @testset "alpha diversity" begin
     data = Dict(:a => 2, :b => 2)
 

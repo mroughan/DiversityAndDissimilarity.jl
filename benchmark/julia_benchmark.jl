@@ -27,13 +27,19 @@ function best_time(f; repeats::Integer=5, inner::Integer=1)
     return best
 end
 
-function warmup(community)
+function warmup(community, validated)
     richness(community)
     shannon_entropy(community)
     alpha_diversity(community)
     bray_curtis_distance(community)
     jaccard_distance(community)
     hellinger_distance(community)
+    richness(validated)
+    shannon_entropy(validated)
+    alpha_diversity(validated)
+    bray_curtis_distance(validated)
+    jaccard_distance(validated)
+    hellinger_distance(validated)
     return nothing
 end
 
@@ -44,21 +50,38 @@ function main()
     repeats = parse(Int, get(ENV, "DIVERSITY_BENCH_REPEATS", "5"))
     inner = parse(Int, get(ENV, "DIVERSITY_BENCH_INNER", "1"))
     community = simulated_community(nsites, ntaxa; total)
-    warmup(community)
+    # validate once; the Validated pathway skips per-call validation
+    validated = validate(community)
+    warmup(community, validated)
 
     println("language,package,task,nsites,ntaxa,repeats,inner,best_seconds")
-    println(join(("Julia", "DiversityAndDissimilarity.jl", "richness", nsites, ntaxa, repeats,
-        inner, best_time(() -> richness(community); repeats, inner)), ","))
-    println(join(("Julia", "DiversityAndDissimilarity.jl", "shannon_entropy", nsites, ntaxa, repeats,
-        inner, best_time(() -> shannon_entropy(community); repeats, inner)), ","))
-    println(join(("Julia", "DiversityAndDissimilarity.jl", "alpha_diversity", nsites, ntaxa, repeats,
-        inner, best_time(() -> alpha_diversity(community); repeats, inner)), ","))
-    println(join(("Julia", "DiversityAndDissimilarity.jl", "bray_curtis_distance_matrix", nsites, ntaxa, repeats,
-        inner, best_time(() -> bray_curtis_distance(community); repeats, inner)), ","))
-    println(join(("Julia", "DiversityAndDissimilarity.jl", "jaccard_distance_matrix", nsites, ntaxa, repeats,
-        inner, best_time(() -> jaccard_distance(community); repeats, inner)), ","))
-    println(join(("Julia", "DiversityAndDissimilarity.jl", "hellinger_distance_matrix", nsites, ntaxa, repeats,
-        inner, best_time(() -> hellinger_distance(community); repeats, inner)), ","))
+
+    # Safe pathway: validates on every call (default user experience)
+    for (task, f) in [
+        ("richness",                  () -> richness(community)),
+        ("shannon_entropy",           () -> shannon_entropy(community)),
+        ("alpha_diversity",           () -> alpha_diversity(community)),
+        ("bray_curtis_distance_matrix", () -> bray_curtis_distance(community)),
+        ("jaccard_distance_matrix",   () -> jaccard_distance(community)),
+        ("hellinger_distance_matrix", () -> hellinger_distance(community)),
+    ]
+        println(join(("Julia", "DiversityAndDissimilarity.jl", task, nsites, ntaxa, repeats,
+            inner, best_time(f; repeats, inner)), ","))
+    end
+
+    # Pre-validated pathway: validate once, then computation only (fair comparison with
+    # Python/NumPy and R/vegan, which do not re-validate on each call)
+    for (task, f) in [
+        ("richness_prevalidated",                  () -> richness(validated)),
+        ("shannon_entropy_prevalidated",           () -> shannon_entropy(validated)),
+        ("alpha_diversity_prevalidated",           () -> alpha_diversity(validated)),
+        ("bray_curtis_distance_matrix_prevalidated", () -> bray_curtis_distance(validated)),
+        ("jaccard_distance_matrix_prevalidated",   () -> jaccard_distance(validated)),
+        ("hellinger_distance_matrix_prevalidated", () -> hellinger_distance(validated)),
+    ]
+        println(join(("Julia", "DiversityAndDissimilarity.jl", task, nsites, ntaxa, repeats,
+            inner, best_time(f; repeats, inner)), ","))
+    end
 end
 
 main()

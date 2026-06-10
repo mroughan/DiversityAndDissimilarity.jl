@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.5)  3 JUN 2026 22:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.5)  11 JUN 2026 08:19
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -574,54 +574,66 @@ Overfull \hbox (2.61108pt too wide) has occurred while \output is active
 
 
 ] [2]
-Underfull \hbox (badness 1521) in paragraph at lines 151--161
+Underfull \hbox (badness 1521) in paragraph at lines 152--162
 \OT1/cmr/m/n/12 A mi-cro-biome work-flow may re-port alpha-diversity sum-maries be-side
  []
 
 [3] (./Figs/framework.tex)
-Overfull \hbox (1.89742pt too wide) in paragraph at lines 190--201
+Overfull \hbox (1.89742pt too wide) in paragraph at lines 191--202
 []\OT1/cmr/m/n/12 For ex-am-ple, \OT1/cmtt/m/n/12 Simpson() \OT1/cmr/m/n/12 is de-fined as con-cen-tra-tion, while \OT1/cmtt/m/n/12 GiniSimpson()
  []
 
-[4] (./Figs/validation.tex) [5] [6] [7] (./benchmark-results.tex) (./Figs/benchmark-jaccard.tex
-Package pgfplots info on input line 17: Using 'lua backend=false' for axis: ymode=log unsupported (yet).
-Package pgfplots info on input line 17: Using 'lua backend=false' for axis: x coord trafo unsupported.
-) [8] (./case-study-results.tex) [9] [10]
-Underfull \hbox (badness 1281) in paragraph at lines 427--433
+[4] (./Figs/validation.tex) [5] [6]
+LaTeX Font Info:    Trying to load font information for OMS+cmtt on input line 284.
+ (/usr/share/texmf/tex/latex/R/tex/latex/omscmtt.fd
+File: omscmtt.fd 
+)
+LaTeX Font Info:    Font shape `OMS/cmtt/m/n' in size <12> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 284.
+
+Overfull \hbox (15.31674pt too wide) in paragraph at lines 281--287
+\OT1/cmr/m/n/12 plicit sep-a-ra-tion of val-i-da-tion from com-pu-ta-tion. Call-ing \OT1/cmtt/m/n/12 validate(community)
+ []
+
+[7] [8] [9] (./benchmark-results.tex) (./Figs/benchmark-jaccard.tex
+Package pgfplots info on input line 21: Using 'lua backend=false' for axis: ymode=log unsupported (yet).
+Package pgfplots info on input line 21: Using 'lua backend=false' for axis: x coord trafo unsupported.
+) (./case-study-results.tex) [10] [11] [12]
+Underfull \hbox (badness 1281) in paragraph at lines 492--498
 []\OT1/cmr/m/n/12 The soft-ware, val-i-da-tion cases, bench-mark scripts, doc-u-men-ta-tion,
  []
 
 
-Overfull \hbox (13.06714pt too wide) in paragraph at lines 427--433
+Overfull \hbox (13.06714pt too wide) in paragraph at lines 492--498
 \OT1/cmr/m/n/12 figure-generation ar-ti-facts are avail-able in the \OT1/cmtt/m/n/12 DiversityAndDissimilarity.jl
  []
 
 
-Underfull \hbox (badness 1147) in paragraph at lines 427--433
+Underfull \hbox (badness 1147) in paragraph at lines 492--498
 \OT1/cmr/m/n/12 in this manuscript are gen-er-ated from repos-i-tory scripts rather than
  []
 
-[11] (./diversityanddissimilarity.bbl [12] [13]) [14] (./diversityanddissimilarity.aux)
+[13] (./diversityanddissimilarity.bbl [14]) [15] (./diversityanddissimilarity.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `diversityanddissimilarity.out' has not changed.
-(rerunfilecheck)             Checksum: C10EAB981BAF3DF88FF0FACD475F107B;3309.
+(rerunfilecheck)             Checksum: 1B8D1842B9D3D0A09F02B03634FEBBFA;3487.
  ) 
 Here is how much of TeX's memory you used:
- 31102 strings out of 476064
- 735385 string characters out of 5792854
- 1944975 words of memory out of 5000000
- 52577 multiletter control sequences out of 15000+600000
- 565395 words of font info for 62 fonts, out of 8000000 for 9000
+ 31162 strings out of 476064
+ 736472 string characters out of 5792854
+ 1947975 words of memory out of 5000000
+ 52630 multiletter control sequences out of 15000+600000
+ 565563 words of font info for 63 fonts, out of 8000000 for 9000
  81 hyphenation exceptions out of 8191
- 84i,19n,93p,1844b,2329s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1200.pfb>
-Output written on diversityanddissimilarity.pdf (15 pages, 229829 bytes).
+ 84i,19n,93p,1844b,2320s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm1200.pfb>
+Output written on diversityanddissimilarity.pdf (16 pages, 275007 bytes).
 PDF statistics:
- 322 PDF objects out of 1000 (max. 8388607)
- 270 compressed objects within 3 object streams
- 60 named destinations out of 1000 (max. 500000)
- 157 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 352 PDF objects out of 1000 (max. 8388607)
+ 291 compressed objects within 3 object streams
+ 63 named destinations out of 1000 (max. 500000)
+ 165 words of extra memory for PDF output out of 10000 (max. 10000000)
 

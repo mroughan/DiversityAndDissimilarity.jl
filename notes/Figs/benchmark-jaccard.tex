@@ -1,25 +1,31 @@
 \begin{figure}[t]
 \centering
+\definecolor{juliasafe}{HTML}{4063d8}
+\definecolor{juliapre}{HTML}{8fa8f4}
+\definecolor{pythoncol}{HTML}{389826}
+\definecolor{rcol}{HTML}{9558b2}
 \begin{tikzpicture}
 \begin{axis}[
   ybar,
-  bar width=18pt,
+  bar width=8pt,
   ymode=log,
   ylabel={seconds},
   symbolic x coords={default,large},
   xtick=data,
-  legend style={at={(0.5,1.05)},anchor=south,legend columns=2},
-  width=0.75\linewidth,
-  height=5cm,
-  ymin=0.0001,
+  legend style={at={(0.5,1.05)},anchor=south,legend columns=4},
+  width=0.88\linewidth,
+  height=6cm,
   nodes near coords,
   nodes near coords align={vertical},
+  every node near coord/.append style={font=\tiny},
 ]
-\addplot coordinates {(default,0.000315) (large,0.00336)};
-\addplot coordinates {(default,0.0145) (large,0.197)};
-\legend{DiversityAndDissimilarity.jl,SciPy}
+\addplot[fill=juliasafe] coordinates {(default,0.00033303425000000004) (large,0.003387647)};
+\addplot[fill=juliapre] coordinates {(default,0.0002563651) (large,0.002869618)};
+\addplot[fill=pythoncol] coordinates {(default,0.014519004605244846) (large,0.1978759670164436)};
+\addplot[fill=rcol] coordinates {(default,0.00939999999999999) (large,0.138)};
+\legend{Julia (safe),Julia (pre),SciPy,R/\texttt{vegan}}
 \end{axis}
 \end{tikzpicture}
-\caption{Selected Jaccard distance matrix timings after bitset incidence encoding. The benchmark is workflow-level and hardware-dependent, but illustrates the algorithmic benefit of packed incidence representation.}
+\caption{Jaccard distance matrix timings after bitset incidence encoding. \emph{Julia (safe)} includes per-call validation; \emph{Julia (pre)} validates once before the loop, matching the SciPy and R/\texttt{vegan} calling convention. The benchmark is workflow-level and hardware-dependent, but illustrates the algorithmic benefit of packed incidence representation.}
 \label{fig:jaccard}
 \end{figure}

@@ -272,6 +272,12 @@ end
 function dissimilarity(::BrayCurtis, data::AbstractMatrix{<:Real}; frequencies::Bool=true, species=nothing)
     _check_matrix_frequencies(frequencies)
     _validate_community_matrix(data)
+    return dissimilarity(BrayCurtis(), Validated(data); frequencies)
+end
+
+function dissimilarity(::BrayCurtis, v::Validated{<:AbstractMatrix{<:Real}}; frequencies::Bool=true, species=nothing)
+    _check_matrix_frequencies(frequencies)
+    data = v.data
     nsites = size(data, 1)
     ntaxa = size(data, 2)
     abundance = permutedims(data)
@@ -283,7 +289,6 @@ function dissimilarity(::BrayCurtis, data::AbstractMatrix{<:Real}; frequencies::
         end
         row_totals[row] = total
     end
-
     result = Matrix{Float64}(undef, nsites, nsites)
     for i in 1:nsites
         result[i, i] = 0.0
@@ -379,6 +384,12 @@ end
 function dissimilarity(index::KullbackLeibler, data::AbstractMatrix{<:Real}; frequencies::Bool=true, species=nothing)
     _check_matrix_frequencies(frequencies)
     _validate_community_matrix(data)
+    return dissimilarity(index, Validated(data); frequencies)
+end
+
+function dissimilarity(index::KullbackLeibler, v::Validated{<:AbstractMatrix{<:Real}}; frequencies::Bool=true, species=nothing)
+    _check_matrix_frequencies(frequencies)
+    data = v.data
     nsites = size(data, 1)
     result = Matrix{Float64}(undef, nsites, nsites)
     for i in 1:nsites
@@ -487,7 +498,12 @@ dissimilarity(index::MorisitaHorn, left, right; frequencies::Bool=true) =
 function similarity(::Jaccard, data::AbstractMatrix{<:Real}; frequencies::Bool=true, species=nothing)
     _check_matrix_frequencies(frequencies)
     _validate_community_matrix(data)
-    presence = _incidence_bitsets(data)
+    return similarity(Jaccard(), Validated(data); frequencies)
+end
+
+function similarity(::Jaccard, v::Validated{<:AbstractMatrix{<:Real}}; frequencies::Bool=true, species=nothing)
+    _check_matrix_frequencies(frequencies)
+    presence = _incidence_bitsets(v.data)
     nsites = size(presence, 2)
     nwords = size(presence, 1)
     result = Matrix{Float64}(undef, nsites, nsites)
@@ -515,7 +531,12 @@ end
 function dissimilarity(::Jaccard, data::AbstractMatrix{<:Real}; frequencies::Bool=true, species=nothing)
     _check_matrix_frequencies(frequencies)
     _validate_community_matrix(data)
-    presence = _incidence_bitsets(data)
+    return dissimilarity(Jaccard(), Validated(data); frequencies)
+end
+
+function dissimilarity(::Jaccard, v::Validated{<:AbstractMatrix{<:Real}}; frequencies::Bool=true, species=nothing)
+    _check_matrix_frequencies(frequencies)
+    presence = _incidence_bitsets(v.data)
     nsites = size(presence, 2)
     nwords = size(presence, 1)
     result = Matrix{Float64}(undef, nsites, nsites)
@@ -560,6 +581,12 @@ end
 function dissimilarity(::Hellinger, data::AbstractMatrix{<:Real}; frequencies::Bool=true, species=nothing)
     _check_matrix_frequencies(frequencies)
     _validate_community_matrix(data)
+    return dissimilarity(Hellinger(), Validated(data); frequencies)
+end
+
+function dissimilarity(::Hellinger, v::Validated{<:AbstractMatrix{<:Real}}; frequencies::Bool=true, species=nothing)
+    _check_matrix_frequencies(frequencies)
+    data = v.data
     nsites = size(data, 1)
     ntaxa = size(data, 2)
     abundance = permutedims(data)
@@ -573,7 +600,6 @@ function dissimilarity(::Hellinger, data::AbstractMatrix{<:Real}; frequencies::B
             roots[column, row] = sqrt(abundance[column, row] / total)
         end
     end
-
     result = Matrix{Float64}(undef, nsites, nsites)
     for i in 1:nsites
         result[i, i] = 0.0
@@ -694,6 +720,7 @@ function _pairwise_labels(data; labels=nothing, label=nothing)
 end
 
 _sample_count(data::AbstractMatrix) = size(data, 1)
+_sample_count(v::Validated{<:AbstractMatrix}) = size(v.data, 1)
 function _sample_count(data)
     if _is_table(data)
         columns = Tables.columns(data)
@@ -719,6 +746,32 @@ function _pairwise_matrix(metric, matrix::AbstractMatrix{<:Real})
     end
     return result
 end
+
+function _pairwise_matrix(metric, v::Validated{<:AbstractMatrix{<:Real}})
+    matrix = v.data
+    n = size(matrix, 1)
+    result = Matrix{Float64}(undef, n, n)
+    for i in 1:n
+        result[i, i] = metric(view(matrix, i, :), view(matrix, i, :))
+        for j in (i + 1):n
+            value = metric(view(matrix, i, :), view(matrix, j, :))
+            result[i, j] = value
+            result[j, i] = value
+        end
+    end
+    return result
+end
+
+function similarity(index::DiversityIndex, v::Validated{<:AbstractMatrix{<:Real}}; frequencies::Bool=true, species=nothing)
+    return _pairwise_matrix((left, right) -> similarity(index, left, right; frequencies), v)
+end
+
+function dissimilarity(index::DiversityIndex, v::Validated{<:AbstractMatrix{<:Real}}; frequencies::Bool=true, species=nothing)
+    return _pairwise_matrix((left, right) -> dissimilarity(index, left, right; frequencies), v)
+end
+
+distance(index::DiversityIndex, v::Validated{<:AbstractMatrix{<:Real}}; frequencies::Bool=true, species=nothing) =
+    dissimilarity(index, v; frequencies, species)
 
 function _checked_aligned_abundances(left, right; frequencies::Bool=true)
     left_abundance, right_abundance = _aligned_abundances(left, right; frequencies)

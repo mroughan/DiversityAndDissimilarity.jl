@@ -303,32 +303,41 @@ function entropy(index::Shannon{Plugin}, data::AbstractMatrix{<:Real}; frequenci
     _check_matrix_frequencies(frequencies)
     if support === nothing
         _validate_community_matrix(data)
-        nsites = size(data, 1)
-        row_totals = zeros(Float64, nsites)
-        @inbounds for column in axes(data, 2)
-            for row in axes(data, 1)
-                row_totals[row] += data[row, column]
-            end
-        end
-
-        result = zeros(Float64, nsites)
-        log_base = log(index.base)
-        @inbounds for column in axes(data, 2)
-            for row in axes(data, 1)
-                abundance = data[row, column]
-                if abundance > 0
-                    probability = abundance / row_totals[row]
-                    result[row] -= probability * log(probability)
-                end
-            end
-        end
-        @inbounds for row in eachindex(result)
-            result[row] /= log_base
-        end
-        return result
+        return entropy(index, Validated(data); frequencies)
     end
     matrix_support = _matrix_support(support)
     return [entropy(index, row; frequencies, support=matrix_support) for row in _rows(data)]
+end
+
+function entropy(index::Shannon{Plugin}, v::Validated{<:AbstractMatrix{<:Real}}; frequencies::Bool=true, support=nothing, species=nothing)
+    _check_matrix_frequencies(frequencies)
+    if support !== nothing
+        matrix_support = _matrix_support(support)
+        return [entropy(index, row; frequencies, support=matrix_support) for row in _rows(v.data)]
+    end
+    data = v.data
+    nsites = size(data, 1)
+    row_totals = zeros(Float64, nsites)
+    @inbounds for column in axes(data, 2)
+        for row in axes(data, 1)
+            row_totals[row] += data[row, column]
+        end
+    end
+    result = zeros(Float64, nsites)
+    log_base = log(index.base)
+    @inbounds for column in axes(data, 2)
+        for row in axes(data, 1)
+            abundance = data[row, column]
+            if abundance > 0
+                probability = abundance / row_totals[row]
+                result[row] -= probability * log(probability)
+            end
+        end
+    end
+    @inbounds for row in eachindex(result)
+        result[row] /= log_base
+    end
+    return result
 end
 
 function entropy(index::Shannon, data::AbstractMatrix{<:Real}; frequencies::Bool=true, support=nothing, species=nothing)
@@ -361,6 +370,12 @@ end
 function diversity(::Richness, data::AbstractMatrix{<:Real}; frequencies::Bool=true, species=nothing)
     _check_matrix_frequencies(frequencies)
     _validate_community_matrix(data)
+    return diversity(Richness(), Validated(data); frequencies)
+end
+
+function diversity(::Richness, v::Validated{<:AbstractMatrix{<:Real}}; frequencies::Bool=true, species=nothing)
+    _check_matrix_frequencies(frequencies)
+    data = v.data
     result = zeros(Int, size(data, 1))
     @inbounds for column in axes(data, 2)
         for row in axes(data, 1)
@@ -477,7 +492,7 @@ function diversity(::Chao1, data; frequencies::Bool=true, species=nothing)
     abundance = _abundances(data; frequencies)
     f1 = count(==(1), abundance)
     f2 = count(==(2), abundance)
-    return length(abundance) + f1 * (f1 - 1) / (2 * (f2 + 1))
+    return length(abundance) + float(f1) * (f1 - 1) / (2 * (f2 + 1))
 end
 
 diversity(index::Chao1, data::AbstractMatrix{<:Real}; frequencies::Bool=true, species=nothing) =
@@ -496,7 +511,9 @@ function diversity(index::ACE, data; frequencies::Bool=true, species=nothing)
     n_rare = sum(rare)
     f1 = count(==(1), rare)
     coverage = 1 - f1 / n_rare
-    coverage > 0 || throw(ArgumentError("ACE coverage estimate must be positive"))
+    coverage > 0 || throw(ArgumentError(
+        "ACE coverage estimate is zero: all $f1 rare-species counts are singletons " *
+        "(f₁=$f1, n_rare=$n_rare); try a larger dataset or a lower threshold"))
 
     s_rare = length(rare)
     frequency_counts = [count(==(i), rare) for i in 1:threshold]
@@ -699,7 +716,9 @@ function _shannon_entropy(::ChaoShen, counts, n, base)
     positive_counts = [count for count in counts if count > 0]
     singletons = count(==(1), positive_counts)
     coverage = 1 - singletons / n
-    coverage > 0 || throw(ArgumentError("Chao-Shen coverage estimate must be positive"))
+    coverage > 0 || throw(ArgumentError(
+        "Chao-Shen coverage estimate is zero: all $n observations are singletons " *
+        "(singletons=$singletons, n=$n); try a larger dataset or Plugin/MillerMadow estimator"))
     probabilities = [coverage * count / n for count in positive_counts]
     terms = map(probabilities) do p
         detection_probability = 1 - (1 - p)^n
@@ -756,7 +775,9 @@ function _shannon_variance(::ChaoShen, counts, n, base)
     positive_counts = [count for count in counts if count > 0]
     singletons = count(==(1), positive_counts)
     coverage = 1 - singletons / n
-    coverage > 0 || throw(ArgumentError("Chao-Shen coverage estimate must be positive"))
+    coverage > 0 || throw(ArgumentError(
+        "Chao-Shen coverage estimate is zero: all $n observations are singletons " *
+        "(singletons=$singletons, n=$n); try a larger dataset or Plugin/MillerMadow estimator"))
     variance = 0.0
     for count_value in positive_counts
         probability = coverage * count_value / n
@@ -917,6 +938,7 @@ function alpha_diversity(data::AbstractMatrix{<:Real}; frequencies::Bool=true, s
         threshold::Integer=10)
     _check_matrix_frequencies(frequencies)
     if estimator isa Plugin && support === nothing
+        _validate_community_matrix(data)
         return _alpha_diversity_matrix_plugin(data, float(base), Int(threshold))
     end
     matrix_support = _matrix_support(support)
@@ -933,9 +955,22 @@ function alpha_diversity(data::AbstractMatrix{<:Real}; frequencies::Bool=true, s
     ]
 end
 
+function alpha_diversity(v::Validated{<:AbstractMatrix{<:Real}}; frequencies::Bool=true, species=nothing,
+        base::Real=2, estimator::ShannonEstimator=Plugin(), support=nothing,
+        threshold::Integer=10)
+    _check_matrix_frequencies(frequencies)
+    if estimator isa Plugin && support === nothing
+        return _alpha_diversity_matrix_plugin(v.data, float(base), Int(threshold))
+    end
+    matrix_support = _matrix_support(support)
+    return [
+        alpha_diversity(row; frequencies, base, estimator, support=matrix_support, threshold)
+        for row in _rows(v.data)
+    ]
+end
+
 function _alpha_diversity_matrix_plugin(data::AbstractMatrix{<:Real}, base::Float64, threshold::Int)
     threshold >= 1 || throw(ArgumentError("threshold must be positive"))
-    _validate_community_matrix(data)
     result = Vector{NamedTuple{
         (:richness, :shannon_entropy, :shannon_diversity, :simpson,
             :gini_simpson, :inverse_simpson, :chao1, :ace, :sample_coverage,
@@ -989,12 +1024,14 @@ function _alpha_diversity_matrix_plugin(data::AbstractMatrix{<:Real}, base::Floa
 
     @inbounds for row in axes(data, 1)
         shannon_value = shannon_values[row] / log_base
-        chao1_value = richness[row] + f1[row] * (f1[row] - 1) / (2 * (f2[row] + 1))
+        chao1_value = richness[row] + float(f1[row]) * (f1[row] - 1) / (2 * (f2[row] + 1))
         ace_value = if rare_count[row] == 0
             float(abundant[row])
         else
             coverage = 1 - f1[row] / n_rare[row]
-            coverage > 0 || throw(ArgumentError("ACE coverage estimate must be positive"))
+            coverage > 0 || throw(ArgumentError(
+                "ACE coverage estimate is zero at row $row: all $(f1[row]) rare-species counts are singletons " *
+                "(f₁=$(f1[row]), n_rare=$(n_rare[row])); try a larger dataset or a lower threshold"))
             gamma_squared = if n_rare[row] <= 1
                 0.0
             else

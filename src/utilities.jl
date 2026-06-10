@@ -11,11 +11,23 @@ _is_table(data) = Tables.istable(data) && !(data isa AbstractVector) && !(data i
 Return a numeric community matrix with samples/sites in rows and species/taxa in
 columns.
 
-Matrices are returned as floating-point copies. Tables.jl-compatible inputs,
-including DataFrames, are converted column-wise. By default, numeric columns are
-used as species columns. Pass `species` as a collection of column names to choose
-species columns explicitly, which is recommended when a table also contains
-numeric site identifiers or metadata.
+Matrices are returned as `Float64` copies. All abundances must be non-negative and
+finite, and each row must have positive total abundance; otherwise an
+`ArgumentError` is thrown.
+
+Tables.jl-compatible inputs, including DataFrames, are converted column-wise. By
+default, numeric columns are used as species columns. Pass `species` as a collection
+of column names to choose species columns explicitly, which is recommended when a
+table also contains numeric site identifiers or metadata.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> community_matrix([1 2 3; 4 5 6])
+2×3 Matrix{Float64}:
+ 1.0  2.0  3.0
+ 4.0  5.0  6.0
+```
 """
 function community_matrix(data::AbstractMatrix{<:Real}; species=nothing)
     species === nothing || throw(ArgumentError("species selection is only used for Tables.jl-compatible inputs"))
@@ -55,12 +67,18 @@ function _table_nrows(columns, names)
 end
 
 function _validate_community_matrix(data::AbstractMatrix{<:Real})
-    for value in data
-        value < 0 && throw(ArgumentError("abundances must be non-negative"))
-        isfinite(value) || throw(ArgumentError("abundances must be finite"))
+    for col in axes(data, 2)
+        for row in axes(data, 1)
+            value = data[row, col]
+            value < 0 && throw(ArgumentError(
+                "abundance at row $row, column $col is negative ($value); all abundances must be non-negative"))
+            isfinite(value) || throw(ArgumentError(
+                "abundance at row $row, column $col is not finite ($value); all abundances must be finite"))
+        end
     end
     for row in axes(data, 1)
-        sum(view(data, row, :)) > 0 || throw(ArgumentError("each community matrix row must have positive total abundance"))
+        sum(view(data, row, :)) > 0 || throw(ArgumentError(
+            "row $row has zero total abundance; every community must contain at least one observation"))
     end
     return nothing
 end
@@ -68,10 +86,27 @@ end
 """
     counts(x)
 
-Return a `Dict` of category counts.
+Return a `Dict` mapping each category to its count or validated abundance.
 
-Vectors are treated as observations. Dictionaries are treated as category =>
-abundance mappings and are validated without changing key types.
+When `x` is a vector, each element is treated as an observation and the result
+maps each unique value to the number of times it appears, with type
+`Dict{eltype(x), Int64}`. When `x` is a `Dict`, it is treated as a
+`category => abundance` mapping: abundances are validated to be non-negative and
+finite, and returned as `Float64` values without changing the key type.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> sort(collect(counts(["oak", "ash", "oak"])), by=first)
+2-element Vector{Pair{String, Int64}}:
+ "ash" => 1
+ "oak" => 2
+
+julia> sort(collect(counts(Dict(:oak => 3, :ash => 1))), by=first)
+2-element Vector{Pair{Symbol, Float64}}:
+ :ash => 1.0
+ :oak => 3.0
+```
 """
 function counts(xs::AbstractVector)
     result = Dict{eltype(xs), Int}()
@@ -127,12 +162,30 @@ end
 """
     proportions(x; frequencies=true)
 
-Return positive relative abundances for `x`.
+Return relative abundances for `x` as a probability vector or matrix.
 
-Numeric vectors are interpreted as abundance/frequency vectors by default.
-Use `frequencies=false` to treat a numeric vector as raw observations.
-Community matrices are interpreted as samples in rows and taxa/categories in
-columns; the returned matrix contains row-wise proportions.
+Numeric vectors are interpreted as abundance/frequency vectors by default; zero
+entries are discarded and the returned vector contains only the positive-abundance
+proportions. Pass `frequencies=false` to treat a numeric vector as raw observations
+instead. Non-numeric vectors are always treated as observations.
+
+Community matrices (samples in rows, taxa in columns) are normalized row-wise: the
+returned matrix has the same shape as the input, each row sums to one, and zero
+entries are preserved.
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> proportions([3, 1])
+2-element Vector{Float64}:
+ 0.75
+ 0.25
+
+julia> proportions([3 1; 2 2])
+2×2 Matrix{Float64}:
+ 0.75  0.25
+ 0.5   0.5
+```
 """
 function proportions(data::AbstractMatrix{<:Real}; frequencies::Bool=true)
     _check_matrix_frequencies(frequencies)
@@ -201,4 +254,80 @@ end
 
 function _aligned_abundances(left::AbstractVector, right::AbstractVector; frequencies::Bool=false)
     return _aligned_abundances(counts(left), counts(right))
+end
+
+"""
+    Validated(data)
+
+A thin wrapper asserting that `data` has already been validated as a community
+matrix. Pass a `Validated` value to diversity and dissimilarity functions to
+skip per-call input validation.
+
+Obtain a `Validated` wrapper from raw data using [`validate`](@ref), which runs
+all the usual checks and returns a type-stable `Float64` copy. Constructing
+`Validated(data)` directly bypasses all checks entirely.
+
+!!! warning "Use `validate`, not `Validated` directly"
+    Constructing `Validated(data)` directly bypasses all input checks.
+    Passing invalid data — negative abundances, non-finite values, or all-zero
+    rows — may produce silently wrong results or unhelpful errors. Always use
+    [`validate`](@ref) unless you are certain the data satisfies all
+    preconditions and are deliberately trading safety for performance.
+"""
+struct Validated{T}
+    data::T
+end
+
+"""
+    validate(data; species=nothing)
+
+Validate `data` and return a [`Validated`](@ref) wrapper.
+
+Checks that all abundances are non-negative and finite and that each row has
+positive total abundance. Matrices are returned as `Float64` copies. The
+returned `Validated` object can be passed to diversity and dissimilarity
+functions to skip per-call validation overhead, which is useful when the same
+matrix is consumed by many functions in a pipeline.
+
+The safe default pathway validates on every call:
+
+```julia
+richness(community)        # validates, then computes
+shannon_entropy(community) # validates independently
+```
+
+With `validate`, validation runs once and the result is reused:
+
+```julia
+v = validate(community)    # validates once
+richness(v)                # computation only
+shannon_entropy(v)         # computation only
+bray_curtis_distance(v)    # computation only
+```
+
+```jldoctest
+julia> using DiversityAndDissimilarity
+
+julia> v = validate([1 1 0; 0 1 1]);
+
+julia> richness(v)
+2-element Vector{Int64}:
+ 2
+ 2
+
+julia> dissimilarity(BrayCurtis(), v)
+2×2 Matrix{Float64}:
+ 0.0  0.5
+ 0.5  0.0
+```
+"""
+function validate(data::AbstractMatrix{<:Real}; species=nothing)
+    species === nothing || throw(ArgumentError("species selection is only used for Tables.jl-compatible inputs"))
+    _validate_community_matrix(data)
+    return Validated(float.(data))
+end
+
+function validate(data; species=nothing)
+    _is_table(data) || throw(ArgumentError("expected a numeric matrix or a Tables.jl-compatible table"))
+    return Validated(community_matrix(data; species))
 end

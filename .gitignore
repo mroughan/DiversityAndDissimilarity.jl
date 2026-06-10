@@ -1,3 +1,4 @@
+tmp/
 Manifest.toml
 *.cov
 lcov.info
@@ -6,3 +7,4 @@ build/
 todo.txt
 todo.md
 review/
+background/

@@ -58,7 +58,8 @@ workflows.
 \item Diversity and similarity indices are integrated in one auditable workflow.
 \item Executable reference cases link formulas, tests, documentation, and benchmarks.
 \item Workflow audits combine coverage diagnostics and bootstrap uncertainty reports.
-\item Warmed cross-language benchmarks compare Julia, R \texttt{vegan}, and Python.
+\item Input validation is separated from computation via a \texttt{Validated} wrapper, enabling safe pipeline reuse and fair cross-language benchmarks.
+\item Warmed cross-language benchmarks report both validated and pre-validated pathways.
 \end{highlights}
 
 \begin{keyword}
@@ -266,6 +267,47 @@ available at the same stage as convention and coverage checks.  This is useful
 in ecological informatics workflows because uncertainty is often lost when
 alpha summaries and distance matrices are exported as separate tables.
 
+\subsection{Validated input pathway}
+
+A recurring tension in defensive scientific software is the cost of input
+validation.  Checks for non-negative abundances, finite values, and positive
+row totals protect users from silent errors, but they also add overhead that is
+paid on every function call.  In pipeline workflows where the same community
+matrix is passed to richness, entropy, alpha-diversity summary, and distance
+matrix functions in sequence, this overhead accumulates and can account for a
+meaningful fraction of total compute time, particularly for inexpensive
+row-wise operations such as richness counting.
+
+\texttt{DiversityAndDissimilarity.jl} addresses this tension through an
+explicit separation of validation from computation.  Calling
+\texttt{validate(community)} runs all precondition checks once and returns a
+\texttt{Validated\{T\}} wrapper value.  Subsequent calls on the wrapper skip
+per-call validation entirely.  The default, safe pathway --- passing raw data
+directly to any function --- continues to validate on every invocation.
+
+This design makes the validation boundary a first-class concept rather than an
+invisible implementation detail.  The \texttt{Validated} dispatch methods
+contain only computation; the corresponding raw-data dispatch methods validate
+and then delegate to the \texttt{Validated} version.  A user who writes
+\texttt{v = validate(community)} and then calls \texttt{richness(v)},
+\texttt{shannon\_entropy(v)}, and \texttt{bray\_curtis\_distance(v)} declares
+that validation has been performed once, and the type system enforces that
+commitment across all downstream calls.
+
+Constructing \texttt{Validated(data)} directly without calling
+\texttt{validate} bypasses all checks and is explicitly documented as unsafe.
+This risk is localised: ordinary use of the public API remains fully protected
+by default.
+
+The validated pathway also corrects a methodological asymmetry in cross-language
+benchmarking.  Python/NumPy and R/\texttt{vegan} routines do not re-validate
+input arrays on each call, so comparing Julia's safe pathway against those
+tools overstates Julia's overhead for repeated computation on the same matrix.
+The benchmark corpus therefore reports both pathways: task names ending in
+\texttt{\_prevalidated} use \texttt{Validated} data and are the fair
+computational comparison; plain task names use raw data and reflect the full
+default user experience including validation.
+
 \section{Reproducibility and Benchmark Methods}
 
 Reproducibility is addressed at three levels: definitions, computations, and
@@ -287,6 +329,16 @@ where available.  Julia functions are warmed before timing so that reported
 values describe steady-state execution rather than just-in-time compilation.
 Very fast operations are timed using repeated inner calls to avoid
 zero-valued or timer-resolution-limited measurements.
+
+The benchmark corpus reports two Julia pathways.  The safe pathway passes raw
+data to each function, which validates on every call --- the default user
+experience.  The pre-validated pathway calls \texttt{validate} once on the
+community matrix before the timing loop; subsequent function calls on the
+\texttt{Validated} wrapper skip per-call validation.  Python/NumPy and R
+\texttt{vegan} routines do not re-validate input arrays between calls, so the
+pre-validated Julia pathway is the methodologically correct comparison for
+assessing computational performance.  Both pathways are reported to make this
+distinction transparent rather than implicit.
 
 The benchmarks are intentionally workflow-level comparisons.  They include
 the costs of normalization, matrix traversal, allocation, and pairwise scaling
@@ -319,23 +371,36 @@ reference cases used to explain the package to users.
 \subsection{Benchmark results}
 
 Selected warmed per-call benchmark results are shown in Table
-\ref{tab:benchmarks}.  They demonstrate that the additional metadata and
-validation machinery does not prevent efficient matrix implementations.  In
-particular, incidence Jaccard distance matrices benefit from packed
-\texttt{UInt64} bitsets, reducing pairwise comparisons to word-wise
-intersections, unions, and population counts.
+\ref{tab:benchmarks}.  The table reports two Julia pathways alongside Python
+and R/\texttt{vegan}: \emph{Julia (safe)} validates on every call, which is
+the default user experience; \emph{Julia (pre)} calls \texttt{validate} once
+before the timing loop, matching the Python and R calling convention.  The
+pre-validated column is therefore the methodologically fair cross-language
+comparison for computational performance.
+
+The validation overhead is most visible for inexpensive row-wise operations.
+For richness at the default scenario size (400 sites, 200 taxa), the safe
+pathway is slower than NumPy because the input is fully checked on every call,
+while the pre-validated pathway is substantially faster.  For heavier matrix
+operations such as Bray--Curtis and Hellinger distance matrices, validation
+cost is negligible relative to the $O(n_{\text{sites}}^2 \cdot n_{\text{taxa}})$
+computation, and both pathways outperform or match the reference stacks.
+Incidence Jaccard distance matrices benefit from packed \texttt{UInt64} bitsets
+that reduce pairwise comparisons to word-wise intersections and population
+counts, yielding a larger margin over SciPy and R/\texttt{vegan} at scale.
 
 \input{benchmark-results.tex}
 
 \input{Figs/benchmark-jaccard.tex}
 
-The benchmark results also show why reproducible performance reporting is
-important.  Some tasks are dominated by simple reductions, some by memory
-access patterns, and others by pairwise matrix construction.  Profiling and
-benchmarking guided targeted implementation improvements, including
-column-major matrix traversal and bitset incidence kernels, while the
-reference corpus checked that optimized methods preserved the intended
-conventions.
+These results demonstrate that the additional metadata and validation machinery
+does not prevent efficient matrix implementations.  Reproducible performance
+reporting is important precisely because different tasks are dominated by
+different cost structures: some by input validation, some by memory access
+patterns, and others by pairwise matrix construction.  Benchmarking guided
+targeted implementation improvements, including column-major matrix traversal
+and bitset incidence kernels, while the reference corpus checked that optimized
+methods preserved the intended conventions.
 
 \subsection{Workflow case study with uncertainty audit}
 
@@ -430,6 +495,14 @@ figure-generation artifacts are available in the \texttt{DiversityAndDissimilari
 source repository.  Benchmark tables, case-study tables, and figures used in
 this manuscript are generated from repository scripts rather than hand-entered
 values.
+
+\section*{Declaration of generative AI and AI-assisted technologies in the writing process}
+
+During the preparation of this work the author used Claude Code
+(claude-sonnet-4-6, Anthropic) to assist with code generation, refactoring,
+documentation, benchmarking, and manuscript drafting. After using this tool,
+the author reviewed and edited the content as necessary and takes full
+responsibility for the content of the published article.
 
 \section*{Declaration of competing interest}
 

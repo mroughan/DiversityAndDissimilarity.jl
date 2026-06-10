@@ -78,6 +78,39 @@ otherwise produce zero or noisy elapsed times.
 The Julia benchmark runs every timed function once before measurement so JIT
 compilation work is not included in reported timings.
 
+## Safe and Pre-validated Pathways
+
+By default every function validates its input on every call — checking for
+negative abundances, non-finite values, and all-zero rows before any
+computation begins. This is the safe, user-facing default.
+
+When the same community matrix is passed to many functions in a pipeline the
+validation overhead accumulates. `validate` runs all checks once and returns a
+[`Validated`](@ref) wrapper that signals the data is already clean:
+
+```julia
+v = validate(community)   # validates once; returns Validated{Matrix{Float64}}
+
+richness(v)               # computation only — no re-validation
+shannon_entropy(v)
+alpha_diversity(v)
+bray_curtis_distance(v)
+jaccard_distance(v)
+hellinger_distance(v)
+```
+
+The Julia benchmark outputs both pathways as separate CSV rows. Tasks ending in
+`_prevalidated` use pre-validated data and are the fair point of comparison
+with Python/NumPy and R/vegan, which do not re-validate inputs on each call.
+The plain task names include per-call validation and reflect the full default
+user experience.
+
+!!! warning "Risk of pre-validated pathway"
+    Constructing `Validated(data)` directly — without calling `validate` —
+    bypasses all checks. Invalid data may produce silently wrong results.
+    Always call `validate(data)` to obtain a `Validated` wrapper from
+    unverified input.
+
 ## Notes On Interpretation
 
 These benchmarks are intended as workflow checks, not universal language
