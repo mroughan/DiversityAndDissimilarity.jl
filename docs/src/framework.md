@@ -39,7 +39,9 @@ The script writes DOT, SVG, and PDF files under `docs/src/assets`.
 
 ## Data Inputs
 
-Input interpretation is deliberately consistent across the package:
+Input interpretation is deliberately consistent across the package. See
+[Data Input Formats](data-input.md) for the full reference including orientation
+rules, keyword parameters, and the pre-validated pipeline.
 
 | Input | Interpretation |
 |---|---|
@@ -67,8 +69,9 @@ julia> richness(community)
  3
 ```
 
-Invalid abundance data should fail early: negative values, non-finite values,
-and all-zero abundance vectors are not silently repaired.
+Invalid abundance data fails early with a message identifying the row and
+column: negative values, non-finite values, and all-zero rows are not silently
+repaired.
 
 ## Outputs
 

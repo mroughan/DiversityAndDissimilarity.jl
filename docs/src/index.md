@@ -139,12 +139,16 @@ julia> index_bounds(BrayCurtis()).lower_meaning
 
 ## Where To Go Next
 
+- [Data Input Formats](data-input.md) explains every accepted data shape —
+  dictionaries, vectors, observation sequences, community matrices, and
+  Tables.jl-compatible tables — with orientation rules, validation, and the
+  `validate` pipeline.
 - [Diversity Indices](diversity-indices.md) covers alpha-diversity, entropy,
   estimators, uncertainty, and the diversity availability checklist.
 - [Dissimilarity Indices](similarity-indices.md) covers pairwise incidence,
   abundance, probability, and information-theoretic comparisons.
-- [Framework](framework.md) describes the type structure, data semantics,
-  metadata traits, architecture, goals, and non-goals in more detail.
+- [Framework](framework.md) describes the type structure, metadata traits,
+  architecture, goals, and non-goals in more detail.
 - [Additional Information](additional-information.md) collects estimator
   guidance, validation examples, scaling notes, migration notes, and generated
   documentation assets.
@@ -152,6 +156,7 @@ julia> index_bounds(BrayCurtis()).lower_meaning
 
 ```@contents
 Pages = [
+    "data-input.md",
     "diversity-indices.md",
     "similarity-indices.md",
     "framework.md",

@@ -37,22 +37,15 @@ julia> diversity(Shannon(), assemblage)
 
 ## Inputs
 
-The same methods accept several data shapes:
-
-- dictionaries as `category => abundance`;
-- numeric vectors as abundance vectors;
-- non-numeric vectors as raw observations;
-- numeric observation vectors with `frequencies=false`;
-- community matrices with samples in rows and taxa/categories in columns;
-- Tables.jl-compatible tables, with `species` used to select species columns.
+All methods accept the same data shapes: dictionaries, numeric vectors,
+observation vectors, community matrices, and Tables.jl-compatible tables.
+See [Data Input Formats](data-input.md) for the complete reference.
 
 ```jldoctest diversitypage
-julia> observations = ["oak", "ash", "oak", "elm"];
-
-julia> richness(observations)
+julia> richness(["oak", "ash", "oak", "elm"])   # observation vector
 3
 
-julia> richness([1, 2, 1, 3]; frequencies=false)
+julia> richness([1, 2, 1, 3]; frequencies=false)   # numeric obs. vector
 3
 
 julia> community = [1 1 2 0 5; 3 0 1 1 0];

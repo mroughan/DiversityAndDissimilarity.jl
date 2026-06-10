@@ -160,7 +160,10 @@ sample-coverage logic for unseen mass.
 
 ## Community Matrices
 
-Passing a community matrix computes all pairwise comparisons across rows:
+Passing a community matrix (rows = samples, columns = taxa) computes all
+pairwise comparisons across rows and returns a square matrix. See
+[Data Input Formats](data-input.md) for orientation rules, table inputs, and
+keyword parameters.
 
 ```jldoctest dissimilaritypage
 julia> community = [

@@ -19,6 +19,7 @@ makedocs(;
     ),
     pages=[
         "Introduction" => "index.md",
+        "Data Input Formats" => "data-input.md",
         "Diversity Indices" => "diversity-indices.md",
         "Dissimilarity Indices" => "similarity-indices.md",
         "Framework" => "framework.md",

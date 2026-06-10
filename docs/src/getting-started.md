@@ -74,72 +74,39 @@ T_q = \frac{\sum_i p_i^q - 1}{(1-q)\log b}
 {}^qD = \left(\sum_i p_i^q\right)^{1/(1-q)}
 ```
 
-## Input Conventions
+## Input Formats
 
-Dictionaries are treated as `species => abundance` mappings.
+All functions accept the same data shapes. The word "species" follows ecology
+convention but means any discrete category.
 
-```julia
-proportions(Dict(:oak => 12, :ash => 5, :elm => 3))
-```
-
-Numeric vectors are treated as abundance vectors by default.
-
-```julia
-entropy(Shannon(), [12, 5, 3])
-```
-
-Non-numeric vectors are treated as raw observations.
+| Format | Interpretation |
+|---|---|
+| `Dict{K,V}` | `category => abundance` |
+| Numeric vector | Abundance counts (default) |
+| Non-numeric vector | Raw observations |
+| Numeric vector + `frequencies=false` | Raw observations with numeric labels |
+| Matrix | Samples in rows, taxa/categories in columns |
+| Table / DataFrame | Same as matrix; use `species` to select taxon columns |
 
 ```julia
-observations = ["oak", "ash", "oak", "elm"]
+# dict
+richness(Dict(:oak => 12, :ash => 5, :elm => 3))
 
-counts(observations)
-richness(observations)
+# numeric vector (abundance)
+shannon_entropy([12, 5, 3])
+
+# observation vector
+richness(["oak", "ash", "oak", "elm"])
+
+# community matrix — one result per row
+richness([1 1 2 0 5; 3 0 1 1 0])
+
+# table — pass species to exclude metadata columns
+richness(df; species=[:oak, :ash, :elm])
 ```
 
-Use `frequencies=false` when a numeric vector represents observations rather
-than abundance values.
-
-```julia
-numeric_observations = [1, 2, 1, 3]
-
-richness(numeric_observations; frequencies=false)
-```
-
-Community matrices are treated as samples in rows and taxa/categories in
-columns. Alpha-diversity functions return one value per row.
-
-```julia
-community = [
-    1 1 2 0 5
-    3 0 1 1 0
-]
-
-richness(community)
-entropy(Shannon(), community)
-chao1(community)
-ace(community)
-sample_coverage(community)
-alpha_diversity(community)
-```
-
-Tables.jl-compatible inputs, including DataFrames, use the same convention. Use
-[`community_matrix`](@ref) to inspect the numeric matrix that will be analyzed.
-By default numeric columns are used as species columns; pass `species` when the
-table includes numeric metadata.
-
-```julia
-table = (
-    site=["a", "b"],
-    oak=[1, 3],
-    ash=[1, 0],
-    elm=[2, 1],
-)
-
-community_matrix(table; species=[:oak, :ash, :elm])
-richness(table; species=[:oak, :ash, :elm])
-shannon_entropy(table; species=[:oak, :ash, :elm])
-```
+See [Data Input Formats](data-input.md) for full details, including matrix
+orientation, `frequencies`, `species`, `label`, and the pre-validated pipeline.
 
 ## Pairwise Comparisons
 

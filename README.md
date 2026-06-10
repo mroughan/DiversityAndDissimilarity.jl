@@ -103,6 +103,18 @@ diversity(Hill(1), assemblage)
 
 ## Data Inputs
 
+Noting that the term "species" comes from ecology but is a proxy for the label used for each category of data, data can be input as 
+
++ A dictionary is interpreted to relate "species" to their abundance count;
++ A numerical vector, interpreted as giving a sequence of unlabelled abundance counts;
++ A non-numerical vector, interpreted as sequence of raw observations;
++ A matrix, interpreted as giving abundances for samples in rows and taxa/categories in columns.
++ A dataframe, where the column labels give species names.
+
+For data input that does not have species labels, these can be provided with additional keyword arguments to most functions.
+
+In more detail (with examples):
+
 Dictionaries are interpreted as `species => abundance`:
 
 ```julia
@@ -159,6 +171,10 @@ community_matrix(table; species=[:oak, :ash, :elm])
 richness(table; species=[:oak, :ash, :elm])
 shannon_entropy(table; species=[:oak, :ash, :elm])
 ```
+
+The [Data Input Formats](https://mroughan.github.io/DiversityAndDissimilarity.jl/dev/data-input/)
+page in the documentation covers all formats, orientation rules, validation,
+keyword parameters, and the pre-validated pipeline in full detail.
 
 ## Main API
 
