@@ -4,6 +4,8 @@ All notable changes to `DiversityAndDissimilarity.jl` will be documented in this
 
 ## Unreleased
 
+- Corrected and stabilized executable documentation examples, and added
+  ordinary tests that mirror source docstring and data-input examples.
 - Added `Validated{T}` wrapper type and `validate()` function to separate
   input validation from computation. Calling `validate(community)` checks all
   preconditions once and returns a wrapper; subsequent calls on the wrapper

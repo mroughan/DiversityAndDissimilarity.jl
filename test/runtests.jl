@@ -3,6 +3,8 @@ using DiversityAndDissimilarity
 using LinearAlgebra
 using Test
 
+include("docstring_examples.jl")
+
 function test_valid_probabilities(data; frequencies=true)
     probabilities = proportions(data; frequencies)
     @test all(>=(0), probabilities)

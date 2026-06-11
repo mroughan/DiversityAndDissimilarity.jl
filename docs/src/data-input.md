@@ -35,11 +35,11 @@ julia> assemblage = Dict(:oak => 12, :ash => 5, :elm => 3);
 julia> richness(assemblage)
 3
 
-julia> shannon_entropy(assemblage)
-1.3527241956246545
+julia> round(shannon_entropy(assemblage); digits=4)
+1.3527
 
 julia> dissimilarity(BrayCurtis(), Dict(:oak => 10, :ash => 2), Dict(:ash => 5, :elm => 3))
-0.7
+0.8
 ```
 
 ---
@@ -56,8 +56,8 @@ julia> abundance = [12, 5, 3];
 julia> richness(abundance)
 3
 
-julia> shannon_entropy(abundance)
-1.3527241956246545
+julia> round(shannon_entropy(abundance); digits=4)
+1.3527
 ```
 
 For pairwise comparisons, two numeric vectors must have the same length.
@@ -69,8 +69,8 @@ julia> left = [12, 5, 0];
 
 julia> right = [0, 5, 7];
 
-julia> dissimilarity(BrayCurtis(), left, right)
-0.6551724137931034
+julia> round(dissimilarity(BrayCurtis(), left, right); digits=4)
+0.6552
 ```
 
 ---
@@ -84,14 +84,17 @@ each value appears.
 ```jldoctest datainput
 julia> observations = ["oak", "ash", "oak", "elm", "ash", "oak"];
 
-julia> counts(observations)
-Dict{String, Int64}("elm" => 1, "ash" => 2, "oak" => 3)
+julia> sort(collect(counts(observations)), by=first)
+3-element Vector{Pair{String, Int64}}:
+ "ash" => 2
+ "elm" => 1
+ "oak" => 3
 
 julia> richness(observations)
 3
 
-julia> shannon_entropy(observations)
-1.4591479170272448
+julia> round(shannon_entropy(observations); digits=4)
+1.4591
 ```
 
 ---
@@ -110,18 +113,19 @@ julia> richness(obs; frequencies=false)
 3
 
 julia> richness(obs)
-3
+4
 ```
 
-Note that richness gives the same answer here because the number of distinct
-values equals the number of nonzero positions. Shannon entropy differs:
+Here richness differs because the observation interpretation counts distinct
+labels, while the default abundance interpretation counts positive positions.
+Shannon entropy differs too:
 
 ```jldoctest datainput
 julia> round(shannon_entropy(obs; frequencies=false); digits=4)
 1.5
 
 julia> round(shannon_entropy(obs); digits=4)
-1.5
+1.8424
 ```
 
 A clearer example where the distinction matters:
@@ -155,15 +159,15 @@ julia> richness(community)
  4
  3
 
-julia> shannon_entropy(community)
+julia> round.(shannon_entropy(community); digits=4)
 2-element Vector{Float64}:
- 1.6577427265048888
- 1.3709505944546687
+ 1.6577
+ 1.371
 
-julia> alpha_diversity(community)
-2-element Vector{@NamedTuple{…}}:
- (richness = 4, …)
- (richness = 3, …)
+julia> getproperty.(alpha_diversity(community), :richness)
+2-element Vector{Int64}:
+ 4
+ 3
 ```
 
 Pairwise index functions called with a single matrix argument return a square

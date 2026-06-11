@@ -17,6 +17,8 @@ PairwiseIndex
 counts
 community_matrix
 proportions
+Validated
+validate
 alpha_diversity
 ```
 
