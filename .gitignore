@@ -1,7 +1,10 @@
 tmp/
 Manifest.toml
 *.cov
+*.mem
 lcov.info
+__pycache__/
+*.pyc
 *~
 build/
 todo.txt

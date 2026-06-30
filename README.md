@@ -29,9 +29,10 @@ the package exposes those conventions explicitly; for example,
 `LinguisticDiversityIndex()` and `GreenbergDiversityIndex()` are aliases by
 interpretation for Gini-Simpson diversity.
 
-The maintained manual has six top-level pages:
+The maintained manual has seven top-level pages:
 
 - [Introduction](docs/src/index.md)
+- [Data Input Formats](docs/src/data-input.md)
 - [Diversity Indices](docs/src/diversity-indices.md)
 - [Dissimilarity Indices](docs/src/similarity-indices.md)
 - [Framework](docs/src/framework.md)
@@ -172,9 +173,9 @@ richness(table; species=[:oak, :ash, :elm])
 shannon_entropy(table; species=[:oak, :ash, :elm])
 ```
 
-The [Data Input Formats](https://mroughan.github.io/DiversityAndDissimilarity.jl/dev/data-input/)
-page in the documentation covers all formats, orientation rules, validation,
-keyword parameters, and the pre-validated pipeline in full detail.
+The [Data Input Formats](docs/src/data-input.md) page covers all formats,
+orientation rules, validation, keyword parameters, and the pre-validated
+pipeline in full detail.
 
 ## Main API
 
@@ -422,6 +423,7 @@ The generated site is written to `docs/build/`.
 Useful local entry points are:
 
 - [Introduction](docs/src/index.md)
+- [Data Input Formats](docs/src/data-input.md)
 - [Diversity Indices](docs/src/diversity-indices.md)
 - [Dissimilarity Indices](docs/src/similarity-indices.md)
 - [Framework](docs/src/framework.md)

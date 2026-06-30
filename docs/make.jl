@@ -13,8 +13,10 @@ makedocs(;
     sitename="DiversityAndDissimilarity.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
+        disable_git=true,
         canonical="https://mroughan.github.io/DiversityAndDissimilarity.jl",
         repolink="https://github.com/mroughan/DiversityAndDissimilarity.jl",
+        edit_link=nothing,
         assets=String[],
     ),
     pages=[
