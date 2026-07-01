@@ -27,5 +27,6 @@ jobs:
           files: lcov.info
           flags: package
           name: DiversityAndDissimilarity.jl
+          slug: mroughan/DiversityAndDissimilarity.jl
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true

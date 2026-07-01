@@ -58,8 +58,11 @@ With support size ``S`` and counts ``n_i``, probabilities are estimated as
 """
 struct AddGamma <: ShannonEstimator
     gamma::Float64
+    function AddGamma(gamma::Real)
+        gamma >= 0 || throw(ArgumentError("gamma must be non-negative"))
+        return new(float(gamma))
+    end
 end
-AddGamma(gamma::Real) = gamma >= 0 ? AddGamma(float(gamma)) : throw(ArgumentError("gamma must be non-negative"))
 AddGamma() = AddGamma(1)
 
 """
@@ -236,9 +239,12 @@ Species with counts up to `threshold` are treated as rare. The default
 """
 struct ACE <: AlphaDiversityIndex
     threshold::Int
+    function ACE(threshold::Integer)
+        threshold >= 1 || throw(ArgumentError("threshold must be positive"))
+        return new(Int(threshold))
+    end
 end
-ACE(; threshold::Integer=10) =
-    threshold >= 1 ? ACE(Int(threshold)) : throw(ArgumentError("threshold must be positive"))
+ACE(; threshold::Integer=10) = ACE(threshold)
 
 """
 Good-Turing sample coverage estimate.

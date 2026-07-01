@@ -13,6 +13,8 @@ function test_valid_probabilities(data; frequencies=true)
     return probabilities
 end
 
+struct UnknownFrameworkIndex <: DiversityIndex end
+
 @testset "abundance handling" begin
     @test counts(["a", "b", "a"]) == Dict("a" => 2, "b" => 1)
     @test proportions(Dict(:a => 2, :b => 2)) == [0.5, 0.5]
@@ -56,7 +58,14 @@ end
     @test shannon(data; estimator=MillerMadow()) ≈ shannon_entropy(data; estimator=MillerMadow())
     @test shannon_diversity(data; estimator=MillerMadow()) ≈
         effective_diversity(Shannon(; estimator=MillerMadow()), data)
+    @test AddGamma().gamma == 1.0
+    @test AddGamma(0).gamma == 0.0
+    @test_throws ArgumentError AddGamma(-0.5)
     @test_throws ArgumentError entropy(Shannon(; estimator=AddGamma(1)), data; support=1)
+    @test entropy(Shannon(; estimator=AddGamma(1)), Dict(:a => 2, :b => 1); support=[:a, :b, :c]) ≈
+        -sum(p -> p * log2(p), [1 / 2, 1 / 3, 1 / 6])
+    @test_throws ArgumentError entropy(Shannon(; estimator=AddGamma(1)), Dict(:a => 2); support=[:b])
+    @test_throws ArgumentError entropy(Shannon(; estimator=ChaoShen()), [1, 1, 1])
 
     shannon_estimators = (
         (Plugin(), nothing),
@@ -111,6 +120,10 @@ end
     @test hill_number(data, 2) ≈ diversity(Hill(2), data)
     @test diversity(Chao1(), [1, 1, 2, 0, 5]) ≈ 4.5
     @test chao1([1, 1, 2, 0, 5]) ≈ diversity(Chao1(), [1, 1, 2, 0, 5])
+    @test ACE().threshold == 10
+    @test ACE(; threshold=3).threshold == 3
+    @test_throws ArgumentError ACE(; threshold=0)
+    @test_throws ArgumentError ACE(0)
     @test diversity(ACE(), [1, 1, 2, 0, 5]) ≈ 6.612244897959183
     @test ace([1, 1, 2, 0, 5]) ≈ diversity(ACE(), [1, 1, 2, 0, 5])
     @test sample_coverage([1, 1, 2, 0, 5]) ≈ 7 / 9
@@ -152,6 +165,24 @@ end
             entropy(Shannon(; estimator=AddGamma(1)), matrix[2, :]; support=5)]
     @test entropy(Shannon(; estimator=AddGamma(1)), matrix; support=[:a, :b, :c, :d, :e]) ≈
         entropy(Shannon(; estimator=AddGamma(1)), matrix; support=5)
+    @test entropy(Shannon(; estimator=MillerMadow()), matrix) ≈
+        [entropy(Shannon(; estimator=MillerMadow()), matrix[1, :]),
+            entropy(Shannon(; estimator=MillerMadow()), matrix[2, :])]
+    @test shannon(matrix) ≈ shannon_entropy(matrix)
+    @test shannon_diversity(matrix) ≈ effective_diversity(Shannon(), matrix)
+    @test renyi_entropy(matrix, 2) ≈ entropy(Renyi(2), matrix)
+    @test renyi(matrix, 2) ≈ renyi_entropy(matrix, 2)
+    @test renyi_diversity(matrix, 2) ≈ effective_diversity(Renyi(2), matrix)
+    @test tsallis_entropy(matrix, 2) ≈ entropy(Tsallis(2), matrix)
+    @test tsallis(matrix, 2) ≈ tsallis_entropy(matrix, 2)
+    @test tsallis_diversity(matrix, 2) ≈ effective_diversity(Tsallis(2), matrix)
+    @test effective_diversity(Simpson(), matrix) ≈ inverse_simpson_index(matrix)
+    @test simpson_index(matrix) ≈ diversity(Simpson(), matrix)
+    @test gini_simpson_index(matrix) ≈ diversity(GiniSimpson(), matrix)
+    @test greenberg_diversity_index(matrix) ≈ diversity(GreenbergDiversityIndex(), matrix)
+    @test linguistic_diversity_index(matrix) ≈ diversity(LinguisticDiversityIndex(), matrix)
+    @test inverse_simpson_index(matrix) ≈ diversity(InverseSimpson(), matrix)
+    @test length(shannon_confint(matrix)) == 2
 
     @test distance(BrayCurtis(), matrix) ≈ [
         0.0 bray_curtis_distance(matrix[1, :], matrix[2, :])
@@ -164,6 +195,21 @@ end
     @test length(alpha_diversity(matrix)) == 2
     @test alpha_diversity(matrix)[1].richness == richness(matrix)[1]
     @test alpha_diversity(matrix)[1] == alpha_diversity(matrix[1, :])
+    @test alpha_diversity(matrix; estimator=MillerMadow())[1].shannon_entropy ≈
+        shannon_entropy(matrix[1, :]; estimator=MillerMadow())
+    @test_throws ArgumentError alpha_diversity(matrix; threshold=0)
+
+    validated = validate(matrix)
+    @test validated.data == float.(matrix)
+    @test richness(validated) == richness(matrix)
+    @test alpha_diversity(validated) == alpha_diversity(matrix)
+    @test alpha_diversity(validated; estimator=MillerMadow())[2].shannon_entropy ≈
+        shannon_entropy(matrix[2, :]; estimator=MillerMadow())
+    @test distance(BrayCurtis(), validated) ≈ distance(BrayCurtis(), matrix)
+    @test similarity(Jaccard(), validated) ≈ similarity(Jaccard(), matrix)
+    @test dissimilarity(Hellinger(), validated) ≈ dissimilarity(Hellinger(), matrix)
+    @test distance(JensenShannon(), validated) ≈ distance(JensenShannon(), matrix)
+    @test_throws ArgumentError validate(matrix; species=[:oak])
 end
 
 @testset "Shannon uncertainty" begin
@@ -182,6 +228,12 @@ end
     @test interval.stderr ≈ sqrt(interval.variance)
     @test shannon_confint(data; estimator=Basharin(), support=4).estimate ≈
         entropy(Shannon(; estimator=Basharin()), data; support=4)
+    wide_interval = entropy_confint(Shannon(), data; level=0.999999)
+    @test wide_interval.lower < wide_interval.estimate < wide_interval.upper
+    @test DiversityAndDissimilarity._normal_quantile(1e-6) < 0
+    @test DiversityAndDissimilarity._normal_quantile(0.5) ≈ 0 atol = 1e-12
+    @test_throws ArgumentError entropy_confint(Shannon(), data; level=1)
+    @test_throws ArgumentError DiversityAndDissimilarity._normal_quantile(0)
 
     boot = bootstrap(Shannon(), data; nboot=25)
     @test boot.lower <= boot.upper
@@ -190,11 +242,19 @@ end
 
     boot_diversity = bootstrap(Shannon(), data; nboot=25, quantity=:diversity)
     @test boot_diversity.estimate ≈ shannon_diversity(data)
+    @test_throws ArgumentError bootstrap(Shannon(), data; nboot=1)
+    @test_throws ArgumentError bootstrap(Shannon(), data; nboot=3, quantity=:bad)
+    @test_throws ArgumentError bootstrap(Shannon(), [1.5, 2.5]; nboot=3)
 
     jack = jackknife(Shannon(), data)
     @test jack.lower <= jack.upper
     @test length(jack.leave_one_out) == 4
     @test isfinite(jack.bias_corrected)
+    jack_diversity = jackknife(Shannon(), data; quantity=:diversity)
+    @test jack_diversity.estimate ≈ shannon_diversity(data)
+    @test_throws ArgumentError jackknife(Shannon(), [1])
+    @test_throws ArgumentError jackknife(Shannon(), data; quantity=:bad)
+    @test_throws ArgumentError entropy_variance(Shannon(; estimator=ChaoShen()), [1, 1, 1])
 
     matrix = [
         4 3 2 1
@@ -221,8 +281,19 @@ end
     ]
 
     @test community_matrix(table; species=[:oak, :ash, :elm, :pine, :birch]) == float.(matrix)
+    @test size(community_matrix(table)) == (2, 6)
+    @test community_matrix(table)[:, 1] == [101.0, 102.0]
+    @test proportions(table; species=[:oak, :ash, :elm, :pine, :birch]) ≈ proportions(matrix)
+    @test validate(table; species=[:oak, :ash, :elm, :pine, :birch]).data == float.(matrix)
+    @test_throws ArgumentError community_matrix([1 2; 3 4]; species=[:oak])
     @test richness(table; species=[:oak, :ash, :elm, :pine, :birch]) == richness(matrix)
     @test shannon_entropy(table; species=[:oak, :ash, :elm, :pine, :birch]) ≈ shannon_entropy(matrix)
+    @test shannon_variance(table; species=[:oak, :ash, :elm, :pine, :birch]) ≈ shannon_variance(matrix)
+    @test shannon_confint(table; species=[:oak, :ash, :elm, :pine, :birch])[1].estimate ≈
+        shannon_confint(matrix)[1].estimate
+    @test length(bootstrap(Shannon(), table; species=[:oak, :ash, :elm, :pine, :birch], nboot=3)) == 2
+    @test length(jackknife(Shannon(), table; species=[:oak, :ash, :elm, :pine, :birch])) == 2
+    @test alpha_diversity(table; species=[:oak, :ash, :elm, :pine, :birch]) == alpha_diversity(matrix)
     @test inverse_simpson_index(table; species=[:oak, :ash, :elm, :pine, :birch]) ≈ inverse_simpson_index(matrix)
     @test chao1(table; species=[:oak, :ash, :elm, :pine, :birch]) ≈ chao1(matrix)
     @test pielou_evenness(table; species=[:oak, :ash, :elm, :pine, :birch]) ≈ pielou_evenness(matrix)
@@ -231,7 +302,16 @@ end
     labeled = labeled_distance(BrayCurtis(), table; label=:site, species=[:oak, :ash, :elm, :pine, :birch])
     @test labeled.labels == ["a", "b"]
     @test labeled.matrix ≈ bray_curtis_distance(matrix)
+    @test labeled_dissimilarity(BrayCurtis(), table; label=:site, species=[:oak, :ash, :elm, :pine, :birch]).matrix ≈
+        bray_curtis_distance(matrix)
+    @test labeled_similarity(Jaccard(), table; label=:site, species=[:oak, :ash, :elm, :pine, :birch]).matrix ≈
+        jaccard_similarity(matrix)
     @test labeled_similarity(Jaccard(), matrix; labels=["a", "b"]).labels == ["a", "b"]
+    @test labeled_distance(BrayCurtis(), matrix).labels == [1, 2]
+    @test_throws ArgumentError labeled_distance(BrayCurtis(), table; labels=["a", "b"], label=:site,
+        species=[:oak, :ash, :elm, :pine, :birch])
+    @test_throws ArgumentError labeled_distance(BrayCurtis(), matrix; label=:site)
+    @test_throws ArgumentError labeled_distance(BrayCurtis(), matrix; labels=["a"])
     @test_throws ArgumentError community_matrix(table; species=[:site, :oak])
 end
 
@@ -306,6 +386,103 @@ end
     @test is_supermetric(Richness()) == :unknown
     @test all(result -> result.passed, validate_reference_cases())
 
+    catalogue = DiversityIndex[
+        Richness(), Shannon(), Renyi(2), Tsallis(2), Simpson(), GiniSimpson(),
+        GreenbergDiversityIndex(), LinguisticDiversityIndex(), InverseSimpson(),
+        Hill(2), Chao1(), ACE(), SampleCoverage(), PielouEvenness(), FisherAlpha(),
+        Jaccard(), SorensenDice(), Overlap(), BrayCurtis(), Ruzicka(), TotalVariation(),
+        Manhattan(), Euclidean(), Canberra(), Hellinger(), Chord(), Bhattacharyya(),
+        KullbackLeibler(), ShannonDifference(), JensenDifference(), JensenShannon(),
+        MorisitaHorn(),
+    ]
+    for index in catalogue
+        metadata = index_metadata(index)
+        @test metadata.type == typeof(index)
+        @test metadata.family == index_family(index)
+        @test metadata.input_mode == input_mode(index)
+        @test metadata.output_mode == output_mode(index)
+        @test metadata.range == index_range(index)
+        @test metadata.bounds == index_bounds(index)
+        @test metadata.is_finite == is_finite(index)
+        @test metadata.is_metric == is_metric(index)
+        @test metadata.is_triangular == is_triangular(index)
+        @test metadata.is_nonnegative == is_nonnegative(index)
+        @test metadata.is_bounded == is_bounded(index)
+        @test metadata.is_pseudometric == is_pseudometric(index)
+        @test metadata.is_quasimetric == is_quasimetric(index)
+        @test metadata.is_metametric == is_metametric(index)
+        @test metadata.is_semimetric == is_semimetric(index)
+        @test metadata.is_premetric == is_premetric(index)
+        @test metadata.is_supermetric == is_supermetric(index)
+        @test metadata.is_similarity == is_similarity(index)
+        @test metadata.is_dissimilarity == is_dissimilarity(index)
+        @test metadata.is_symmetric == is_symmetric(index)
+        @test metadata.requires_probabilities == requires_probabilities(index)
+        @test metadata.supports_matrix_kernel == supports_matrix_kernel(index)
+        @test metadata.formula isa AbstractString
+        @test metadata.aliases isa Vector{String}
+        @test metadata.notes isa AbstractString
+    end
+
+    expected_families = (
+        Richness() => :richness,
+        Shannon() => :entropy,
+        Simpson() => :dominance,
+        GreenbergDiversityIndex() => :linguistic_diversity,
+        InverseSimpson() => :effective_diversity,
+        Chao1() => :richness_estimator,
+        SampleCoverage() => :coverage,
+        PielouEvenness() => :evenness,
+        FisherAlpha() => :diversity,
+        Jaccard() => :incidence,
+        BrayCurtis() => :abundance,
+        KullbackLeibler() => :probability,
+    )
+    for (index, family) in expected_families
+        @test index_family(index) == family
+    end
+    @test input_mode(Shannon()) == :single_assemblage
+    @test input_mode(Jaccard()) == :pairwise
+    @test output_mode(Bhattacharyya()) == :coefficient
+    @test index_range(Manhattan()) == (lower=0.0, upper=2.0)
+    @test index_range(Euclidean()) == (lower=0.0, upper=sqrt(2))
+    @test index_range(JensenDifference(; base=4)).upper ≈ 0.5
+    @test index_range(JensenShannon(; base=4)).upper ≈ sqrt(0.5)
+    @test index_range(JensenShannon(; base=4, distance=false)).upper ≈ 0.5
+    @test requires_probabilities(Shannon())
+    @test !requires_probabilities(Richness())
+    @test supports_matrix_kernel(Shannon())
+    @test !supports_matrix_kernel(Canberra())
+    @test contains(index_metadata(KullbackLeibler()).notes, "Asymmetric")
+    @test "vegan: vegdist(method=\"bray\")" in index_metadata(BrayCurtis()).aliases
+    @test !isempty(index_metadata(SorensenDice()).formula)
+
+    unknown = UnknownFrameworkIndex()
+    unknown_metadata = index_metadata(unknown)
+    @test unknown_metadata.family == :unknown
+    @test unknown_metadata.input_mode == :single_assemblage
+    @test unknown_metadata.output_mode == :estimate
+    @test unknown_metadata.range == (lower=0.0, upper=Inf)
+    @test unknown_metadata.bounds.lower_meaning == :unknown
+    @test unknown_metadata.bounds.upper_meaning == :unknown
+    @test unknown_metadata.is_finite
+    @test !unknown_metadata.is_metric
+    @test unknown_metadata.is_triangular == :unknown
+    @test unknown_metadata.is_pseudometric == :unknown
+    @test unknown_metadata.is_quasimetric == :unknown
+    @test unknown_metadata.is_metametric == :unknown
+    @test unknown_metadata.is_semimetric == :unknown
+    @test unknown_metadata.is_premetric == :unknown
+    @test unknown_metadata.is_supermetric == :unknown
+    @test !unknown_metadata.is_similarity
+    @test !unknown_metadata.is_dissimilarity
+    @test unknown_metadata.is_symmetric
+    @test !unknown_metadata.requires_probabilities
+    @test !unknown_metadata.supports_matrix_kernel
+    @test isempty(unknown_metadata.formula)
+    @test isempty(unknown_metadata.aliases)
+    @test isempty(unknown_metadata.notes)
+
     report = estimator_report([1, 1, 2, 0, 5]; support=6)
     @test report.observed_richness == 4
     @test report.singletons == 2
@@ -331,6 +508,14 @@ end
     @test audit.n_taxa == 5
     @test audit.pairwise.labels == ["a", "b"]
     @test size(audit.pairwise.matrix) == (2, 2)
+    table_audit = diversity_audit(
+        DataFrame(site=["a", "b"], oak=[1, 3], ash=[1, 0], elm=[2, 1]);
+        label=:site,
+        species=[:oak, :ash, :elm],
+        pairwise_index=Jaccard(),
+    )
+    @test table_audit.pairwise.labels == ["a", "b"]
+    @test table_audit.pairwise.matrix ≈ jaccard_distance([1 1 2; 3 0 1])
 
     uncertainty = uncertainty_audit([1 1 2 0 5; 3 0 1 1 0]; labels=["a", "b"], nboot=10)
     @test uncertainty.labels == ["a", "b"]
@@ -338,6 +523,15 @@ end
     @test uncertainty.reports[1].label == "a"
     @test any(result -> result.quantity == :entropy, uncertainty.reports[1].estimates)
     @test any(contains("low nboot"), uncertainty.warnings)
+    table_uncertainty = uncertainty_audit(
+        DataFrame(site=["a", "b"], oak=[1, 3], ash=[1, 0], elm=[2, 1]);
+        label=:site,
+        species=[:oak, :ash, :elm],
+        quantities=(:entropy,),
+        nboot=3,
+    )
+    @test table_uncertainty.labels == ["a", "b"]
+    @test length(table_uncertainty.reports[1].estimates) == 1
 end
 
 @testset "pairwise indexes" begin
@@ -361,6 +555,21 @@ end
             sum(pi > 0 ? pi * log2(pi / ((pi + qi) / 2)) : 0 for (pi, qi) in zip(p, q)) +
             sum(qi > 0 ? qi * log2(qi / ((pi + qi) / 2)) : 0 for (pi, qi) in zip(p, q))
         ) / 2
+    pairwise_matrix = [
+        1 2 0
+        0 1 3
+        2 0 1
+    ]
+
+    @test KullbackLeibler(; base=10).base == 10.0
+    @test KullbackLeibler(; estimator=AddGamma(1), support=4).support == 4
+    @test ShannonDifference(; base=10).base == 10.0
+    @test JensenDifference(; base=10).base == 10.0
+    @test JensenShannon(; distance=false).distance == false
+    for constructor in (KullbackLeibler, ShannonDifference, JensenDifference, JensenShannon)
+        @test_throws ArgumentError constructor(; base=1)
+        @test_throws ArgumentError constructor(; base=0)
+    end
 
     @test similarity(Jaccard(), left, right) ≈ 1 / 3
     @test dissimilarity(Jaccard(), left, right) ≈ 2 / 3
@@ -407,6 +616,8 @@ end
         dissimilarity(JensenShannon(; distance=false), left_vector, right_vector)
     @test dissimilarity(KullbackLeibler(), [1, 0], [0, 1]) == Inf
     @test dissimilarity(KullbackLeibler(), [0, 1], [1, 0]) == Inf
+    @test dissimilarity(Bhattacharyya(), [1, 0], [0, 1]) == Inf
+    @test similarity(ShannonDifference(), [5], [10]) ≈ 1
     @test kullback_leibler_divergence(left_vector, right_vector; estimator=MillerMadow()) <=
         kullback_leibler_divergence(left_vector, right_vector)
     @test isfinite(kullback_leibler_divergence(left_vector, right_vector; estimator=AddGamma(1)))
@@ -418,6 +629,12 @@ end
     @test isfinite(jensen_shannon_divergence(left_vector, right_vector; estimator=AddGamma(0.5), support=4))
     @test isfinite(jensen_shannon_divergence(left_vector, right_vector; estimator=HausserStrimmer(), support=4))
     @test isfinite(jensen_shannon_divergence(left_vector, right_vector; estimator=ChaoShen()))
+    support = [:a, :b, :c, :d]
+    @test isfinite(kullback_leibler_divergence(left, right; estimator=AddGamma(1), support))
+    @test isfinite(kullback_leibler_divergence(left, right; estimator=ChaoShen(), support))
+    @test isfinite(jensen_difference(left, right; estimator=AddGamma(0.5), support))
+    @test isfinite(jensen_shannon_divergence(left, right; estimator=ChaoShen(), support))
+    @test_throws ArgumentError kullback_leibler_divergence(left, right; estimator=AddGamma(1), support=[:a, :b])
     @test morisita_horn_similarity(left_vector, right_vector) ≈ 24 / 85
     @test morisita_horn_distance(left_vector, right_vector) ≈ 1 - 24 / 85
 
@@ -432,6 +649,38 @@ end
     @test overlap_distance(left, right) ≈ dissimilarity(Overlap(), left, right)
     @test ruzicka_similarity(left_vector, right_vector) ≈ quantitative_jaccard_similarity(left_vector, right_vector)
     @test ruzicka_distance(left_vector, right_vector) ≈ quantitative_jaccard_distance(left_vector, right_vector)
+    @test distance(Euclidean(), left_vector, right_vector) ≈ euclidean_distance(left_vector, right_vector)
+    @test jaccard_index(pairwise_matrix) ≈ similarity(Jaccard(), pairwise_matrix)
+    @test jaccard_similarity(pairwise_matrix) ≈ jaccard_index(pairwise_matrix)
+    @test jaccard_distance(pairwise_matrix) ≈ dissimilarity(Jaccard(), pairwise_matrix)
+    @test sorensen_dice_index(pairwise_matrix) ≈ similarity(SorensenDice(), pairwise_matrix)
+    @test sorensen_index(pairwise_matrix) ≈ sorensen_dice_index(pairwise_matrix)
+    @test sorensen_dice_dissimilarity(pairwise_matrix) ≈ dissimilarity(SorensenDice(), pairwise_matrix)
+    @test sorensen_dice_distance(pairwise_matrix) ≈ sorensen_dice_dissimilarity(pairwise_matrix)
+    @test sorensen_distance(pairwise_matrix) ≈ sorensen_dice_distance(pairwise_matrix)
+    @test bray_curtis_dissimilarity(pairwise_matrix) ≈ dissimilarity(BrayCurtis(), pairwise_matrix)
+    @test bray_curtis_distance(pairwise_matrix) ≈ bray_curtis_dissimilarity(pairwise_matrix)
+    @test overlap_similarity(pairwise_matrix) ≈ similarity(Overlap(), pairwise_matrix)
+    @test overlap_distance(pairwise_matrix) ≈ dissimilarity(Overlap(), pairwise_matrix)
+    @test ruzicka_similarity(pairwise_matrix) ≈ similarity(Ruzicka(), pairwise_matrix)
+    @test quantitative_jaccard_similarity(pairwise_matrix) ≈ ruzicka_similarity(pairwise_matrix)
+    @test ruzicka_distance(pairwise_matrix) ≈ dissimilarity(Ruzicka(), pairwise_matrix)
+    @test quantitative_jaccard_distance(pairwise_matrix) ≈ ruzicka_distance(pairwise_matrix)
+    @test total_variation_distance(pairwise_matrix) ≈ dissimilarity(TotalVariation(), pairwise_matrix)
+    @test manhattan_distance(pairwise_matrix) ≈ dissimilarity(Manhattan(), pairwise_matrix)
+    @test euclidean_distance(pairwise_matrix) ≈ dissimilarity(Euclidean(), pairwise_matrix)
+    @test canberra_distance(pairwise_matrix) ≈ dissimilarity(Canberra(), pairwise_matrix)
+    @test hellinger_distance(pairwise_matrix) ≈ dissimilarity(Hellinger(), pairwise_matrix)
+    @test chord_distance(pairwise_matrix) ≈ dissimilarity(Chord(), pairwise_matrix)
+    @test bhattacharyya_coefficient(pairwise_matrix) ≈ similarity(Bhattacharyya(), pairwise_matrix)
+    @test bhattacharyya_distance(pairwise_matrix) ≈ dissimilarity(Bhattacharyya(), pairwise_matrix)
+    @test shannon_difference(pairwise_matrix) ≈ dissimilarity(ShannonDifference(), pairwise_matrix)
+    @test jensen_difference(pairwise_matrix) ≈ dissimilarity(JensenDifference(), pairwise_matrix)
+    @test jensen_shannon_similarity(pairwise_matrix) ≈ similarity(JensenShannon(), pairwise_matrix)
+    @test jensen_shannon_divergence(pairwise_matrix) ≈ dissimilarity(JensenShannon(; distance=false), pairwise_matrix)
+    @test jensen_shannon_distance(pairwise_matrix) ≈ dissimilarity(JensenShannon(), pairwise_matrix)
+    @test morisita_horn_similarity(pairwise_matrix) ≈ similarity(MorisitaHorn(), pairwise_matrix)
+    @test morisita_horn_distance(pairwise_matrix) ≈ dissimilarity(MorisitaHorn(), pairwise_matrix)
     @test_throws ArgumentError total_variation_distance([0, 0], [1, 0])
     @test_throws ArgumentError euclidean_distance([-1, 1], [1, 0])
 end
